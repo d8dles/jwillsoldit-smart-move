@@ -30,7 +30,7 @@ The form posts to `/api/smart-move`, which requires the Vercel runtime. Vercel s
    | `ALLOWED_ORIGIN` | `https://move.jwillsoldit.com` |
 
    To create a HubSpot token: HubSpot → Settings → Integrations → Private Apps → Create a private app.
-   Required scopes: `crm.objects.contacts.write`, `crm.objects.contacts.read`, `crm.objects.notes.write`.
+   Required scopes: `crm.objects.contacts.read`, `crm.objects.contacts.write`, `crm.schemas.contacts.read`, `crm.schemas.contacts.write`
 
 3. **Deploy**
    Click Deploy. Vercel builds and deploys automatically on every push to `main`.
