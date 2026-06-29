@@ -4612,7 +4612,7 @@ if (typeof module !== "undefined" && module.exports) {
 
   // Paste your Zapier Catch Hook or backend endpoint here once connected.
   // Keep blank while testing locally; the button will not open email.
-  const SMART_MOVE_ENDPOINT = 'https://formsubmit.co/ajax/jwillsoldit@icloud.com';
+  const SMART_MOVE_ENDPOINT = '/api/smart-move';
 
   // sections indexed 0–7
   const SECTIONS = ['section-open','section-path','section-contact','section-trunk','section-budget','section-area','section-details','section-brief'];
@@ -5851,7 +5851,7 @@ if (typeof module !== "undefined" && module.exports) {
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error(`Endpoint responded ${res.status}`);
-      if (status) status.textContent = 'Sent. Joey has your Smart Move Brief. This form is reset for the next move.';
+      if (status) status.textContent = 'Saved. Joey has your Smart Move Brief in the CRM.';
       if (btn) btn.textContent = 'Brief sent';
       resetSmartMoveState({ keepBrief: true });
     } catch (err) {
