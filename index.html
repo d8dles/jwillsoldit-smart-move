@@ -1312,6 +1312,18 @@
     max-width: 720px;
   }
 
+  .detail-disclaimer {
+    font-family: var(--body);
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--mid);
+    padding: 12px 14px;
+    border: 1px solid var(--trace);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.04);
+    margin-top: 4px;
+  }
+
   .detail-options {
     display: flex;
     flex-direction: column;
@@ -5108,7 +5120,39 @@ if (typeof module !== "undefined" && module.exports) {
   const SHARED_DETAIL_FIELDS = [
     { group:'Search criteria', type:'multi', store:'trunk.Q3_propertyTypes', label:'What type of property should I search for?', required:true,
       paths:['buyer','sellbuy','notsure'],
-      options:[['single_family','Single-family home'],['condo','Condo / townhome'],['duplex_fourplex','Duplex / fourplex'],['multi_family','Multi-family / income property'],['new_construction','New construction'],['land','Land'],['not_sure','Not sure yet']] }
+      options:[['single_family','Single-family home'],['condo','Condo / townhome'],['duplex_fourplex','Duplex / fourplex'],['multi_family','Multi-family / income property'],['new_construction','New construction'],['land','Land'],['not_sure','Not sure yet']] },
+
+    // ── SCHOOLS, COMMUTE & LOCATION ANCHORS ──────────────────────────────
+    { group:'Schools, Commute & Location', type:'single', store:'pathData.school_zoning_factor',
+      label:'Is school zoning a factor?', required:false,
+      paths:['buyer','renter','sellbuy','notsure'],
+      options:[['yes','Yes'],['not_important','Not important'],['unsure','Unsure']] },
+    { group:'Schools, Commute & Location', type:'text', store:'pathData.school_district_preference',
+      label:'Preferred school district, zone, or campus', required:false,
+      paths:['buyer','renter','sellbuy','notsure'],
+      when:{ field:'pathData.school_zoning_factor', equals:'yes' } },
+    { group:'Schools, Commute & Location', type:'single', store:'pathData.school_anchor_distance',
+      label:'Desired travel time from school or anchor location', required:false,
+      paths:['buyer','renter','sellbuy','notsure'],
+      when:{ field:'pathData.school_zoning_factor', equals:'yes' },
+      options:[['5min','5 minutes'],['10min','10 minutes'],['15min','15 minutes'],['20min','20 minutes'],['flexible','Flexible']] },
+    { group:'Schools, Commute & Location', type:'multi', store:'pathData.location_anchors',
+      label:'Important location anchors', required:false,
+      paths:['buyer','renter','sellbuy','notsure'],
+      options:[['work_commute','Work commute'],['family_friends','Family / friends nearby'],['daycare_childcare','Daycare / childcare'],['medical_care','Medical care'],['airport_access','Airport access'],['highway_access','Highway access'],['gym_wellness','Gym / wellness'],['grocery_shopping','Grocery / shopping'],['restaurants_nightlife','Restaurants / nightlife'],['parks_trails','Parks / trails'],['worship_community','Worship / community'],['other','Other']] },
+    { group:'Schools, Commute & Location', type:'single', store:'pathData.commute_time_preference',
+      label:'Preferred commute time', required:false,
+      paths:['buyer','renter','sellbuy','notsure'],
+      options:[['under_15','Under 15 minutes'],['15_30','15–30 minutes'],['30_45','30–45 minutes'],['flexible','Flexible']] },
+    { group:'Schools, Commute & Location', type:'disclaimer', store:'', required:false,
+      paths:['buyer','renter','sellbuy','notsure'],
+      text:'School zoning and boundaries should be independently verified with the district before applying, leasing, or purchasing.' },
+
+    // ── NON-NEGOTIABLES ───────────────────────────────────────────────────
+    { group:'Non-Negotiables', type:'multi', store:'pathData.non_negotiables',
+      label:'Any deal-breakers I should know about?', required:false,
+      paths:['buyer','renter','sellbuy'],
+      options:[['too_far_work_school','Too far from work / school'],['too_many_stairs','Too many stairs'],['no_yard','No yard'],['no_garage','No garage'],['too_much_carpet','Too much carpet'],['too_close_major_road','Too close to a major road'],['hoa_too_high','HOA too high'],['tax_rate_too_high','Tax rate too high'],['flood_zone_concern','Flood zone concern'],['pet_restrictions','Pet restrictions'],['parking_issues','Parking issues'],['older_property_systems','Older property systems'],['small_kitchen','Small kitchen'],['not_enough_storage','Not enough storage'],['other','Other']] }
   ];
 
   const PATH_DETAIL_FIELDS = {
@@ -5277,6 +5321,10 @@ if (typeof module !== "undefined" && module.exports) {
         <div class="detail-dot"></div><span class="detail-option-label">I acknowledge</span></div></div>`;
     } else if (field.type === 'link') {
       body = `<a href="#" class="detail-link" onclick="markLenderClicked(event)">Mark lender intro needed / clicked</a>`;
+    } else if (field.type === 'disclaimer') {
+      return `<div class="detail-field" data-field="_disclaimer" data-visible="true">
+        <div class="detail-disclaimer">${field.text || ''}</div>
+      </div>`;
     }
     return `<div class="detail-field" data-field="${field.store}" data-visible="true">
       <div class="detail-label">${field.label}</div>
