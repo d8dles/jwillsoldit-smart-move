@@ -2819,97 +2819,103 @@
   }
 
   .crg-brief-side {
-    width: min(100%, 380px);
-    margin: 2px auto 0;
+    width: min(100%, 420px);
+    margin: 4px auto 0;
     align-self: center;
     justify-self: center;
-    opacity: 0.88;
   }
-
 
   .crg-liquid-mark {
     position: relative;
-    margin: 22px auto 26px;
-    width: min(100%, 380px);
-    padding: 28px 26px 24px;
+    margin: 24px auto 28px;
+    width: min(100%, 420px);
+    min-height: 250px;
+    padding: 34px 34px 26px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
     text-align: center;
-    border: 1px solid rgba(250,250,250,0.18);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 30px;
     background:
-      radial-gradient(circle at 28% 18%, rgba(255,255,255,0.26), transparent 30%),
-      radial-gradient(circle at 78% 84%, rgba(126,220,160,0.16), transparent 36%),
-      linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.035));
+      linear-gradient(145deg, rgba(255,255,255,0.24), rgba(255,255,255,0.055) 55%, rgba(126,220,160,0.10)),
+      radial-gradient(circle at 28% 18%, rgba(255,255,255,0.22), transparent 34%),
+      rgba(255,255,255,0.06);
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,0.22),
-      inset 0 -32px 70px rgba(255,255,255,0.035),
-      0 22px 70px rgba(0,0,0,0.26),
-      0 0 42px rgba(126,220,160,0.08);
-    backdrop-filter: blur(18px) saturate(145%);
-    -webkit-backdrop-filter: blur(18px) saturate(145%);
+      inset 0 -28px 60px rgba(255,255,255,0.035),
+      0 24px 90px rgba(0,0,0,0.26),
+      0 0 80px rgba(126,220,160,0.08);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
     overflow: hidden;
   }
 
   .crg-liquid-mark::before {
     content: '';
     position: absolute;
-    inset: -40% -30%;
-    background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.16) 48%, transparent 62%);
-    transform: translateX(-32%) rotate(8deg);
-    animation: crgGlassSweep 5.5s ease-in-out infinite;
+    inset: -55% -35%;
+    background: linear-gradient(110deg, transparent 34%, rgba(255,255,255,0.22) 48%, transparent 64%);
+    transform: translateX(-42%) rotate(9deg);
+    animation: crgGlassSweep 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .crg-liquid-mark::after {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.08);
     pointer-events: none;
   }
 
   @keyframes crgGlassSweep {
-    0%, 48% { transform: translateX(-46%) rotate(8deg); opacity: 0; }
+    0%, 48% { transform: translateX(-46%) rotate(9deg); opacity: 0; }
     60% { opacity: 0.85; }
-    100% { transform: translateX(46%) rotate(8deg); opacity: 0; }
+    100% { transform: translateX(46%) rotate(9deg); opacity: 0; }
   }
 
-  .crg-liquid-logo {
+  .crg-liquid-img {
     position: relative;
-    font-family: Georgia, 'Times New Roman', serif;
-    font-size: clamp(3.2rem, 6vw, 5.8rem);
-    line-height: 0.82;
-    letter-spacing: -0.08em;
-    color: rgba(250,250,250,0.68);
-    text-shadow: 0 0 28px rgba(255,255,255,0.16), 0 0 38px rgba(126,220,160,0.12);
-    mix-blend-mode: screen;
-  }
-
-  .crg-liquid-name {
-    position: relative;
-    margin-top: 18px;
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: rgba(250,250,250,0.58);
+    z-index: 1;
+    width: min(100%, 310px);
+    height: auto;
+    display: block;
+    opacity: 0.9;
+    filter:
+      drop-shadow(0 16px 28px rgba(0,0,0,0.22))
+      drop-shadow(0 0 26px rgba(255,255,255,0.08));
   }
 
   .crg-liquid-address {
     position: relative;
-    margin-top: 10px;
+    z-index: 1;
+    margin-top: 0;
     font-family: var(--body);
     font-size: 12px;
     line-height: 1.45;
-    color: rgba(250,250,250,0.42);
+    color: rgba(250,250,250,0.62);
+    letter-spacing: 0.02em;
   }
 
   .brief-map-beacon {
     position: relative;
     margin: 16px auto 20px;
     width: min(100%, 420px);
-    height: 218px;
-    border: 1px solid rgba(126,220,160,0.22);
+    height: 240px;
+    border-radius: 26px;
+    border: 1px solid rgba(126,220,160,0.26);
     background:
-      radial-gradient(circle at 56% 46%, rgba(224,58,31,0.12), transparent 18%),
-      radial-gradient(circle at 42% 58%, rgba(126,220,160,0.18), transparent 28%),
-      linear-gradient(135deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025)),
-      rgba(4,13,9,0.18);
+      radial-gradient(circle at 55% 48%, rgba(224,58,31,0.18), transparent 18%),
+      radial-gradient(circle at 30% 70%, rgba(126,220,160,0.16), transparent 28%),
+      rgba(255,255,255,0.045);
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.16),
-      0 24px 80px rgba(0,0,0,0.25),
-      0 0 44px rgba(126,220,160,0.10);
+      inset 0 1px 0 rgba(255,255,255,0.11),
+      0 20px 80px rgba(0,0,0,0.22),
+      0 0 74px rgba(126,220,160,0.09);
     backdrop-filter: blur(16px) saturate(150%);
     -webkit-backdrop-filter: blur(16px) saturate(150%);
     overflow: hidden;
@@ -3568,8 +3574,8 @@
             <div class="map-route-line map-route-b"></div>
             <div class="map-route-line map-route-c"></div>
             <div class="map-pulse-pin"></div>
-            <div class="map-beacon-label">Houston route point</div>
-            <div class="map-beacon-address">Richmond Ave · Galleria area</div>
+            <div class="map-beacon-label">Move signal locked</div>
+            <div class="map-beacon-address">Greater Houston · route mapped</div>
           </div>
 
           <div class="brief-actions">
@@ -3583,8 +3589,7 @@
       </div>
 
       <aside class="crg-liquid-mark crg-brief-side" aria-label="Christin Rachelle Group brokerage mark">
-        <div class="crg-liquid-logo">CRG</div>
-        <div class="crg-liquid-name">Christin Rachelle Group</div>
+        <img class="crg-liquid-img" src="assets/crg-logo-transparent.png" alt="Christin Rachelle Group">
         <div class="crg-liquid-address">5090 Richmond Ave #219<br>Houston, TX 77056</div>
       </aside>
     </div>
@@ -4630,6 +4635,16 @@ if (typeof module !== "undefined" && module.exports) {
     document.body.classList.toggle('hero-idle', hide);
   }
 
+  function syncHeaderVisibility() {
+    const isOpening = currentStep === 0 || document.getElementById('section-open')?.classList.contains('active-section');
+    const barelyScrolled = window.scrollY < 90;
+    document.body.classList.toggle('hero-idle', isOpening && barelyScrolled);
+  }
+
+  window.addEventListener('scroll', syncHeaderVisibility, { passive: true });
+  window.addEventListener('load', syncHeaderVisibility);
+  syncHeaderVisibility();
+
   function updatePlotline(step) {
     document.querySelectorAll('.plotline-step').forEach((el, i) => {
       el.classList.remove('active', 'done');
@@ -5103,7 +5118,7 @@ if (typeof module !== "undefined" && module.exports) {
       { group:'Rental needs', type:'bedbath', store:'pathData.Q9_bedroomsBathrooms', label:'Minimum bedroom / bathroom count', required:true,
         note:'Use the plus and minus controls so this feels quick instead of making someone hunt through a long dropdown.' },
       { group:'Rental needs', type:'multi', store:'pathData.Q10_rentalAmenities', label:'What features or amenities matter most?', required:false,
-        options:[['washer_dryer','Washer / dryer'],['garage','Garage'],['covered_parking','Covered parking'],['yard','Yard'],['fenced_yard','Fenced yard'],['patio_balcony','Patio / balcony'],['pet_friendly','Pet friendly'],['study','Study / office'],['home_office','Home office space'],['primary_down','Primary bedroom down'],['one_bed_down','At least one bedroom down'],['multi_story_ok','Multi-story okay'],['split_level_ok','Split-level okay'],['no_carpet','No carpet'],['island_kitchen','Island kitchen'],['walk_in_closet','Walk-in closet'],['pool','Pool'],['gym','Gym'],['gated','Gated access'],['elevator','Elevator'],['first_floor','First-floor unit'],['top_floor','Top-floor unit'],['storage','Extra storage'],['ev_charging','EV charging']] },
+        options:[['washer_dryer','Washer / dryer'],['garage','Garage'],['covered_parking','Covered parking'],['yard','Yard'],['fenced_yard','Fenced yard'],['patio_balcony','Patio / balcony'],['pet_friendly','Pet friendly'],['study','Study / office'],['home_office','Home office space'],['one_story_preferred','One-story preferred'],['two_story_ok','Two-story okay'],['three_plus_stories_ok','Three+ stories okay'],['split_level_ok','Split-level okay'],['primary_down','Primary bedroom down'],['one_bed_down','At least one bedroom down'],['no_carpet','No carpet'],['island_kitchen','Island kitchen'],['walk_in_closet','Walk-in closet'],['pool','Pool'],['gym','Gym'],['gated','Gated access'],['elevator','Elevator'],['first_floor','First-floor unit'],['top_floor','Top-floor unit'],['storage','Extra storage'],['ev_charging','EV charging']] },
       { group:'Rental needs', type:'single', store:'pathData.Q11_rentalMoveIn', label:'When do you need to move in?', required:true,
         options:[['asap','ASAP'],['2_weeks','Within 2 weeks'],['1_month','Within 30 days'],['flexible','Flexible']] },
       { group:'Rental needs', type:'select', store:'pathData.Q12_leaseTerm', label:'What lease term are you looking for?', required:true,
