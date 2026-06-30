@@ -3096,6 +3096,138 @@
     color: rgba(250,250,250,0.34);
   }
 
+  /* ── CRG MOBILE FOOTER TILE + COMPLETION CARD PATCH ────── */
+
+  /* Desktop: gf-left is invisible in layout — top/bottom are direct column items */
+  .gf-left {
+    display: contents;
+  }
+
+  /* CRG tile: hidden on desktop */
+  .gf-crg-tile {
+    display: none;
+  }
+
+  .gf-crg-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    padding: 7px;
+  }
+
+  @media (max-width: 768px) {
+    /* Switch footer to row: left content + right CRG tile */
+    #global-footer {
+      flex-direction: row;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 16px;
+      height: auto;
+      min-height: 0;
+    }
+
+    /* Left column: all the text content */
+    .gf-left {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Right column: black CRG tile */
+    .gf-crg-tile {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 96px;
+      height: 96px;
+      min-width: 96px;
+      flex-shrink: 0;
+      align-self: center;
+      background: #0D0D0D;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    /* Legal links: stack cleanly, no overlap */
+    .gf-bottom .gf-legal {
+      gap: 3px 8px;
+      flex-wrap: wrap;
+      line-height: 1.7;
+    }
+
+    .gf-bottom .gf-legal a,
+    .gf-bottom .gf-eho {
+      white-space: normal;
+      display: inline-block;
+    }
+
+    /* gf-top: tighten on mobile */
+    .gf-top {
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Increase section clearance for taller mobile footer (~120px) */
+    .section:not(#section-brief) {
+      padding-bottom: 140px;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .gf-crg-tile {
+      width: 82px;
+      height: 82px;
+      min-width: 82px;
+    }
+
+    #global-footer {
+      gap: 10px;
+    }
+  }
+
+  /* Completion screen CRG card: slimmer on mobile */
+  @media (max-width: 860px) {
+    .crg-liquid-mark {
+      min-height: auto;
+      padding: 18px 22px 14px;
+      border-radius: 20px;
+      gap: 10px;
+      margin: 10px auto 14px;
+      width: min(100%, 360px);
+    }
+
+    .crg-liquid-img {
+      width: min(100%, 190px);
+      opacity: 1;
+      filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35)) brightness(1.1);
+    }
+
+    .crg-liquid-address {
+      font-size: 11px;
+      color: rgba(250,250,250,0.74);
+    }
+
+    /* Tighten the stage between route card and CRG credential */
+    .brief-stage {
+      gap: 14px;
+    }
+
+    /* Primary action: full width on mobile */
+    .brief-action.primary {
+      width: 100%;
+      text-align: center;
+    }
+
+    /* Tighten action button row */
+    .brief-actions {
+      gap: 8px;
+      margin-top: 20px;
+    }
+  }
+
 </style>
 </head>
 <body class="auto-flow hero-idle">
@@ -3628,25 +3760,29 @@
 </section>
 
 <div id="global-footer">
-  <div class="gf-top">
-    <span class="gf-brand">JWillSoldIt</span>
-    <span class="gf-vdiv"></span>
-    <span class="gf-agent">Joey Williams · REALTOR®</span>
-    <div class="gf-contacts">
-      <span class="gf-connect-label">Connect:</span>
-      <a href="#section-open" class="gf-link" onclick="goHome(event)">Home</a>
-      <a href="tel:+15616856566" class="gf-link">Call</a>
-      <a href="sms:+15616856566" class="gf-link">Text</a>
-      <a href="mailto:jwillsoldit@icloud.com" class="gf-link">Email</a>
+  <div class="gf-left">
+    <div class="gf-top">
+      <span class="gf-brand">JWillSoldIt</span>
+      <span class="gf-vdiv"></span>
+      <span class="gf-agent">Joey Williams · REALTOR®</span>
+      <div class="gf-contacts">
+        <span class="gf-connect-label">Connect:</span>
+        <a href="#section-open" class="gf-link" onclick="goHome(event)">Home</a>
+        <a href="tel:+15616856566" class="gf-link">Call</a>
+        <a href="sms:+15616856566" class="gf-link">Text</a>
+        <a href="mailto:jwillsoldit@icloud.com" class="gf-link">Email</a>
+      </div>
+    </div>
+    <div class="gf-bottom">
+      <div class="gf-legal">
+        <a href="assets/docs/iabs.pdf" target="_blank" rel="noopener">IABS Consumer Protection Notice</a>
+        <a href="#">Privacy Policy</a>
+        <span class="gf-eho">Equal Housing Opportunity</span>
+      </div>
     </div>
   </div>
-  <div class="gf-bottom">
-    <div class="gf-legal">
-      <a href="assets/docs/iabs.pdf" target="_blank" rel="noopener">IABS</a>
-      <a href="assets/docs/cpn.pdf" target="_blank" rel="noopener">Consumer Protection Notice</a>
-      <a href="#">Privacy Policy</a>
-      <span class="gf-eho">Equal Housing Opportunity</span>
-    </div>
+  <div class="gf-crg-tile" aria-label="Christin Rachelle Group">
+    <img src="assets/crg-logo-transparent.png" alt="Christin Rachelle Group" class="gf-crg-logo">
   </div>
 </div>
 
