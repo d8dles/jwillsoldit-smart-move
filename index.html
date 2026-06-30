@@ -3096,81 +3096,91 @@
     color: rgba(250,250,250,0.34);
   }
 
-  /* ── CRG MOBILE FOOTER TILE + COMPLETION CARD PATCH ────── */
+  /* ── CRG FOOTER TILE + COMPLETION CARD PATCH v2 ─────────── */
 
-  /* Desktop: gf-left is invisible in layout — top/bottom are direct column items */
+  /* Footer: row layout everywhere — left text column, right CRG tile */
+  #global-footer {
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 40px;
+    gap: 20px;
+    overflow: visible;
+  }
+
   .gf-left {
-    display: contents;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
   }
 
-  /* CRG tile: hidden on desktop */
+  /* Black CRG tile — shown on all screen sizes */
   .gf-crg-tile {
-    display: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 92px;
+    height: 92px;
+    min-width: 92px;
+    flex-shrink: 0;
+    background: #0D0D0D;
+    border-radius: 4px;
+    overflow: hidden;
   }
 
+  /* Invert dark logo to white on black tile background */
   .gf-crg-logo {
     width: 100%;
     height: 100%;
     object-fit: contain;
     display: block;
-    padding: 7px;
+    padding: 8px;
+    filter: invert(1) brightness(1.8) contrast(1.1);
+  }
+
+  /* Legal links: clean wrap */
+  .gf-bottom .gf-legal {
+    gap: 3px 10px;
+    flex-wrap: wrap;
+    line-height: 1.7;
+  }
+
+  .gf-bottom .gf-legal a,
+  .gf-bottom .gf-eho {
+    white-space: normal;
+    display: inline-block;
+  }
+
+  /* Section clearance for the taller footer (~112px) */
+  .section:not(#section-brief) {
+    padding-bottom: 120px;
+  }
+
+  /* Brief action: primary button full width on all sizes */
+  .brief-action.primary {
+    text-align: center;
   }
 
   @media (max-width: 768px) {
-    /* Switch footer to row: left content + right CRG tile */
     #global-footer {
-      flex-direction: row;
-      align-items: center;
       gap: 14px;
       padding: 10px 16px;
-      height: auto;
-      min-height: 0;
     }
 
-    /* Left column: all the text content */
-    .gf-left {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      flex: 1;
-      min-width: 0;
-    }
-
-    /* Right column: black CRG tile */
     .gf-crg-tile {
-      display: flex;
-      align-items: center;
-      justify-content: center;
       width: 96px;
       height: 96px;
       min-width: 96px;
-      flex-shrink: 0;
-      align-self: center;
-      background: #0D0D0D;
-      border-radius: 4px;
-      overflow: hidden;
     }
 
-    /* Legal links: stack cleanly, no overlap */
-    .gf-bottom .gf-legal {
-      gap: 3px 8px;
-      flex-wrap: wrap;
-      line-height: 1.7;
-    }
-
-    .gf-bottom .gf-legal a,
-    .gf-bottom .gf-eho {
-      white-space: normal;
-      display: inline-block;
-    }
-
-    /* gf-top: tighten on mobile */
     .gf-top {
       gap: 8px;
       flex-wrap: wrap;
     }
 
-    /* Increase section clearance for taller mobile footer (~120px) */
     .section:not(#section-brief) {
       padding-bottom: 140px;
     }
@@ -3188,40 +3198,16 @@
     }
   }
 
-  /* Completion screen CRG card: slimmer on mobile */
+  /* Brief completion: tighten actions */
   @media (max-width: 860px) {
-    .crg-liquid-mark {
-      min-height: auto;
-      padding: 18px 22px 14px;
-      border-radius: 20px;
-      gap: 10px;
-      margin: 10px auto 14px;
-      width: min(100%, 360px);
-    }
-
-    .crg-liquid-img {
-      width: min(100%, 190px);
-      opacity: 1;
-      filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35)) brightness(1.1);
-    }
-
-    .crg-liquid-address {
-      font-size: 11px;
-      color: rgba(250,250,250,0.74);
-    }
-
-    /* Tighten the stage between route card and CRG credential */
     .brief-stage {
       gap: 14px;
     }
 
-    /* Primary action: full width on mobile */
     .brief-action.primary {
       width: 100%;
-      text-align: center;
     }
 
-    /* Tighten action button row */
     .brief-actions {
       gap: 8px;
       margin-top: 20px;
@@ -3732,10 +3718,6 @@
         </div>
       </div>
 
-      <aside class="crg-liquid-mark crg-brief-side" aria-label="Christin Rachelle Group brokerage mark">
-        <img class="crg-liquid-img" src="assets/crg-logo-transparent.png" alt="Christin Rachelle Group">
-        <div class="crg-liquid-address">5090 Richmond Ave #219<br>Houston, TX 77056</div>
-      </aside>
     </div>
   </div>
   <div class="brief-footer-strip">
