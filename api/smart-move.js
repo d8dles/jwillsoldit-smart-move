@@ -165,6 +165,85 @@ async function upsertContact(token, payload) {
   return created.id;
 }
 
+async function sendLeadAlert(payload, contactId) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const to     = process.env.LEAD_ALERT_TO;
+  const from   = process.env.LEAD_ALERT_FROM;
+
+  if (!apiKey || !to || !from) {
+    console.warn('[smart-move] Lead alert skipped: RESEND_API_KEY, LEAD_ALERT_TO, or LEAD_ALERT_FROM not set');
+    return;
+  }
+
+  const { name, email, phone } = payload.contact || {};
+  const route        = payload.routeLabel    || payload.path || '—';
+  const timeline     = payload.timelineLabel || '—';
+  const budget       = payload.budgetLabel   || '—';
+  const readiness    = payload.readinessLabel|| '—';
+  const areas        = payload.areasLabel    || '—';
+  const criteria     = payload.criteriaLabel || '—';
+  const submissionId = payload.metadata?.submissionId || '—';
+  const submittedAt  = payload.metadata?.submittedAt  || '—';
+  const brief        = buildBriefText(payload);
+  const hubspotLink  = `https://app-na2.hubspot.com/contacts/246507261/contact/${contactId}`;
+
+  const subject = `New Smart Move Lead: ${name || '—'} — ${route}`;
+
+  const html = `
+<h2 style="font-family:sans-serif;margin-bottom:16px;">New Smart Move Lead</h2>
+<table cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">
+  <tr><td style="font-weight:bold;padding-right:16px;">Name</td><td>${name || '—'}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Email</td><td><a href="mailto:${email}">${email || '—'}</a></td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Phone</td><td>${phone || '—'}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Route</td><td>${route}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Timeline</td><td>${timeline}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Budget</td><td>${budget}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Readiness</td><td>${readiness}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Areas</td><td>${areas}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Criteria</td><td>${criteria}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Submission ID</td><td>${submissionId}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Submitted At</td><td>${submittedAt}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">HubSpot Contact</td><td><a href="${hubspotLink}">${hubspotLink}</a></td></tr>
+</table>
+<h3 style="font-family:sans-serif;margin-top:24px;">Smart Move Brief</h3>
+<pre style="background:#f5f5f5;padding:12px;font-size:13px;white-space:pre-wrap;font-family:monospace;">${brief}</pre>
+`.trim();
+
+  const text = [
+    subject,
+    '',
+    `Name:          ${name || '—'}`,
+    `Email:         ${email || '—'}`,
+    `Phone:         ${phone || '—'}`,
+    `Route:         ${route}`,
+    `Timeline:      ${timeline}`,
+    `Budget:        ${budget}`,
+    `Readiness:     ${readiness}`,
+    `Areas:         ${areas}`,
+    `Criteria:      ${criteria}`,
+    `Submission ID: ${submissionId}`,
+    `Submitted At:  ${submittedAt}`,
+    `HubSpot:       ${hubspotLink}`,
+    '',
+    '--- Smart Move Brief ---',
+    brief,
+  ].join('\n');
+
+  const alertRes = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ from, to: [to], subject, html, text }),
+  });
+
+  if (!alertRes.ok) {
+    const errBody = await alertRes.text();
+    throw new Error(`Resend API ${alertRes.status}: ${errBody}`);
+  }
+}
+
 async function tryAttachNote(token, contactId, noteText) {
   try {
     const createNoteRes = await fetch(`${HUBSPOT_API}/crm/v3/objects/notes`, {
@@ -223,6 +302,12 @@ export default async function handler(req, res) {
     const contactId = await upsertContact(token, payload);
     const briefText = buildBriefText(payload);
     await tryAttachNote(token, contactId, briefText);
+
+    try {
+      await sendLeadAlert(payload, contactId);
+    } catch (err) {
+      console.warn('[smart-move] Lead alert email failed:', err.message);
+    }
 
     return res.status(200).json({
       success: true,
