@@ -187,11 +187,16 @@ async function sendLeadAlert(payload, contactId) {
   const brief        = buildBriefText(payload);
   const hubspotLink  = `https://app-na2.hubspot.com/contacts/246507261/contact/${contactId}`;
 
-  const subject = `New Smart Move Lead: ${name || '—'} — ${route}`;
+  const isPartial = payload.metadata?.submissionType === 'partial_contact';
+  const submissionTypeLabel = isPartial ? 'Partial Contact' : 'Completed Brief';
+  const subject = isPartial
+    ? `Partial Smart Move Lead: ${name || '—'} — ${route}`
+    : `Completed Smart Move Lead: ${name || '—'} — ${route} — ${budget}`;
 
   const html = `
-<h2 style="font-family:sans-serif;margin-bottom:16px;">New Smart Move Lead</h2>
+<h2 style="font-family:sans-serif;margin-bottom:16px;">${isPartial ? 'Partial' : 'Completed'} Smart Move Lead</h2>
 <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">
+  <tr><td style="font-weight:bold;padding-right:16px;">Submission Type</td><td>${submissionTypeLabel}</td></tr>
   <tr><td style="font-weight:bold;padding-right:16px;">Name</td><td>${name || '—'}</td></tr>
   <tr><td style="font-weight:bold;padding-right:16px;">Email</td><td><a href="mailto:${email}">${email || '—'}</a></td></tr>
   <tr><td style="font-weight:bold;padding-right:16px;">Phone</td><td>${phone || '—'}</td></tr>
@@ -212,6 +217,7 @@ async function sendLeadAlert(payload, contactId) {
   const text = [
     subject,
     '',
+    `Submission Type: ${submissionTypeLabel}`,
     `Name:          ${name || '—'}`,
     `Email:         ${email || '—'}`,
     `Phone:         ${phone || '—'}`,

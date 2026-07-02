@@ -1,0 +1,172 @@
+{
+ "e2e": [
+  {
+   "path": "rent",
+   "width": 390,
+   "steps": [
+    "01-path→section-path",
+    "02-contact→section-contact",
+    "03-trunk→section-trunk",
+    "04-budget→section-budget",
+    "05-area→section-area",
+    "06-details→section-details",
+    "07-brief→section-brief"
+   ],
+   "overflowMax": 0,
+   "errors": [],
+   "detailsFilled": true,
+   "noDetailsAutoAdvance": true,
+   "submitStatus": "Saved. Joey has your Smart Move Brief in the CRM.",
+   "buttonState": "Brief sent"
+  },
+  {
+   "path": "buy",
+   "width": 390,
+   "steps": [
+    "01-path→section-path",
+    "02-contact→section-contact",
+    "03-trunk→section-trunk",
+    "04-budget→section-budget",
+    "05-area→section-area",
+    "06-details→section-details",
+    "07-brief→section-brief"
+   ],
+   "overflowMax": 0,
+   "errors": [],
+   "detailsFilled": true,
+   "noDetailsAutoAdvance": true,
+   "submitStatus": "Saved. Joey has your Smart Move Brief in the CRM.",
+   "buttonState": "Brief sent"
+  },
+  {
+   "path": "sell",
+   "width": 390,
+   "steps": [
+    "01-path→section-path",
+    "02-contact→section-contact",
+    "03-trunk→section-trunk",
+    "04-budget→section-budget",
+    "05-area→section-area",
+    "06-details→section-details",
+    "07-brief→section-brief"
+   ],
+   "overflowMax": 0,
+   "errors": [],
+   "detailsFilled": true,
+   "noDetailsAutoAdvance": true,
+   "submitStatus": "Saved. Joey has your Smart Move Brief in the CRM.",
+   "buttonState": "Brief sent"
+  },
+  {
+   "path": "sell-buy",
+   "width": 390,
+   "steps": [
+    "01-path→section-path",
+    "02-contact→section-contact",
+    "03-trunk→section-trunk",
+    "04-budget→section-budget",
+    "05-area→section-area",
+    "06-details→section-details",
+    "07-brief→section-brief"
+   ],
+   "overflowMax": 0,
+   "errors": [],
+   "detailsFilled": true,
+   "noDetailsAutoAdvance": true,
+   "submitStatus": "Saved. Joey has your Smart Move Brief in the CRM.",
+   "buttonState": "Brief sent"
+  },
+  {
+   "path": "commercial",
+   "width": 390,
+   "steps": [
+    "01-path→section-path",
+    "02-contact→section-contact",
+    "03-trunk→section-trunk",
+    "04-budget→section-budget",
+    "05-area→section-area",
+    "06-details→section-details",
+    "07-brief→section-brief"
+   ],
+   "overflowMax": 0,
+   "errors": [],
+   "detailsFilled": true,
+   "noDetailsAutoAdvance": true,
+   "submitStatus": "Saved. Joey has your Smart Move Brief in the CRM.",
+   "buttonState": "Brief sent"
+  },
+  {
+   "path": "not-sure",
+   "width": 390,
+   "steps": [
+    "01-path→section-path",
+    "02-contact→section-contact",
+    "03-trunk→section-trunk",
+    "04-budget→section-budget",
+    "05-area→section-area",
+    "06-details→section-details",
+    "07-brief→section-brief"
+   ],
+   "overflowMax": 0,
+   "errors": [],
+   "detailsFilled": true,
+   "noDetailsAutoAdvance": true,
+   "submitStatus": "Saved. Joey has your Smart Move Brief in the CRM.",
+   "buttonState": "Brief sent"
+  }
+ ],
+ "regression": {
+  "advancedTo": "section-trunk",
+  "bodyClass": "auto-flow",
+  "recovered": true
+ },
+ "viewports": [
+  {
+   "width": 360,
+   "overflowMax": 0,
+   "completed": "Saved. Joey has your Smart Move Brief in the CRM.",
+   "errors": []
+  },
+  {
+   "width": 430,
+   "overflowMax": 0,
+   "completed": "Saved. Joey has your Smart Move Brief in the CRM.",
+   "errors": []
+  },
+  {
+   "width": 820,
+   "overflowMax": 0,
+   "completed": "Saved. Joey has your Smart Move Brief in the CRM.",
+   "errors": []
+  },
+  {
+   "width": 1440,
+   "overflowMax": 1,
+   "completed": "Saved. Joey has your Smart Move Brief in the CRM.",
+   "errors": []
+  }
+ ],
+ "tracking": {
+  "utm_source": "facebook",
+  "utm_medium": "paid",
+  "utm_campaign": "smartmove-test",
+  "fbclid": "fb.test.123"
+ },
+ "submissions": {
+  "total": 21,
+  "partials": 11,
+  "finals": 10,
+  "partialSample": {
+   "route": "Rent · Partial",
+   "readiness": "Partial lead — contact captured, form in progress",
+   "email": "fable-test@example.com",
+   "name": "Fable Test Lead",
+   "wouldPassBackendValidation": true
+  },
+  "finalSample": {
+   "route": "Rent",
+   "budget": "$0 – $1,000 / month",
+   "selectedDetails": 10
+  }
+ }
+}

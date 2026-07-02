@@ -21,6 +21,9 @@
 <meta name="twitter:description" content="A guided intake experience for buyers, sellers, renters, and investors — helping Joey Williams map your next move with clarity and confidence.">
 <meta name="twitter:image" content="https://move.jwillsoldit.com/assets/og-smart-move-v1.png">
 <link rel="canonical" href="https://move.jwillsoldit.com/">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon.png" type="image/png" sizes="48x48">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <script type="application/ld+json">
 [
   {
@@ -988,21 +991,25 @@
     border-color: var(--ink);
   }
 
-  /* Auto-flow mode: selections advance the experience; buttons stay in DOM as fallback logic only. */
+  /* Auto-flow mode: selections advance automatically, but every step keeps a
+     real, visible Continue button as the guaranteed path forward. */
   .auto-flow .path-continue,
   .auto-flow .budget-continue,
   .auto-flow .detail-continue {
     min-height: 54px;
-    justify-content: center;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
     position: relative;
-    padding: 18px 80px;
+    padding: 22px 80px;
   }
 
   .auto-flow .path-continue::before,
   .auto-flow .budget-continue::before,
   .auto-flow .detail-continue::before {
-    content: 'Auto-advances when ready';
+    content: 'Answers advance automatically';
     font-family: var(--mono);
     font-size: 10px;
     font-weight: 700;
@@ -1013,22 +1020,62 @@
 
   .auto-flow #section-path .path-continue::before {
     color: rgba(250,250,250,0.38);
+    content: 'Choose a route to continue';
   }
 
   .auto-flow #section-contact .path-continue::before {
-    content: 'Complete contact fields, then keep scrolling';
+    content: 'Complete the fields, then continue';
   }
 
   .auto-flow #section-trunk .path-continue::before {
-    content: 'Confirm disclosures, then keep scrolling';
+    content: 'Confirm the disclosures, then continue';
   }
 
   .auto-flow #section-budget .budget-continue::before {
-    content: 'Choose a range, then keep scrolling';
+    content: 'Choose a range to continue';
   }
 
   .auto-flow #section-details .detail-continue::before {
-    content: 'Complete details, then keep scrolling';
+    content: 'Answer what applies, then build your brief';
+  }
+
+  /* Contact + trunk live on light sections; the shared .path-continue base
+     background is the dark path-section strip, so restore the light surface. */
+  #section-contact .path-continue,
+  #section-trunk .path-continue {
+    background: var(--pure);
+    border-top: 1px solid var(--trace);
+  }
+
+  /* On the dark path section the ink button would vanish — use the brand red. */
+  #section-path .btn-continue {
+    background: var(--red);
+  }
+
+  #section-path .btn-continue:hover {
+    background: #c73419;
+  }
+
+  #section-path .btn-continue:disabled {
+    background: rgba(250,250,250,0.08);
+    color: rgba(250,250,250,0.35);
+  }
+
+  /* Small screens: stack the caption over a full-width button. */
+  @media (max-width: 640px) {
+    .auto-flow .path-continue,
+    .auto-flow .budget-continue,
+    .auto-flow .detail-continue {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 14px;
+      padding: 20px 24px;
+    }
+    .auto-flow .path-continue .btn-continue,
+    .auto-flow .budget-continue .btn-continue,
+    .auto-flow .detail-continue .btn-continue {
+      width: 100%;
+    }
   }
 
   .auto-flow .area-continue {
@@ -1039,40 +1086,39 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 32px;
+    gap: 16px 32px;
+    flex-wrap: wrap;
     position: relative;
   }
 
   .auto-flow .area-continue::before {
-    content: 'Pick areas, then keep scrolling';
+    content: 'Pick a few areas — or skip for now';
     font-family: var(--mono);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--mid);
-    flex: 1;
+    flex: 1 1 100%;
   }
 
   .auto-flow .area-skip {
-    margin-left: auto;
-    white-space: nowrap;
-    padding: 8px 0 4px;
+    padding: 12px 0;
   }
 
-  .auto-flow .btn-continue {
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    padding: 0 !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    clip: rect(0 0 0 0) !important;
-    clip-path: inset(50%) !important;
-    white-space: nowrap !important;
-    border: 0 !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
+  @media (max-width: 640px) {
+    .auto-flow .area-continue {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      padding: 20px 24px;
+    }
+    .auto-flow .area-continue .btn-continue {
+      width: 100%;
+    }
+    .auto-flow .area-skip {
+      text-align: center;
+    }
   }
 
   .auto-flow-ready-pulse {
@@ -2235,18 +2281,6 @@
   .area-body,
   .route-detail-body { overflow-y: visible !important; }
 
-  /* Auto-flow means no button/footer bars between steps. Keep the fallback buttons in markup, but not on screen. */
-  .auto-flow .path-continue,
-  .auto-flow .budget-continue,
-  .auto-flow .detail-continue {
-    display: none !important;
-  }
-  .auto-flow .path-continue::before,
-  .auto-flow .budget-continue::before,
-  .auto-flow .detail-continue::before {
-    content: none !important;
-  }
-
   /* Faster hero runway with a stronger camera push. */
   #section-open.visible {
     min-height: 162vh !important;
@@ -2489,21 +2523,6 @@
 
   .area-continue {
     align-items: center;
-  }
-
-  .auto-flow .area-continue {
-    display: flex;
-    min-height: 74px;
-  }
-
-  .auto-flow .area-continue::before {
-    content: 'Choose areas or keep moving';
-    flex: 0 0 auto;
-    margin-right: 32px;
-  }
-
-  .area-skip {
-    margin-left: auto;
   }
 
   /* Details: make the restored intake feel intentionally zoned, not dumped. */
@@ -3638,7 +3657,7 @@
   </div>
   <div class="detail-continue">
     <div class="detail-error" id="detail-error"></div>
-    <button class="btn-continue" onclick="submitRouteDetails()">Build My Brief</button>
+    <button class="btn-continue" onclick="submitRouteDetails()">Build My Smart Move Brief</button>
   </div>
 </section>
 
@@ -3735,7 +3754,7 @@
     <div class="bf-legal">
       <a href="assets/docs/iabs.pdf" target="_blank" rel="noopener">IABS</a>
       <a href="assets/docs/cpn.pdf" target="_blank" rel="noopener">Consumer Protection Notice</a>
-      <a href="#">Privacy Policy</a>
+      <a href="privacy.html">Privacy Policy</a>
       <span class="bf-eho">Equal Housing Opportunity</span>
       <span class="bf-vdiv" style="opacity:0.4;"></span>
       <span class="bf-crg-text">Christin Rachelle Group</span>
@@ -3759,8 +3778,9 @@
     </div>
     <div class="gf-bottom">
       <div class="gf-legal">
-        <a href="assets/docs/iabs.pdf" target="_blank" rel="noopener">IABS Consumer Protection Notice</a>
-        <a href="#">Privacy Policy</a>
+        <a href="assets/docs/iabs.pdf" target="_blank" rel="noopener">IABS</a>
+        <a href="assets/docs/cpn.pdf" target="_blank" rel="noopener">Consumer Protection Notice</a>
+        <a href="privacy.html">Privacy Policy</a>
         <span class="gf-eho">Equal Housing Opportunity</span>
       </div>
     </div>
@@ -4746,6 +4766,19 @@ if (typeof module !== "undefined" && module.exports) {
   // Keep blank while testing locally; the button will not open email.
   const SMART_MOVE_ENDPOINT = '/api/smart-move';
 
+  // Ad-attribution params captured on load so every submission (partial and
+  // final) carries which campaign produced the lead.
+  const TRACKING_PARAMS = (() => {
+    const params = new URLSearchParams(window.location.search);
+    const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid'];
+    const out = {};
+    keys.forEach(k => {
+      const v = params.get(k);
+      if (v) out[k] = v.slice(0, 256);
+    });
+    return out;
+  })();
+
   // sections indexed 0–7
   const SECTIONS = ['section-open','section-path','section-contact','section-trunk','section-budget','section-area','section-details','section-brief'];
 
@@ -4756,6 +4789,7 @@ if (typeof module !== "undefined" && module.exports) {
 
   let unlockedStep = 0;
   let rewindTimer = null;
+  let scrollBackTimer = null;
   const autoAdvanceTimers = new Map();
   let programmaticScroll = false;
   let lastScrollY = window.scrollY || 0;
@@ -4833,12 +4867,18 @@ if (typeof module !== "undefined" && module.exports) {
     resetSmartMoveState({ keepBrief: false });
   }
 
-  function scheduleAutoAdvance(key, callback, delay = 500) {
+  function scheduleAutoAdvance(key, callback, delay = 500, fromStep = currentStep) {
     if (autoAdvanceTimers.has(key)) clearTimeout(autoAdvanceTimers.get(key));
     const timer = setTimeout(() => {
       autoAdvanceTimers.delete(key);
-      // Do not yank users forward while they are scrolling back to change an answer.
-      if (Date.now() - lastUpScrollAt < 950 || document.body.classList.contains('rewinding')) return;
+      // If the user navigated to a different step, let the visible buttons take over.
+      if (currentStep !== fromStep) return;
+      // Do not yank users forward while they are scrolling back to change an answer —
+      // retry shortly instead of dropping the advance entirely.
+      if (Date.now() - lastUpScrollAt < 950 || document.body.classList.contains('rewinding')) {
+        scheduleAutoAdvance(key, callback, 700, fromStep);
+        return;
+      }
       callback();
     }, delay);
     autoAdvanceTimers.set(key, timer);
@@ -4891,8 +4931,10 @@ if (typeof module !== "undefined" && module.exports) {
     if (y < lastScrollY - 8) {
       lastUpScrollAt = Date.now();
       document.body.classList.add('user-scrolling-back');
-      clearTimeout(rewindTimer);
-      rewindTimer = setTimeout(() => document.body.classList.remove('user-scrolling-back'), 900);
+      // Uses its own timer: sharing one with triggerBlueprintRewind() cancelled the
+      // 'rewinding' cleanup and could disable auto-advance permanently.
+      clearTimeout(scrollBackTimer);
+      scrollBackTimer = setTimeout(() => document.body.classList.remove('user-scrolling-back'), 900);
     }
     lastScrollY = y;
   }, { passive: true });
@@ -4984,7 +5026,40 @@ if (typeof module !== "undefined" && module.exports) {
     FormLogic.updateContactField('email', email);
     FormLogic.updateContactField('phone', phone);
 
+    sendPartialLead(); // fire-and-forget: capture the lead even if they never finish
+
     goTo(3); // → trunk
+  }
+
+  // ── PARTIAL LEAD CAPTURE ────────────────────────────────
+  // Once contact info is valid, send it to the CRM immediately so an
+  // abandoned form is still a lead. Never blocks or surfaces errors to
+  // the user; the final submission upserts the same contact by email.
+  let partialLeadSent = false;
+
+  async function sendPartialLead() {
+    if (partialLeadSent || !SMART_MOVE_ENDPOINT) return;
+    partialLeadSent = true;
+    try {
+      const path = FormLogic.getPath();
+      const payload = buildEnhancedSubmission({
+        ...FormLogic.buildSubmissionObject(),
+        routeLabel: PATH_LABELS[path] || path || 'Route pending',
+        readinessLabel: 'Partial lead — contact captured, form in progress',
+        contactLinks: { callText: '561-685-6566', email: 'jwillsoldit@icloud.com' }
+      });
+      payload.metadata.submissionType = 'partial_contact';
+      const res = await fetch(SMART_MOVE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(`Endpoint responded ${res.status}`);
+      console.log('[SmartMove] Partial lead captured');
+    } catch (err) {
+      partialLeadSent = false; // allow a retry if the user edits contact info
+      console.warn('[SmartMove] Partial lead send failed (non-blocking):', err);
+    }
   }
 
   // ── TRUNK SCREEN ────────────────────────────────────────
@@ -5620,10 +5695,10 @@ if (typeof module !== "undefined" && module.exports) {
   }
 
   function maybeAutoDetails() {
-    const fields = getCurrentDetailFields();
-    if (!fields.length) return;
-    const ready = fields.every(fieldHasValue);
-    if (ready) scheduleAutoAdvance('details', submitRouteDetails, 1200);
+    // The details step never auto-advances: many fields are optional and users
+    // should not be yanked to the brief mid-form. The explicit "Build My Smart
+    // Move Brief" button (and the route cue) are the way forward here.
+    updateRouteCue();
   }
 
   function submitRouteDetails() {
@@ -5653,9 +5728,11 @@ if (typeof module !== "undefined" && module.exports) {
       metadata: {
         submissionId: `SM-${Date.now()}`,
         submittedAt: new Date().toISOString(),
+        submissionType: 'final',
         formVersion: FormLogic.formData.formVersion || '1.0',
         deviceType: window.innerWidth < 768 ? 'mobile' : 'desktop',
-        userAgent: navigator.userAgent
+        userAgent: navigator.userAgent,
+        tracking: TRACKING_PARAMS
       },
       fullTrunk: FormLogic.formData.trunk,
       fullPathData: FormLogic.formData.pathData,
@@ -5972,6 +6049,7 @@ if (typeof module !== "undefined" && module.exports) {
   function resetSmartMoveState({ keepBrief = false } = {}) {
     autoAdvanceTimers.forEach(timer => clearTimeout(timer));
     autoAdvanceTimers.clear();
+    partialLeadSent = false;
     FormLogic.init();
 
     document.querySelectorAll('.selected, .checked, .invalid').forEach(el => el.classList.remove('selected', 'checked', 'invalid'));
