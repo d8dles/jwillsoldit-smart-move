@@ -1,6 +1,10 @@
 # Smart Move — Full Site Audit & Improvement Plan
 **Site:** move.jwillsoldit.com · **Audited:** July 2026 · **Method:** Chromium/Playwright browser testing at 430px, 390px, 360px, 820px (tablet), 1440px (desktop), all six paths driven end-to-end, plus full code review of `index.html` and `api/smart-move.js`.
 
+> **Status log**
+> - **2026-07-02 — C2 RESOLVED** (commit `cb6c05a`): TREC IABS and CPN PDFs added at `assets/docs/iabs.pdf` / `assets/docs/cpn.pdf` (official forms, filled: CRG LLC lic. 9013823-BB, designated broker Christin Rachelle Hobbs, supervisor Joey Williams lic. 702090-SA). Global footer's merged "IABS Consumer Protection Notice" link split into two correct links. All six on-page disclosure references verified 200.
+> - Evidence screenshots from the audit are preserved in [`docs/audit-evidence/`](audit-evidence/) — see Appendix A. They double as the visual baseline for regression-checking the upcoming fixes.
+
 **Testing caveat:** this audit environment's network policy blocks outbound requests to `move.jwillsoldit.com`, so the exact production code (this repo's `index.html`, which is what Vercel serves) was tested via a local server with a mock `/api/smart-move` that replicates the Vercel function's contract. One mock submission was completed successfully (client showed success, endpoint returned 200, payload validated). **A single manual live submission on the production URL is still recommended** to confirm HubSpot/Resend wiring. iOS Safari/WebKit was not tested (Chromium mobile emulation only); custom fonts were blocked in the sandbox, so typography judgments are from code.
 
 ---
@@ -25,8 +29,9 @@ All Continue buttons are visually removed by `.auto-flow .btn-continue { width:1
 
 In both cases the only rescue is the small floating "Next route point" pill, which doesn't read as a primary button and overlaps the footer on mobile. This is very likely leaking real conversions on the live site today.
 
-### C2 — Texas disclosure links 404 (compliance + trust)
-`assets/docs/iabs.pdf` and `assets/docs/cpn.pdf` do not exist in the repo → both acknowledgment links on the required "Texas Disclosures" step return 404. Users are being asked to legally acknowledge documents they cannot open (TREC IABS delivery expectation). The footer compounds it: one link labeled "IABS Consumer Protection Notice" merges two distinct TREC documents and also 404s.
+### C2 — Texas disclosure links 404 (compliance + trust) — ✅ RESOLVED 2026-07-02 (`cb6c05a`)
+~~`assets/docs/iabs.pdf` and `assets/docs/cpn.pdf` do not exist in the repo~~ → both acknowledgment links on the required "Texas Disclosures" step returned 404, meaning users were asked to legally acknowledge documents they could not open (TREC IABS delivery expectation). The footer compounded it: one link labeled "IABS Consumer Protection Notice" merged two distinct TREC documents and also 404'd.
+**Fix shipped:** both filled TREC PDFs now hosted at the linked paths (verified against the official forms — see `audit-evidence/15-iabs-pdf-verification.png`); footer split into separate IABS and CPN links. Deploys with the next merge to `main`.
 
 ### C3 — Privacy Policy links to `#`
 The site collects name, email, and phone from paid social traffic with no privacy policy. Facebook ad policies expect one for lead capture, and it's a trust signal serious clients look for.
@@ -47,7 +52,7 @@ Contact info is validated and stored in JS at step 3, but nothing is POSTed unti
 | Q2 | Restore real, always-visible Continue buttons at the bottom of each step (keep auto-advance as an accelerator, buttons as the guarantee) | CSS + minor markup |
 | Q3 | Partial-lead POST after contact step (reuses existing endpoint as-is) | ~15 lines JS |
 | Q4 | Fix Areas-screen overflow: let the row wrap, drop `nowrap`, correct the caption copy | CSS |
-| Q5 | Host the IABS + CPN PDFs (need the actual documents from Joey/CRG) and split the footer into two correct links | content + links |
+| Q5 | ~~Host the IABS + CPN PDFs and split the footer into two correct links~~ ✅ **Done** (`cb6c05a`) | content + links |
 | Q6 | Add a real privacy policy page | one static page |
 | Q7 | Add favicon + apple-touch-icon (currently 404s; generic tab icon when shared/bookmarked) | assets |
 | Q8 | Set step expectations: "Step 2 of 8 · about 3 minutes" under section labels | copy |
@@ -138,7 +143,7 @@ Contact info is validated and stored in JS at step 3, but nothing is POSTed unti
 **Phase 0 — protect leads & compliance (no visual change, lowest risk)**
 1. `fix: separate rewind timers and reschedule dropped auto-advances` (C1 — ~10 lines)
 2. `feat: submit partial lead after contact step` (C5 — reuses existing endpoint, no backend change)
-3. `fix: host TREC IABS and CPN PDFs and split footer disclosure links` (needs the two PDFs from Joey/CRG)
+3. ~~`fix: host TREC IABS and CPN PDFs and split footer disclosure links`~~ ✅ **Done** (`cb6c05a`, 2026-07-02)
 4. `feat: add privacy policy page and link it` (needs Joey's approval on text)
 5. `chore: add favicon and apple-touch-icon`
 
@@ -178,3 +183,29 @@ Keyboard accessibility (role/tabindex/Enter handling on the band and option elem
 - The CRG footer tile placement (works on desktop and mobile once overflow is fixed).
 - The backend architecture (`api/smart-move.js` upsert + note + Resend alert) — hardening only, no restructuring.
 - The single-file, no-build-step setup — it's a feature for a site this size.
+
+---
+
+## Appendix A — Evidence screenshots (`docs/audit-evidence/`)
+
+Captured with Playwright/Chromium during the audit (production code served locally; Google Fonts were blocked in the test sandbox, so type renders in fallback fonts — layout and geometry are accurate). These serve two purposes: **(1)** visual proof anchoring each finding, and **(2)** the *before* baseline for regression-checking every fix — each Phase 0–2 commit gets re-shot at the same viewports and diffed against these.
+
+| File | Viewport | What it shows | Related finding |
+|---|---|---|---|
+| `01-hero-mobile-390.png` | 390 | First impression, mobile — premium, on-brand | §8 First impression |
+| `02-hero-desktop-1440.png` | 1440 | Desktop hero + footer with CRG tile | §8, §10 |
+| `03-path-selector-390-cue-overlaps-footer.png` | 390 | Path bands (good); floating cue pill overlapping footer text; first band label under sticky bar | §4.8, §4.9 |
+| `04-contact-step-390.png` | 390 | Contact step; 29px inline option chips | §4.6 |
+| `05-trunk-agent-yes-notice-390.png` | 390 | "Working with another agent = Yes" notice renders correctly | §7 verified-working |
+| `06-budget-rent-variant-390.png` | 390 | Budget screen correctly swapped to monthly-rent bands on renter path | §7 verified-working |
+| `07-areas-overflow-CRITICAL-390.png` | 390 | **C4**: layout blown out to ~485px, page zoomed, skip link clipped, footer/CRG tile cut | **C4** |
+| `08-areas-selected-tray-390.png` | 390 | Area chips + custom ZIP added to tray (works) | §7 verified-working |
+| `09-details-renter-390.png` | 390 | Renter details wall (8,305px / ~10 screens) | §4.3 |
+| `10-details-sellbuy-390.png` | 390 | Sell+Buy details top — 23 fields / 17 required / 13.4 screens begins here | §4.3 |
+| `11-details-buyer-desktop-1440.png` | 1440 | Desktop details — clean two-column layout (keep) | §10 |
+| `12-brief-390.png` | 390 | Brief climax screen — the site's best moment | §10 |
+| `13-brief-sent-390.png` | 390 | Post-submit state: "Brief Sent," red status dot, "Acknowledged" noise rows | §4.7, Phase 2 #15 |
+| `14-budget-small-360.png` | 360 | 360px check — plotline bar and bands fit, no overflow | §7 verified-working |
+| `15-iabs-pdf-verification.png` | — | Uploaded IABS PDF rendered and verified as the filled TREC form before hosting | **C2** fix |
+
+Not preserved (available on request from test logs): per-step flow shots for buyer/seller/commercial/notsure detail screens (geometry captured in §4.3 measurements), and the stuck-state reproductions for C1, which are behavioral (documented via body-class logs in the audit notes rather than pixels).
