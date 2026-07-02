@@ -3654,7 +3654,7 @@
   </div>
   <div class="detail-continue">
     <div class="detail-error" id="detail-error"></div>
-    <button class="btn-continue" onclick="submitRouteDetails()">Build My Brief</button>
+    <button class="btn-continue" onclick="submitRouteDetails()">Build My Smart Move Brief</button>
   </div>
 </section>
 
@@ -5646,10 +5646,10 @@ if (typeof module !== "undefined" && module.exports) {
   }
 
   function maybeAutoDetails() {
-    const fields = getCurrentDetailFields();
-    if (!fields.length) return;
-    const ready = fields.every(fieldHasValue);
-    if (ready) scheduleAutoAdvance('details', submitRouteDetails, 1200);
+    // The details step never auto-advances: many fields are optional and users
+    // should not be yanked to the brief mid-form. The explicit "Build My Smart
+    // Move Brief" button (and the route cue) are the way forward here.
+    updateRouteCue();
   }
 
   function submitRouteDetails() {
