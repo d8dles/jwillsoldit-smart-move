@@ -4763,6 +4763,19 @@ if (typeof module !== "undefined" && module.exports) {
   // Keep blank while testing locally; the button will not open email.
   const SMART_MOVE_ENDPOINT = '/api/smart-move';
 
+  // Ad-attribution params captured on load so every submission (partial and
+  // final) carries which campaign produced the lead.
+  const TRACKING_PARAMS = (() => {
+    const params = new URLSearchParams(window.location.search);
+    const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid'];
+    const out = {};
+    keys.forEach(k => {
+      const v = params.get(k);
+      if (v) out[k] = v.slice(0, 256);
+    });
+    return out;
+  })();
+
   // sections indexed 0–7
   const SECTIONS = ['section-open','section-path','section-contact','section-trunk','section-budget','section-area','section-details','section-brief'];
 
@@ -5715,7 +5728,8 @@ if (typeof module !== "undefined" && module.exports) {
         submissionType: 'final',
         formVersion: FormLogic.formData.formVersion || '1.0',
         deviceType: window.innerWidth < 768 ? 'mobile' : 'desktop',
-        userAgent: navigator.userAgent
+        userAgent: navigator.userAgent,
+        tracking: TRACKING_PARAMS
       },
       fullTrunk: FormLogic.formData.trunk,
       fullPathData: FormLogic.formData.pathData,
