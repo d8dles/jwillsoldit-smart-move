@@ -4757,6 +4757,7 @@ if (typeof module !== "undefined" && module.exports) {
 
   let unlockedStep = 0;
   let rewindTimer = null;
+  let scrollBackTimer = null;
   const autoAdvanceTimers = new Map();
   let programmaticScroll = false;
   let lastScrollY = window.scrollY || 0;
@@ -4834,12 +4835,18 @@ if (typeof module !== "undefined" && module.exports) {
     resetSmartMoveState({ keepBrief: false });
   }
 
-  function scheduleAutoAdvance(key, callback, delay = 500) {
+  function scheduleAutoAdvance(key, callback, delay = 500, fromStep = currentStep) {
     if (autoAdvanceTimers.has(key)) clearTimeout(autoAdvanceTimers.get(key));
     const timer = setTimeout(() => {
       autoAdvanceTimers.delete(key);
-      // Do not yank users forward while they are scrolling back to change an answer.
-      if (Date.now() - lastUpScrollAt < 950 || document.body.classList.contains('rewinding')) return;
+      // If the user navigated to a different step, let the visible buttons take over.
+      if (currentStep !== fromStep) return;
+      // Do not yank users forward while they are scrolling back to change an answer —
+      // retry shortly instead of dropping the advance entirely.
+      if (Date.now() - lastUpScrollAt < 950 || document.body.classList.contains('rewinding')) {
+        scheduleAutoAdvance(key, callback, 700, fromStep);
+        return;
+      }
       callback();
     }, delay);
     autoAdvanceTimers.set(key, timer);
@@ -4892,8 +4899,10 @@ if (typeof module !== "undefined" && module.exports) {
     if (y < lastScrollY - 8) {
       lastUpScrollAt = Date.now();
       document.body.classList.add('user-scrolling-back');
-      clearTimeout(rewindTimer);
-      rewindTimer = setTimeout(() => document.body.classList.remove('user-scrolling-back'), 900);
+      // Uses its own timer: sharing one with triggerBlueprintRewind() cancelled the
+      // 'rewinding' cleanup and could disable auto-advance permanently.
+      clearTimeout(scrollBackTimer);
+      scrollBackTimer = setTimeout(() => document.body.classList.remove('user-scrolling-back'), 900);
     }
     lastScrollY = y;
   }, { passive: true });
