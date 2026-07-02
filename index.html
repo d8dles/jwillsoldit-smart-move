@@ -5044,7 +5044,7 @@ if (typeof module !== "undefined" && module.exports) {
       const path = FormLogic.getPath();
       const payload = buildEnhancedSubmission({
         ...FormLogic.buildSubmissionObject(),
-        routeLabel: `${PATH_LABELS[path] || path || 'Route pending'} · Partial`,
+        routeLabel: PATH_LABELS[path] || path || 'Route pending',
         readinessLabel: 'Partial lead — contact captured, form in progress',
         contactLinks: { callText: '561-685-6566', email: 'jwillsoldit@icloud.com' }
       });
