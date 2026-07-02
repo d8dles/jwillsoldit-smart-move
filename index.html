@@ -5010,7 +5010,40 @@ if (typeof module !== "undefined" && module.exports) {
     FormLogic.updateContactField('email', email);
     FormLogic.updateContactField('phone', phone);
 
+    sendPartialLead(); // fire-and-forget: capture the lead even if they never finish
+
     goTo(3); // → trunk
+  }
+
+  // ── PARTIAL LEAD CAPTURE ────────────────────────────────
+  // Once contact info is valid, send it to the CRM immediately so an
+  // abandoned form is still a lead. Never blocks or surfaces errors to
+  // the user; the final submission upserts the same contact by email.
+  let partialLeadSent = false;
+
+  async function sendPartialLead() {
+    if (partialLeadSent || !SMART_MOVE_ENDPOINT) return;
+    partialLeadSent = true;
+    try {
+      const path = FormLogic.getPath();
+      const payload = buildEnhancedSubmission({
+        ...FormLogic.buildSubmissionObject(),
+        routeLabel: `${PATH_LABELS[path] || path || 'Route pending'} · Partial`,
+        readinessLabel: 'Partial lead — contact captured, form in progress',
+        contactLinks: { callText: '561-685-6566', email: 'jwillsoldit@icloud.com' }
+      });
+      payload.metadata.submissionType = 'partial_contact';
+      const res = await fetch(SMART_MOVE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(`Endpoint responded ${res.status}`);
+      console.log('[SmartMove] Partial lead captured');
+    } catch (err) {
+      partialLeadSent = false; // allow a retry if the user edits contact info
+      console.warn('[SmartMove] Partial lead send failed (non-blocking):', err);
+    }
   }
 
   // ── TRUNK SCREEN ────────────────────────────────────────
@@ -5679,6 +5712,7 @@ if (typeof module !== "undefined" && module.exports) {
       metadata: {
         submissionId: `SM-${Date.now()}`,
         submittedAt: new Date().toISOString(),
+        submissionType: 'final',
         formVersion: FormLogic.formData.formVersion || '1.0',
         deviceType: window.innerWidth < 768 ? 'mobile' : 'desktop',
         userAgent: navigator.userAgent
@@ -5998,6 +6032,7 @@ if (typeof module !== "undefined" && module.exports) {
   function resetSmartMoveState({ keepBrief = false } = {}) {
     autoAdvanceTimers.forEach(timer => clearTimeout(timer));
     autoAdvanceTimers.clear();
+    partialLeadSent = false;
     FormLogic.init();
 
     document.querySelectorAll('.selected, .checked, .invalid').forEach(el => el.classList.remove('selected', 'checked', 'invalid'));
