@@ -1066,6 +1066,7 @@
       flex-direction: column;
       align-items: stretch;
       gap: 14px;
+      padding: 20px 24px;
     }
     .auto-flow .path-continue .btn-continue,
     .auto-flow .budget-continue .btn-continue,
@@ -1082,25 +1083,39 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 32px;
+    gap: 16px 32px;
+    flex-wrap: wrap;
     position: relative;
   }
 
   .auto-flow .area-continue::before {
-    content: 'Pick areas, then keep scrolling';
+    content: 'Pick a few areas — or skip for now';
     font-family: var(--mono);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--mid);
-    flex: 1;
+    flex: 1 1 100%;
   }
 
   .auto-flow .area-skip {
-    margin-left: auto;
-    white-space: nowrap;
-    padding: 8px 0 4px;
+    padding: 12px 0;
+  }
+
+  @media (max-width: 640px) {
+    .auto-flow .area-continue {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      padding: 20px 24px;
+    }
+    .auto-flow .area-continue .btn-continue {
+      width: 100%;
+    }
+    .auto-flow .area-skip {
+      text-align: center;
+    }
   }
 
   .auto-flow-ready-pulse {
@@ -2505,21 +2520,6 @@
 
   .area-continue {
     align-items: center;
-  }
-
-  .auto-flow .area-continue {
-    display: flex;
-    min-height: 74px;
-  }
-
-  .auto-flow .area-continue::before {
-    content: 'Choose areas or keep moving';
-    flex: 0 0 auto;
-    margin-right: 32px;
-  }
-
-  .area-skip {
-    margin-left: auto;
   }
 
   /* Details: make the restored intake feel intentionally zoned, not dumped. */
