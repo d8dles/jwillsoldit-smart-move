@@ -988,21 +988,25 @@
     border-color: var(--ink);
   }
 
-  /* Auto-flow mode: selections advance the experience; buttons stay in DOM as fallback logic only. */
+  /* Auto-flow mode: selections advance automatically, but every step keeps a
+     real, visible Continue button as the guaranteed path forward. */
   .auto-flow .path-continue,
   .auto-flow .budget-continue,
   .auto-flow .detail-continue {
     min-height: 54px;
-    justify-content: center;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
     position: relative;
-    padding: 18px 80px;
+    padding: 22px 80px;
   }
 
   .auto-flow .path-continue::before,
   .auto-flow .budget-continue::before,
   .auto-flow .detail-continue::before {
-    content: 'Auto-advances when ready';
+    content: 'Answers advance automatically';
     font-family: var(--mono);
     font-size: 10px;
     font-weight: 700;
@@ -1013,22 +1017,61 @@
 
   .auto-flow #section-path .path-continue::before {
     color: rgba(250,250,250,0.38);
+    content: 'Choose a route to continue';
   }
 
   .auto-flow #section-contact .path-continue::before {
-    content: 'Complete contact fields, then keep scrolling';
+    content: 'Complete the fields, then continue';
   }
 
   .auto-flow #section-trunk .path-continue::before {
-    content: 'Confirm disclosures, then keep scrolling';
+    content: 'Confirm the disclosures, then continue';
   }
 
   .auto-flow #section-budget .budget-continue::before {
-    content: 'Choose a range, then keep scrolling';
+    content: 'Choose a range to continue';
   }
 
   .auto-flow #section-details .detail-continue::before {
-    content: 'Complete details, then keep scrolling';
+    content: 'Answer what applies, then build your brief';
+  }
+
+  /* Contact + trunk live on light sections; the shared .path-continue base
+     background is the dark path-section strip, so restore the light surface. */
+  #section-contact .path-continue,
+  #section-trunk .path-continue {
+    background: var(--pure);
+    border-top: 1px solid var(--trace);
+  }
+
+  /* On the dark path section the ink button would vanish — use the brand red. */
+  #section-path .btn-continue {
+    background: var(--red);
+  }
+
+  #section-path .btn-continue:hover {
+    background: #c73419;
+  }
+
+  #section-path .btn-continue:disabled {
+    background: rgba(250,250,250,0.08);
+    color: rgba(250,250,250,0.35);
+  }
+
+  /* Small screens: stack the caption over a full-width button. */
+  @media (max-width: 640px) {
+    .auto-flow .path-continue,
+    .auto-flow .budget-continue,
+    .auto-flow .detail-continue {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 14px;
+    }
+    .auto-flow .path-continue .btn-continue,
+    .auto-flow .budget-continue .btn-continue,
+    .auto-flow .detail-continue .btn-continue {
+      width: 100%;
+    }
   }
 
   .auto-flow .area-continue {
@@ -1058,21 +1101,6 @@
     margin-left: auto;
     white-space: nowrap;
     padding: 8px 0 4px;
-  }
-
-  .auto-flow .btn-continue {
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    padding: 0 !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    clip: rect(0 0 0 0) !important;
-    clip-path: inset(50%) !important;
-    white-space: nowrap !important;
-    border: 0 !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
   }
 
   .auto-flow-ready-pulse {
@@ -2234,18 +2262,6 @@
   .section.visible { scroll-snap-align: none !important; }
   .area-body,
   .route-detail-body { overflow-y: visible !important; }
-
-  /* Auto-flow means no button/footer bars between steps. Keep the fallback buttons in markup, but not on screen. */
-  .auto-flow .path-continue,
-  .auto-flow .budget-continue,
-  .auto-flow .detail-continue {
-    display: none !important;
-  }
-  .auto-flow .path-continue::before,
-  .auto-flow .budget-continue::before,
-  .auto-flow .detail-continue::before {
-    content: none !important;
-  }
 
   /* Faster hero runway with a stronger camera push. */
   #section-open.visible {
