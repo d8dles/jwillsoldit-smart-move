@@ -1,0 +1,13 @@
+{
+  "name": "jwillsoldit-smart-move",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Smart Move intake site — verification harness (Playwright).",
+  "scripts": {
+    "verify": "node tests/verify.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.56.1"
+  }
+}
