@@ -295,7 +295,7 @@
   /* Scroll-driven hero stage: brand becomes the blueprint before route selection */
   #section-open.visible {
     display: block;
-    min-height: 162vh;
+    min-height: 124vh;
     position: relative;
   }
 
@@ -2281,11 +2281,6 @@
   .area-body,
   .route-detail-body { overflow-y: visible !important; }
 
-  /* Faster hero runway with a stronger camera push. */
-  #section-open.visible {
-    min-height: 162vh !important;
-  }
-
   #section-open .open-inner {
     perspective: 900px;
     transform-style: preserve-3d;
@@ -3095,9 +3090,6 @@
 
   /* ── V14 HERO SNAP / HANDOFF FIX ─────────────────────── */
   /* Shorter runway + earlier snap so the hero never feels stranded between screens. */
-  #section-open.visible {
-    min-height: 124vh !important;
-  }
   #section-open .open-inner {
     top: 0 !important;
     min-height: 100vh !important;
@@ -3400,6 +3392,8 @@
     <h2 class="section-title">How do we<br>reach you?</h2>
   </div>
   <div class="contact-fields">
+    <!-- Honeypot: hidden from humans, off-screen (not display:none), ignored by assistive tech and tab order. Bots that fill it are silently dropped server-side. -->
+    <input type="text" id="c-company-website" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;opacity:0;" placeholder="Company website">
     <div class="contact-row">
       <label class="contact-label" for="c-name">Full Name</label>
       <input class="contact-input" type="text" id="c-name" autocomplete="name" placeholder="Your full name">
@@ -4050,15 +4044,6 @@ const FormLogic = {
   // 5. QUESTION SEQUENCING & PROGRESS
   // ============================================================================
 
-  getCurrentQuestionIndex() {
-    // Track which question user is on (0-indexed)
-    return this.currentQuestion || 0;
-  },
-
-  setCurrentQuestion(index) {
-    this.currentQuestion = index;
-  },
-
   getTotalQuestions() {
     if (!this.formData.path) return 0;
 
@@ -4076,83 +4061,6 @@ const FormLogic = {
     }
 
     return total;
-  },
-
-  getProgressPercentage() {
-    const total = this.getTotalQuestions();
-    if (total === 0) return 0;
-
-    const current = this.getCurrentQuestionIndex();
-    return Math.round((current / total) * 100);
-  },
-
-  getProgressDisplay() {
-    const total = this.getTotalQuestions();
-    const current = this.getCurrentQuestionIndex() + 1; // 1-indexed for display
-    return `${current} of ${total}`;
-  },
-
-  // ============================================================================
-  // 6. CONDITIONAL VISIBILITY
-  // ============================================================================
-
-  /**
-   * Determines if a sub-question should be visible
-   * Returns: { visible: boolean, reason: string }
-   */
-  shouldShowSubQuestion(subQuestionId) {
-    const results = {
-      visible: false,
-      reason: ""
-    };
-
-    switch (subQuestionId) {
-      // Buyer: Q9 Lender Link
-      case "Q9_lenderLink":
-        if (this.formData.path === "buyer" &&
-            (this.formData.pathData.Q8_preApproval === "pre-qualified" ||
-             this.formData.pathData.Q8_preApproval === "not_yet")) {
-          results.visible = true;
-          results.reason = "Buyer not pre-approved, show lender link";
-        }
-        break;
-
-      // Renter/Seller: Q13 Pet Types
-      case "Q13_petTypes":
-        if ((this.formData.path === "renter" || this.formData.path === "sellbuy") &&
-            this.formData.trunk.Q7_pets === "yes") {
-          results.visible = true;
-          results.reason = "User has pets, show pet types";
-        }
-        break;
-
-      // Renter: Q14 Employment Self-employed flag
-      case "Q14_employment":
-        if (this.formData.path === "renter") {
-          results.visible = true;
-          results.reason = "Show employment status for renter";
-        }
-        break;
-
-      // Seller: Q6 Sell First Required
-      case "Q6_sellFirstRequired":
-        if (this.formData.trunk.Q6_homeStatus === "own") {
-          results.visible = true;
-          results.reason = "User owns home, ask if must sell first";
-        }
-        break;
-
-      // Buyer Q8 sub: Approval Amount
-      case "Q8_approvalAmount":
-        if (this.formData.path === "buyer" &&
-            this.formData.pathData.Q8_preApproval === "pre-approved") {
-          results.visible = true;
-          results.reason = "User is pre-approved, show approval amount";
-        }
-        break;
-    }
-
-    return results;
   },
 
   // ============================================================================
@@ -4270,60 +4178,6 @@ const FormLogic = {
     return {
       flags: this.formData.flags,
       urgencyScore: this.formData.urgencyScore
-    };
-  },
-
-  // ============================================================================
-  // 8. LENDER LINK TRACKING (Buyer Path)
-  // ============================================================================
-
-  openLenderLink() {
-    // Mark that user clicked the link
-    this.formData.pathData.Q9_lenderLinkClicked = true;
-    console.log("[FormLogic] Lender link clicked, opening URL...");
-
-    // Open lender URL in new tab
-    window.open("https://uniteddirectlending.com/joann-lopez/", "_blank");
-
-    return true;
-  },
-
-  hasClickedLenderLink() {
-    return this.formData.pathData.Q9_lenderLinkClicked === true;
-  },
-
-  // ============================================================================
-  // 9. SELL+BUY AUTO-ROUTING (Smart Logic)
-  // ============================================================================
-
-  /**
-   * Checks if user should be rerouted to SELL+BUY flow
-   * Called after Q6 submission (home ownership status)
-   */
-  checkSellBuyAutoRoute() {
-    if (this.formData.path === "buyer" &&
-        this.formData.trunk.Q6_homeStatus === "own" &&
-        this.formData.trunk.Q6_sellFirstRequired === "yes_must_sell") {
-
-      console.log("[FormLogic] Auto-routing to SELL+BUY flow...");
-
-      // Reroute to sellbuy
-      this.formData.path = "sellbuy";
-
-      // Recalculate total questions
-      const newTotal = this.getTotalQuestions();
-      console.log(`[FormLogic] Rerouted to sellbuy. New total questions: ${newTotal}`);
-
-      return {
-        rerouted: true,
-        newPath: "sellbuy",
-        newTotal: newTotal
-      };
-    }
-
-    return {
-      rerouted: false,
-      currentPath: this.formData.path
     };
   },
 
@@ -4543,109 +4397,6 @@ const FormLogic = {
     return result;
   },
 
-  /**
-   * Validates all required fields for current screen
-   */
-  validateCurrentScreen() {
-    // This would be implemented per-screen in frontend
-    // Returns array of validation errors
-    return [];
-  },
-
-  // ============================================================================
-  // 12. FORM SUBMISSION
-  // ============================================================================
-
-  /**
-   * Prepares form for submission, validates, and returns submission object
-   * Returns: { success: boolean, data: object, errors: [] }
-   */
-  submitForm() {
-    console.log("[FormLogic] Preparing form submission...");
-
-    const errors = [];
-
-    // Validate contact info
-    let nameValidation = this.validateField("name", this.formData.contact.name);
-    if (!nameValidation.valid) errors.push({ field: "name", error: nameValidation.error });
-
-    let emailValidation = this.validateField("email", this.formData.contact.email);
-    if (!emailValidation.valid) errors.push({ field: "email", error: emailValidation.error });
-
-    let phoneValidation = this.validateField("phone", this.formData.contact.phone);
-    if (!phoneValidation.valid) errors.push({ field: "phone", error: phoneValidation.error });
-
-    // If there are validation errors, return early
-    if (errors.length > 0) {
-      console.warn("[FormLogic] Validation errors found:", errors);
-      return {
-        success: false,
-        data: null,
-        errors: errors
-      };
-    }
-
-    // Build submission object
-    const submissionData = this.buildSubmissionObject();
-
-    console.log("[FormLogic] Form submission ready:");
-    console.log(JSON.stringify(submissionData, null, 2));
-
-    // STUB: HubSpot API call would go here
-    console.log("[FormLogic] STUB: This JSON will POST to HubSpot API");
-    console.log("[FormLogic] TODO: Add HubSpot API call here");
-    console.log("[FormLogic] POST /api/hubspot/form-submission");
-    console.log("[FormLogic] Payload:", submissionData);
-
-    return {
-      success: true,
-      data: submissionData,
-      errors: []
-    };
-  },
-
-  /**
-   * Posts submission to HubSpot API (implement when ready)
-   */
-  async postToHubSpot(submissionData) {
-    try {
-      console.log("[FormLogic] Posting to HubSpot API...");
-
-      // IMPLEMENTATION NOTES:
-      // 1. Replace endpoint with actual HubSpot form submission endpoint
-      // 2. Map formData fields to HubSpot field names
-      // 3. Handle authentication (API key, OAuth, etc.)
-      // 4. Parse response and return submission ID
-
-      const response = await fetch("/api/hubspot/form-submission", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(submissionData)
-      });
-
-      if (!response.ok) {
-        throw new Error(`HubSpot API error: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      console.log("[FormLogic] HubSpot submission successful:", result);
-
-      return {
-        success: true,
-        submissionId: result.submissionId,
-        message: result.message
-      };
-    } catch (error) {
-      console.error("[FormLogic] HubSpot submission failed:", error);
-      return {
-        success: false,
-        error: error.message
-      };
-    }
-  },
-
   // ============================================================================
   // 13. STATE UPDATES
   // ============================================================================
@@ -4679,36 +4430,6 @@ const FormLogic = {
     console.warn(`[FormLogic] Unknown contact field: ${fieldName}`);
     return false;
   },
-
-  // ============================================================================
-  // 14. STATE INSPECTION & DEBUG
-  // ============================================================================
-
-  getFormState() {
-    return JSON.parse(JSON.stringify(this.formData)); // Deep copy
-  },
-
-  logFormState() {
-    console.log("[FormLogic] Complete form state:");
-    console.log(JSON.stringify(this.formData, null, 2));
-  },
-
-  logPathInfo() {
-    if (!this.formData.path) {
-      console.log("[FormLogic] No path selected yet");
-      return;
-    }
-
-    const pathDef = this.paths[this.formData.path];
-    console.log(`[FormLogic] Path: ${this.formData.path}`);
-    console.log(`  Label: ${pathDef.label}`);
-    console.log(`  Trunk questions: ${pathDef.trunkQuestions}`);
-    console.log(`  Path questions: ${pathDef.pathQuestions}`);
-    console.log(`  Conditional count: ${pathDef.conditionalCount}`);
-    console.log(`  Total base: ${pathDef.totalBase}`);
-    console.log(`  Total (with conditionals): ${this.getTotalQuestions()}`);
-    console.log(`  Progress: ${this.getProgressDisplay()}`);
-  }
 };
 
 // Export for use in HTML/modules (if using ES6)
@@ -5725,6 +5446,7 @@ if (typeof module !== "undefined" && module.exports) {
   function buildEnhancedSubmission(base) {
     return {
       ...base,
+      honeypot: document.getElementById('c-company-website')?.value || '',
       metadata: {
         submissionId: `SM-${Date.now()}`,
         submittedAt: new Date().toISOString(),

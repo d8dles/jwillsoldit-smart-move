@@ -1,5 +1,21 @@
 const HUBSPOT_API = 'https://api.hubapi.com';
 
+// Escape user-controlled values before interpolating into the alert email's HTML
+// body. Covers the five HTML-significant characters so injected markup renders as
+// inert text. The plain-text part of the email needs no escaping.
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Cached across warm invocations: once the HubSpot custom properties have been
+// ensured successfully, skip the 9-schema fetch/create round-trips entirely.
+let customPropertiesEnsured = false;
+
 const CUSTOM_PROPERTIES = [
   { name: 'smart_move_brief',         label: 'Smart Move Brief',         fieldType: 'textarea',  type: 'string' },
   { name: 'smart_move_route',         label: 'Smart Move Route',         fieldType: 'text',      type: 'string' },
@@ -68,11 +84,12 @@ async function ensureCustomProperties(token) {
   );
   if (!res.ok) {
     console.warn('[smart-move] Could not fetch existing properties, skipping ensure step');
-    return;
+    return false;
   }
   const data = await res.json();
   const existing = new Set((data.results || []).map(p => p.name));
 
+  let allOk = true;
   for (const prop of CUSTOM_PROPERTIES) {
     if (existing.has(prop.name)) continue;
     const createRes = await fetch(`${HUBSPOT_API}/crm/v3/properties/contacts`, {
@@ -89,10 +106,14 @@ async function ensureCustomProperties(token) {
     if (!createRes.ok) {
       const err = await createRes.text();
       console.warn(`[smart-move] Could not create property ${prop.name}: ${err}`);
+      allOk = false;
     } else {
       console.log(`[smart-move] Created property: ${prop.name}`);
     }
   }
+  // Only report success when every property is present — a partial failure lets
+  // a later request retry the ensure step (graceful fall-through, as before).
+  return allOk;
 }
 
 async function upsertContact(token, payload) {
@@ -193,25 +214,28 @@ async function sendLeadAlert(payload, contactId) {
     ? `Partial Smart Move Lead: ${name || '—'} — ${route}`
     : `Completed Smart Move Lead: ${name || '—'} — ${route} — ${budget}`;
 
+  // Escape every user-controlled value before it lands in the HTML body so
+  // injected markup renders as inert text. hubspotLink and submissionTypeLabel
+  // are server-derived, not user input, but escaping them too is harmless.
   const html = `
 <h2 style="font-family:sans-serif;margin-bottom:16px;">${isPartial ? 'Partial' : 'Completed'} Smart Move Lead</h2>
 <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">
-  <tr><td style="font-weight:bold;padding-right:16px;">Submission Type</td><td>${submissionTypeLabel}</td></tr>
-  <tr><td style="font-weight:bold;padding-right:16px;">Name</td><td>${name || '—'}</td></tr>
-  <tr><td style="font-weight:bold;padding-right:16px;">Email</td><td><a href="mailto:${email}">${email || '—'}</a></td></tr>
-  <tr><td style="font-weight:bold;padding-right:16px;">Phone</td><td>${phone || '—'}</td></tr>
-  <tr><td style="font-weight:bold;padding-right:16px;">Route</td><td>${route}</td></tr>
-  <tr><td style="font-weight:bold;padding-right:16px;">Timeline</td><td>${timeline}</td></tr>
-  <tr><td style="font-weight:bold;padding-right:16px;">Budget</td><td>${budget}</td></tr>
-  <tr><td style="font-weight:bold;padding-right:16px;">Readiness</td><td>${readiness}</td></tr>
-  <tr><td style="font-weight:bold;padding-right:16px;">Areas</td><td>${areas}</td></tr>
-  <tr><td style="font-weight:bold;padding-right:16px;">Criteria</td><td>${criteria}</td></tr>
-  <tr><td style="font-weight:bold;padding-right:16px;">Submission ID</td><td>${submissionId}</td></tr>
-  <tr><td style="font-weight:bold;padding-right:16px;">Submitted At</td><td>${submittedAt}</td></tr>
-  <tr><td style="font-weight:bold;padding-right:16px;">HubSpot Contact</td><td><a href="${hubspotLink}">${hubspotLink}</a></td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Submission Type</td><td>${escapeHtml(submissionTypeLabel)}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Name</td><td>${escapeHtml(name) || '—'}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Email</td><td><a href="mailto:${escapeHtml(email)}">${escapeHtml(email) || '—'}</a></td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Phone</td><td>${escapeHtml(phone) || '—'}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Route</td><td>${escapeHtml(route)}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Timeline</td><td>${escapeHtml(timeline)}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Budget</td><td>${escapeHtml(budget)}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Readiness</td><td>${escapeHtml(readiness)}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Areas</td><td>${escapeHtml(areas)}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Criteria</td><td>${escapeHtml(criteria)}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Submission ID</td><td>${escapeHtml(submissionId)}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Submitted At</td><td>${escapeHtml(submittedAt)}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">HubSpot Contact</td><td><a href="${escapeHtml(hubspotLink)}">${escapeHtml(hubspotLink)}</a></td></tr>
 </table>
 <h3 style="font-family:sans-serif;margin-top:24px;">Smart Move Brief</h3>
-<pre style="background:#f5f5f5;padding:12px;font-size:13px;white-space:pre-wrap;font-family:monospace;">${brief}</pre>
+<pre style="background:#f5f5f5;padding:12px;font-size:13px;white-space:pre-wrap;font-family:monospace;">${escapeHtml(brief)}</pre>
 `.trim();
 
   const text = [
@@ -296,6 +320,18 @@ export default async function handler(req, res) {
     return res.status(400).json({ success: false, error: 'Invalid JSON' });
   }
 
+  // Honeypot: a hidden form field no human fills. If it carries a value the
+  // request is almost certainly a bot — respond with the normal success shape
+  // but silently drop it (no HubSpot, no Resend) so bots aren't tipped off.
+  const honeypot = typeof payload?.honeypot === 'string' ? payload.honeypot.trim() : '';
+  if (honeypot) {
+    return res.status(200).json({
+      success: true,
+      contactId: null,
+      submissionId: payload?.metadata?.submissionId || null,
+    });
+  }
+
   const email = payload?.contact?.email?.trim();
   const name  = payload?.contact?.name?.trim();
 
@@ -304,7 +340,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    await ensureCustomProperties(token);
+    if (!customPropertiesEnsured) {
+      if (await ensureCustomProperties(token)) customPropertiesEnsured = true;
+    }
     const contactId = await upsertContact(token, payload);
     const briefText = buildBriefText(payload);
     await tryAttachNote(token, contactId, briefText);
