@@ -342,12 +342,20 @@ async function main() {
     check(partials.length === 11, `expected 11 partials, got ${partials.length}`);
     check(finals.length === 10, `expected 10 finals, got ${finals.length}`);
 
+    // Honeypot: every real submission must carry the field, present and empty
+    // (a legitimate human never fills the off-screen input).
+    const honeypotPresentEmpty = all.every(
+      (s) => typeof s.payload?.honeypot === 'string' && s.payload.honeypot === '',
+    );
+    check(honeypotPresentEmpty, 'some submissions were missing an empty honeypot field');
+
     const partialSample = partials[0]?.payload;
     const finalSample = finals[0]?.payload;
     results.submissions = {
       total: all.length,
       partials: partials.length,
       finals: finals.length,
+      honeypotPresentEmpty,
       partialSample: partialSample && {
         route: partialSample.routeLabel,
         readiness: partialSample.readinessLabel,
@@ -401,7 +409,7 @@ function printSummary(r) {
   console.log('  ' + JSON.stringify(r.tracking));
 
   console.log('\nSubmissions captured by mock endpoint:');
-  console.log(`  total=${r.submissions.total}  partials=${r.submissions.partials}  finals=${r.submissions.finals}`);
+  console.log(`  total=${r.submissions.total}  partials=${r.submissions.partials}  finals=${r.submissions.finals}  honeypotPresentEmpty=${r.submissions.honeypotPresentEmpty}`);
   console.log('  partialSample=' + JSON.stringify(r.submissions.partialSample));
   console.log('  finalSample=' + JSON.stringify(r.submissions.finalSample));
 

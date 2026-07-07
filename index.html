@@ -3392,6 +3392,8 @@
     <h2 class="section-title">How do we<br>reach you?</h2>
   </div>
   <div class="contact-fields">
+    <!-- Honeypot: hidden from humans, off-screen (not display:none), ignored by assistive tech and tab order. Bots that fill it are silently dropped server-side. -->
+    <input type="text" id="c-company-website" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;opacity:0;" placeholder="Company website">
     <div class="contact-row">
       <label class="contact-label" for="c-name">Full Name</label>
       <input class="contact-input" type="text" id="c-name" autocomplete="name" placeholder="Your full name">
@@ -5444,6 +5446,7 @@ if (typeof module !== "undefined" && module.exports) {
   function buildEnhancedSubmission(base) {
     return {
       ...base,
+      honeypot: document.getElementById('c-company-website')?.value || '',
       metadata: {
         submissionId: `SM-${Date.now()}`,
         submittedAt: new Date().toISOString(),
