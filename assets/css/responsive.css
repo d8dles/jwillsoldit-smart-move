@@ -78,8 +78,8 @@
   }
 
   @keyframes heroLetterGlowV8 {
-    0%, 100% { opacity: 0.72; text-shadow: 0 0 42px rgba(86,190,128,0.13), 0 0 124px rgba(86,190,128,0.07); }
-    50% { opacity: 1; text-shadow: 0 0 56px rgba(86,190,128,0.22), 0 0 156px rgba(86,190,128,0.12); }
+    0%, 100% { opacity: 0.85; text-shadow: none; }
+    50% { opacity: 1; text-shadow: none; }
   }
 
   #section-open .brand-lockup {
@@ -90,17 +90,13 @@
   }
 
   #section-open .brand-name {
-    text-shadow:
-      0 0 calc(26px + var(--intro-progress) * 30px) rgba(86,190,128,0.28),
-      0 0 calc(86px + var(--intro-progress) * 72px) rgba(86,190,128,0.18),
-      0 0 170px rgba(250,250,250,0.045);
+    text-shadow: none;
   }
 
   #section-open .blueprint-overlay {
     transform:
       translate3d(calc(var(--mx, 0) * -24px), calc(var(--my, 0) * -18px), calc(var(--intro-progress) * 90px))
       scale(calc(1 + var(--intro-progress) * 0.18)) !important;
-    filter: drop-shadow(0 0 16px rgba(86,190,128, calc(var(--blueprint-alpha) * 0.22)));
   }
 
   #section-open .trail-layer {
@@ -118,8 +114,8 @@
   /* ── V9 EXPERIENCE STABILITY + CLIMAX PATCH ────────────── */
   /* Keep the page cinematic, but stop it from feeling possessed. */
   body.user-scrolling-back .route-cue {
-    border-color: rgba(126,220,160,0.55);
-    box-shadow: 0 0 18px rgba(86,190,128,0.16);
+    border-color: rgba(232,93,42,0.55);
+    box-shadow: 0 0 18px rgba(176,92,46,0.16);
   }
 
   .route-cue {
@@ -150,14 +146,14 @@
     width: 8px;
     height: 8px;
     border-radius: 999px;
-    background: rgba(86,190,128,0.9);
-    box-shadow: 0 0 16px rgba(86,190,128,0.65), 0 0 36px rgba(86,190,128,0.22);
+    background: rgba(176,92,46,0.9);
+    box-shadow: 0 0 16px rgba(176,92,46,0.65), 0 0 36px rgba(176,92,46,0.22);
   }
 
   .route-cue:hover {
     transform: translateY(-2px);
     border-color: rgba(28,59,46,0.5);
-    box-shadow: 0 10px 36px rgba(13,13,13,0.12), 0 0 24px rgba(86,190,128,0.14);
+    box-shadow: 0 10px 36px rgba(13,13,13,0.12), 0 0 24px rgba(176,92,46,0.14);
   }
 
   .route-cue.is-dark {
@@ -254,7 +250,7 @@
   .area-chip:hover {
     transform: translateY(-1px);
     border-color: rgba(28,59,46,0.35);
-    background: #f6f8f7;
+    background: #F3EEE6;
   }
 
   .area-chip.selected {
@@ -313,7 +309,7 @@
   .detail-group-title {
     margin: 0 -22px;
     padding: 16px 22px;
-    background: #f8f9f8;
+    background: #F4EFE7;
   }
 
   .detail-options {
@@ -351,9 +347,9 @@
   /* Final climax / route-card reveal */
   #section-brief {
     background:
-      radial-gradient(circle at 20% 12%, rgba(126,220,160,0.18), transparent 34%),
+      radial-gradient(circle at 20% 12%, rgba(232,93,42,0.18), transparent 34%),
       radial-gradient(circle at 78% 72%, rgba(224,58,31,0.12), transparent 30%),
-      #08100c;
+      #142B21;
     overflow: hidden;
   }
 
@@ -362,8 +358,8 @@
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(rgba(126,220,160,0.07) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(126,220,160,0.07) 1px, transparent 1px);
+      linear-gradient(rgba(232,93,42,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,93,42,0.07) 1px, transparent 1px);
     background-size: 58px 58px;
     opacity: 0.55;
     transform: perspective(900px) rotateX(58deg) translateY(-18%);
@@ -390,7 +386,7 @@
 
   .brief-kicker {
     font-family: var(--mono);
-    color: rgba(126,220,160,0.72);
+    color: rgba(232,93,42,0.72);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -403,7 +399,7 @@
     letter-spacing: -0.055em;
     line-height: 0.9;
     margin-bottom: 26px;
-    text-shadow: 0 0 42px rgba(86,190,128,0.12);
+    text-shadow: 0 0 42px rgba(176,92,46,0.12);
   }
 
   .brief-subline {
@@ -435,7 +431,7 @@
     background: rgba(250,250,250,0.055);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 28px 80px rgba(0,0,0,0.35), 0 0 44px rgba(86,190,128,0.08);
+    box-shadow: 0 28px 80px rgba(0,0,0,0.35), 0 0 44px rgba(176,92,46,0.08);
     overflow: hidden;
     animation: routeCardIn 780ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
@@ -524,8 +520,8 @@
     position: absolute;
     inset: 0;
     width: 45%;
-    background: linear-gradient(90deg, transparent, rgba(126,220,160,1), transparent);
-    box-shadow: 0 0 22px rgba(126,220,160,0.65);
+    background: linear-gradient(90deg, transparent, rgba(232,93,42,1), transparent);
+    box-shadow: 0 0 22px rgba(232,93,42,0.65);
     animation: routeEnergyTravel 1.35s ease-in-out infinite;
   }
 
@@ -563,7 +559,7 @@
 
   .brief-action:hover {
     background: rgba(250,250,250,0.08);
-    border-color: rgba(126,220,160,0.55);
+    border-color: rgba(232,93,42,0.55);
     transform: translateY(-1px);
   }
 
@@ -622,7 +618,7 @@
     line-height: 1.5;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(126,220,160,0.76);
+    color: rgba(232,93,42,0.76);
   }
 
   .brief-submit-status.error {
@@ -651,14 +647,14 @@
     border: 1px solid rgba(255,255,255,0.22);
     border-radius: 30px;
     background:
-      linear-gradient(145deg, rgba(255,255,255,0.24), rgba(255,255,255,0.055) 55%, rgba(126,220,160,0.10)),
+      linear-gradient(145deg, rgba(255,255,255,0.24), rgba(255,255,255,0.055) 55%, rgba(232,93,42,0.10)),
       radial-gradient(circle at 28% 18%, rgba(255,255,255,0.22), transparent 34%),
       rgba(255,255,255,0.06);
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,0.22),
       inset 0 -28px 60px rgba(255,255,255,0.035),
       0 24px 90px rgba(0,0,0,0.26),
-      0 0 80px rgba(126,220,160,0.08);
+      0 0 80px rgba(232,93,42,0.08);
     backdrop-filter: blur(22px) saturate(160%);
     -webkit-backdrop-filter: blur(22px) saturate(160%);
     overflow: hidden;
@@ -718,15 +714,15 @@
     width: min(100%, 420px);
     height: 240px;
     border-radius: 26px;
-    border: 1px solid rgba(126,220,160,0.26);
+    border: 1px solid rgba(232,93,42,0.26);
     background:
       radial-gradient(circle at 55% 48%, rgba(224,58,31,0.18), transparent 18%),
-      radial-gradient(circle at 30% 70%, rgba(126,220,160,0.16), transparent 28%),
+      radial-gradient(circle at 30% 70%, rgba(232,93,42,0.16), transparent 28%),
       rgba(255,255,255,0.045);
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,0.11),
       0 20px 80px rgba(0,0,0,0.22),
-      0 0 74px rgba(126,220,160,0.09);
+      0 0 74px rgba(232,93,42,0.09);
     backdrop-filter: blur(16px) saturate(150%);
     -webkit-backdrop-filter: blur(16px) saturate(150%);
     overflow: hidden;
@@ -737,8 +733,8 @@
     position: absolute;
     inset: -30%;
     background-image:
-      linear-gradient(rgba(126,220,160,0.11) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(126,220,160,0.08) 1px, transparent 1px);
+      linear-gradient(rgba(232,93,42,0.11) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,93,42,0.08) 1px, transparent 1px);
     background-size: 36px 36px;
     transform: rotate(-8deg) scale(1.12);
     animation: mapGridFloat 12s linear infinite;
@@ -760,8 +756,8 @@
   .map-route-line {
     position: absolute;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(126,220,160,0.82), rgba(224,58,31,0.66), transparent);
-    box-shadow: 0 0 18px rgba(126,220,160,0.32);
+    background: linear-gradient(90deg, transparent, rgba(232,93,42,0.82), rgba(224,58,31,0.66), transparent);
+    box-shadow: 0 0 18px rgba(232,93,42,0.32);
     transform-origin: center;
     z-index: 1;
   }
@@ -779,7 +775,7 @@
     transform: translate(-50%, -50%);
     border-radius: 999px;
     background: var(--red);
-    box-shadow: 0 0 20px rgba(224,58,31,0.72), 0 0 54px rgba(126,220,160,0.22);
+    box-shadow: 0 0 20px rgba(224,58,31,0.72), 0 0 54px rgba(232,93,42,0.22);
     z-index: 3;
   }
 
@@ -795,7 +791,7 @@
 
   .map-pulse-pin::after {
     inset: -26px;
-    border-color: rgba(126,220,160,0.30);
+    border-color: rgba(232,93,42,0.30);
     animation-delay: 0.55s;
   }
 
@@ -879,17 +875,17 @@
   }
   body.hero-ready-to-snap #section-open .scroll-cue {
     opacity: 1 !important;
-    color: rgba(126,220,160,0.82) !important;
+    color: var(--copper) !important;
     transform: translateY(0) scale(1.02) !important;
   }
   body.hero-ready-to-snap #section-open .scroll-cue::before {
     width: 64px;
-    box-shadow: 0 0 18px rgba(86,190,128,0.72), 0 0 42px rgba(86,190,128,0.22);
+    box-shadow: 0 0 10px rgba(176,92,46,0.35);
   }
   body.hero-ready-to-snap #section-open .scroll-cue::after {
     content: 'Route is ready';
     margin-left: 4px;
-    color: rgba(250,250,250,0.34);
+    color: var(--mid);
   }
 
   /* ── CRG FOOTER TILE + COMPLETION CARD PATCH v2 ─────────── */

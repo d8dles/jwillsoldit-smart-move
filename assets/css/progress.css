@@ -55,10 +55,10 @@
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #A8B0AC;
+    color: #9A9184;
     width: 22px;
     height: 22px;
-    border: 1px solid #C8CECA;
+    border: 1px solid #DAD2C6;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -72,7 +72,7 @@
     font-weight: 400;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: #9BA3A0;
+    color: #8C857A;
     transition: color 0.3s ease;
     white-space: nowrap;
   }

@@ -16,5 +16,21 @@
     background: var(--off-white);
     color: var(--ink);
     overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ── Brand globals (continuity with jwillsoldit.com) ── */
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  button { font: inherit; cursor: pointer; }
+
+  ::selection {
+    background: var(--forest);
+    color: var(--off-white);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 3px;
   }
 
