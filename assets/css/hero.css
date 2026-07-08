@@ -84,7 +84,7 @@
 
   .brand-name::before,
   .brand-name::after {
-    content: 'JWILLSOLDIT.';
+    content: 'JWILLSOLDIT';
     display: block;
     font-family: var(--display);
     font-size: clamp(3.4rem, 11vw, 9.25rem);
@@ -96,16 +96,7 @@
   }
 
   .brand-name::before {
-    color: transparent;
-    background-image: linear-gradient(
-      90deg,
-      rgba(28, 59, 46, 0.12) 0%,
-      rgba(28, 59, 46, 0.12) calc(100% - 0.38em),
-      var(--red) calc(100% - 0.38em),
-      var(--red) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
+    color: rgba(28, 59, 46, 0.12);
   }
 
   .brand-lockup {
