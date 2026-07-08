@@ -30,7 +30,7 @@
     position: absolute;
     right: -80px;
     bottom: -80px;
-    font-family: var(--mono);
+    font-family: var(--display);
     font-size: clamp(320px, 46vw, 640px);
     font-weight: 700;
     letter-spacing: -0.06em;
@@ -61,29 +61,62 @@
     z-index: 2;
   }
 
-  /* Masthead-style centered brand — faint ink/forest watermark */
+  /* JWILLSOLDIT brand lockup — same display-font language as the main hub. */
   .brand-lockup {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0;
+    gap: 2px;
     margin-bottom: 40px;
     border-top: 0;
     padding-top: 0;
     position: relative;
   }
 
+  .brand-lockup::after {
+    content: 'SMART MOVE';
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: clamp(0.5625rem, 1vw, 0.6875rem);
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+
   .brand-name {
     position: relative;
     display: inline-block;
-    font-family: var(--mono);
-    font-size: clamp(3.4rem, 11vw, 9.5rem);
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: rgba(28, 59, 46, 0.10);
-    line-height: 0.88;
+    font-size: 0;
+    line-height: 1;
+    color: transparent;
     will-change: transform;
+  }
+
+  .brand-name::before,
+  .brand-name::after {
+    content: 'JWILLSOLDIT.';
+    display: block;
+    font-family: var(--display);
+    font-size: clamp(3.4rem, 11vw, 9.25rem);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .brand-name::before {
+    color: transparent;
+    background-image: linear-gradient(
+      90deg,
+      rgba(28, 59, 46, 0.12) 0%,
+      rgba(28, 59, 46, 0.12) calc(100% - 0.38em),
+      var(--red) calc(100% - 0.38em),
+      var(--red) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
   }
 
   .brand-lockup {
@@ -95,7 +128,6 @@
 
   /* Blueprint scan revealed on scroll — restrained warm copper trace */
   .brand-name::after {
-    content: attr(data-text);
     position: absolute;
     inset: 0;
     color: transparent;
