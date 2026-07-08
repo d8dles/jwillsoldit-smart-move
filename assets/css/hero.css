@@ -66,22 +66,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 0;
     margin-bottom: 40px;
     border-top: 0;
     padding-top: 0;
     position: relative;
-  }
-
-  .brand-lockup::after {
-    content: 'SMART MOVE';
-    margin-top: 8px;
-    font-family: var(--mono);
-    font-size: clamp(0.5625rem, 1vw, 0.6875rem);
-    font-weight: 400;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--mid);
   }
 
   .brand-name {
@@ -172,6 +161,25 @@
     text-transform: uppercase;
     color: rgba(13,13,13,0.4);
     margin: 8px 0 0;
+  }
+
+  /* Footer brand text uses the same display lockup treatment; no new footer copy. */
+  #global-footer .gf-brand,
+  .brief-footer-strip .bf-brand {
+    font-family: var(--display);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  #global-footer .gf-brand {
+    font-size: 1.0625rem;
+    color: var(--ink);
+  }
+
+  .brief-footer-strip .bf-brand {
+    font-size: 1rem;
+    color: rgba(250,250,250,0.66);
   }
 
   .open-headline {
