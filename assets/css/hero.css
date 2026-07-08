@@ -1,0 +1,287 @@
+/* hero.css — opening/hero (section 1). Extracted from index.html <style> (src 286-571). Load 5/7. */
+  /* ── SECTION 1: OPENING ────────────────────────────────── */
+  #section-open {
+    background: #090f0c;
+    color: var(--off-white);
+    overflow: hidden;
+    --intro-progress: 0;
+    --blueprint-alpha: 0;
+  }
+
+  /* Scroll-driven hero stage: brand becomes the blueprint before route selection */
+  #section-open.visible {
+    display: block;
+    min-height: 124vh;
+    position: relative;
+  }
+
+  #section-open .open-inner {
+    position: sticky;
+    top: 56px;
+    min-height: calc(100vh - 56px);
+  }
+
+  /* Oversized lettermark depth layer */
+  #section-open::before {
+    content: 'J';
+    position: absolute;
+    right: -80px;
+    bottom: -80px;
+    font-family: var(--mono);
+    font-size: clamp(320px, 46vw, 640px);
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    color: rgba(86, 190, 128, 0.05);
+    text-shadow: 0 0 40px rgba(86, 190, 128, 0.11), 0 0 120px rgba(86, 190, 128, 0.06);
+    animation: heroLetterGlow 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+    line-height: 1;
+    user-select: none;
+  }
+
+  @keyframes heroLetterGlow {
+    0%, 100% { transform: translate3d(0,0,0) scale(1); opacity: 0.72; }
+    50% { transform: translate3d(-10px,-6px,0) scale(1.015); opacity: 1; }
+  }
+
+  .open-inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 56px 40px 72px;
+    max-width: 100%;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Masthead-style centered brand */
+  .brand-lockup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 40px;
+    border-top: 0;
+    padding-top: 0;
+    position: relative;
+  }
+
+  .brand-name {
+    position: relative;
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: clamp(3.4rem, 11vw, 9.5rem);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(122, 215, 156, 0.18);
+    line-height: 0.88;
+    text-shadow: 0 0 24px rgba(86,190,128,0.20), 0 0 86px rgba(86,190,128,0.12), 0 0 140px rgba(250,250,250,0.035);
+    animation: heroWordmarkDrift 7s ease-in-out infinite;
+    will-change: transform, text-shadow;
+  }
+
+  .brand-lockup {
+    transform: translate3d(0, calc(var(--intro-progress) * -7vh), 0) scale(calc(1 + var(--intro-progress) * 0.55));
+    filter: blur(calc(var(--intro-progress) * 0.45px));
+    transition: filter 0.08s linear;
+    will-change: transform, filter;
+  }
+
+  .brand-name::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(136, 235, 176, calc(0.2 + var(--blueprint-alpha) * 0.55));
+    text-stroke: 1px rgba(136, 235, 176, calc(0.2 + var(--blueprint-alpha) * 0.55));
+    background-image:
+      linear-gradient(90deg, rgba(118,235,164,0.0), rgba(118,235,164,0.32), rgba(118,235,164,0.0)),
+      repeating-linear-gradient(90deg, rgba(118,235,164,0.55) 0 1px, transparent 1px 18px),
+      repeating-linear-gradient(0deg, rgba(118,235,164,0.36) 0 1px, transparent 1px 18px);
+    background-size: 160% 100%, 18px 18px, 18px 18px;
+    background-position: calc(var(--intro-progress) * 100%) 0, 0 0, 0 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    opacity: var(--blueprint-alpha);
+    filter: drop-shadow(0 0 14px rgba(86,190,128,0.35));
+    pointer-events: none;
+  }
+
+  @keyframes heroWordmarkDrift {
+    0%, 100% { transform: translate3d(0,0,0) scale(1); text-shadow: 0 0 24px rgba(86,190,128,0.20), 0 0 86px rgba(86,190,128,0.12), 0 0 140px rgba(250,250,250,0.035); }
+    50% { transform: translate3d(0,-8px,0) scale(1.012); text-shadow: 0 0 36px rgba(86,190,128,0.32), 0 0 118px rgba(86,190,128,0.18), 0 0 160px rgba(250,250,250,0.06); }
+  }
+
+  .brand-divider {
+    display: none;
+  }
+
+  .brand-sub {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(250,250,250,0.28);
+    margin-top: 6px;
+  }
+
+  .brand-agent-line {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(250,250,250,0.22);
+    margin: 8px 0 0;
+  }
+
+  .open-headline {
+    font-family: var(--display);
+    font-size: clamp(4.2rem, 8.5vw, 9rem);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--off-white);
+    text-wrap: balance;
+    margin-bottom: 44px;
+  }
+
+  .open-headline em {
+    font-style: italic;
+    color: rgba(250,250,250,0.38);
+  }
+
+  .open-intro {
+    font-family: var(--body);
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.75;
+    color: rgba(250,250,250,0.5);
+    max-width: 520px;
+    margin-bottom: 52px;
+  }
+
+  /* Old CTA removed: hero now advances by scroll. Keep class hidden in case stale markup exists. */
+  .cta-primary { display: none !important; }
+
+  .blueprint-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: calc(var(--blueprint-alpha) * 0.78);
+    transform: translate3d(calc(var(--mx, 0) * -20px), calc(var(--my, 0) * -16px), 0) scale(calc(1 + var(--intro-progress) * 0.04));
+    transition: opacity 0.08s linear;
+    background-image:
+      linear-gradient(rgba(126,220,160,0.11) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(126,220,160,0.11) 1px, transparent 1px);
+    background-size: 54px 54px;
+    mask-image: radial-gradient(circle at 50% 46%, black 0%, black 38%, transparent 74%);
+  }
+
+  .blueprint-overlay svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .blueprint-overlay .bp-line {
+    stroke-dasharray: 760;
+    stroke-dashoffset: calc(760 - var(--intro-progress) * 760);
+  }
+
+  .scroll-cue {
+    position: relative;
+    z-index: 3;
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(250,250,250, calc(0.55 - var(--intro-progress) * 0.45));
+    transform: translateY(calc(var(--intro-progress) * 16px));
+    opacity: calc(1 - var(--intro-progress) * 1.1);
+    pointer-events: none;
+  }
+
+  .scroll-cue::before {
+    content: '';
+    width: 34px;
+    height: 1px;
+    background: rgba(126,220,160,0.55);
+    box-shadow: 0 0 12px rgba(86,190,128,0.45);
+    animation: scrollCuePulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes scrollCuePulse {
+    0%, 100% { transform: scaleX(0.55); opacity: 0.35; }
+    50% { transform: scaleX(1); opacity: 1; }
+  }
+
+  .open-headline {
+    transform: translateY(calc(var(--intro-progress) * -24px));
+    opacity: calc(1 - var(--intro-progress) * 0.72);
+    filter: blur(calc(var(--intro-progress) * 1.4px));
+    transition: opacity 0.08s linear, filter 0.08s linear;
+  }
+
+  .open-intro {
+    transform: translateY(calc(var(--intro-progress) * -18px));
+    opacity: calc(1 - var(--intro-progress) * 0.92);
+    filter: blur(calc(var(--intro-progress) * 1.8px));
+    transition: opacity 0.08s linear, filter 0.08s linear;
+  }
+
+  .open-footer-strip {
+    border-top: 1px solid rgba(250,250,250,0.1);
+    padding: 20px 80px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .open-crg-text {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(250,250,250,0.22);
+    margin-left: 20px;
+    flex-shrink: 0;
+  }
+
+  .open-footer-strip span {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(250,250,250,0.25);
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--red);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+

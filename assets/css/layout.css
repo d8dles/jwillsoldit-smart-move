@@ -1,0 +1,39 @@
+/* layout.css — section shells + plotline connector. Extracted from index.html <style> (src 248-285). Load 4/7. */
+  /* ── SECTIONS ──────────────────────────────────────────── */
+  .section {
+    min-height: 100vh;
+    padding-top: 56px;
+    display: none;
+    flex-direction: column;
+    position: relative;
+    isolation: isolate;
+  }
+
+  .section.visible {
+    display: flex;
+    scroll-snap-align: none;
+    scroll-margin-top: 56px;
+  }
+
+  html.auto-scroll-ready {
+    scroll-snap-type: none;
+  }
+
+  .section.active-section {
+    outline: none;
+  }
+
+  /* Electrical plotline connector between unlocked sections */
+  .section.visible:not(#section-brief)::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -44px;
+    width: 1px;
+    height: 88px;
+    background: linear-gradient(to bottom, rgba(126,220,160,0), rgba(126,220,160,0.95), rgba(126,220,160,0));
+    box-shadow: 0 0 12px rgba(86,190,128,0.55), 0 0 34px rgba(86,190,128,0.22);
+    pointer-events: none;
+    z-index: 30;
+  }
+

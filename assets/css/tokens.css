@@ -1,0 +1,13 @@
+/* tokens.css — design tokens (:root custom properties). Extracted from index.html <style> (src 119-130). Load 1/7. No rule changes. */
+  :root {
+    --off-white: #FAFAFA;
+    --pure: #FFFFFF;
+    --forest: #1C3B2E;
+    --red: #E03A1F;
+    --ink: #0D0D0D;
+    --mid: #6B6B6B;
+    --trace: #E5E7E6;
+    --display: 'Instrument Sans', system-ui, sans-serif;
+    --body: 'Libre Franklin', system-ui, sans-serif;
+    --mono: 'Space Mono', monospace;
+  }

@@ -1,0 +1,20 @@
+/* base.css — reset + html/body base. Extracted from index.html <style> (src 131-149). Load 2/7. */
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: auto;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    font-family: var(--body);
+    background: var(--off-white);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
