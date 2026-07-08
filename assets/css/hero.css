@@ -1,0 +1,285 @@
+/* hero.css — opening/hero (section 1). Load 5/7.
+   Warm editorial treatment (continuity with jwillsoldit.com). The scroll-driven
+   handoff mechanic is preserved: all --intro-progress / --blueprint-alpha / --mx /
+   --my transform hooks are untouched — only surface colors + glow were reskinned. */
+  /* ── SECTION 1: OPENING ────────────────────────────────── */
+  #section-open {
+    background: var(--off-white);
+    color: var(--ink);
+    overflow: hidden;
+    --intro-progress: 0;
+    --blueprint-alpha: 0;
+  }
+
+  /* Scroll-driven hero stage: brand becomes the blueprint before route selection */
+  #section-open.visible {
+    display: block;
+    min-height: 124vh;
+    position: relative;
+  }
+
+  #section-open .open-inner {
+    position: sticky;
+    top: 56px;
+    min-height: calc(100vh - 56px);
+  }
+
+  /* Oversized lettermark depth layer — faint forest watermark on paper */
+  #section-open::before {
+    content: 'J';
+    position: absolute;
+    right: -80px;
+    bottom: -80px;
+    font-family: var(--mono);
+    font-size: clamp(320px, 46vw, 640px);
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    color: rgba(28, 59, 46, 0.045);
+    animation: heroLetterGlow 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+    line-height: 1;
+    user-select: none;
+  }
+
+  @keyframes heroLetterGlow {
+    0%, 100% { transform: translate3d(0,0,0) scale(1); opacity: 0.85; }
+    50% { transform: translate3d(-10px,-6px,0) scale(1.015); opacity: 1; }
+  }
+
+  .open-inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 56px 40px 72px;
+    max-width: 100%;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Masthead-style centered brand — faint ink/forest watermark */
+  .brand-lockup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 40px;
+    border-top: 0;
+    padding-top: 0;
+    position: relative;
+  }
+
+  .brand-name {
+    position: relative;
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: clamp(3.4rem, 11vw, 9.5rem);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(28, 59, 46, 0.10);
+    line-height: 0.88;
+    will-change: transform;
+  }
+
+  .brand-lockup {
+    transform: translate3d(0, calc(var(--intro-progress) * -7vh), 0) scale(calc(1 + var(--intro-progress) * 0.55));
+    filter: blur(calc(var(--intro-progress) * 0.45px));
+    transition: filter 0.08s linear;
+    will-change: transform, filter;
+  }
+
+  /* Blueprint scan revealed on scroll — restrained warm copper trace */
+  .brand-name::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(176, 92, 46, calc(0.18 + var(--blueprint-alpha) * 0.42));
+    text-stroke: 1px rgba(176, 92, 46, calc(0.18 + var(--blueprint-alpha) * 0.42));
+    background-image:
+      linear-gradient(90deg, rgba(176,92,46,0.0), rgba(176,92,46,0.30), rgba(176,92,46,0.0)),
+      repeating-linear-gradient(90deg, rgba(176,92,46,0.42) 0 1px, transparent 1px 18px),
+      repeating-linear-gradient(0deg, rgba(176,92,46,0.30) 0 1px, transparent 1px 18px);
+    background-size: 160% 100%, 18px 18px, 18px 18px;
+    background-position: calc(var(--intro-progress) * 100%) 0, 0 0, 0 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    opacity: var(--blueprint-alpha);
+    pointer-events: none;
+  }
+
+  @keyframes heroWordmarkDrift {
+    0%, 100% { transform: translate3d(0,0,0) scale(1); }
+    50% { transform: translate3d(0,-8px,0) scale(1.012); }
+  }
+
+  .brand-divider {
+    display: none;
+  }
+
+  .brand-sub {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-top: 6px;
+  }
+
+  .brand-agent-line {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(13,13,13,0.4);
+    margin: 8px 0 0;
+  }
+
+  .open-headline {
+    font-family: var(--display);
+    font-size: clamp(4.2rem, 8.5vw, 9rem);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-wrap: balance;
+    margin-bottom: 44px;
+  }
+
+  .open-headline em {
+    font-style: italic;
+    color: var(--mid);
+  }
+
+  .open-intro {
+    font-family: var(--body);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.75;
+    color: var(--mid);
+    max-width: 520px;
+    margin-bottom: 52px;
+  }
+
+  /* Old CTA removed: hero now advances by scroll. Keep class hidden in case stale markup exists. */
+  .cta-primary { display: none !important; }
+
+  .blueprint-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: calc(var(--blueprint-alpha) * 0.6);
+    transform: translate3d(calc(var(--mx, 0) * -20px), calc(var(--my, 0) * -16px), 0) scale(calc(1 + var(--intro-progress) * 0.04));
+    transition: opacity 0.08s linear;
+    background-image:
+      linear-gradient(rgba(28,59,46,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(28,59,46,0.06) 1px, transparent 1px);
+    background-size: 54px 54px;
+    mask-image: radial-gradient(circle at 50% 46%, black 0%, black 38%, transparent 74%);
+  }
+
+  .blueprint-overlay svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .blueprint-overlay .bp-line {
+    stroke-dasharray: 760;
+    stroke-dashoffset: calc(760 - var(--intro-progress) * 760);
+  }
+
+  .scroll-cue {
+    position: relative;
+    z-index: 3;
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(13,13,13, calc(0.55 - var(--intro-progress) * 0.45));
+    transform: translateY(calc(var(--intro-progress) * 16px));
+    opacity: calc(1 - var(--intro-progress) * 1.1);
+    pointer-events: none;
+  }
+
+  .scroll-cue::before {
+    content: '';
+    width: 34px;
+    height: 1px;
+    background: var(--copper);
+    animation: scrollCuePulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes scrollCuePulse {
+    0%, 100% { transform: scaleX(0.55); opacity: 0.35; }
+    50% { transform: scaleX(1); opacity: 1; }
+  }
+
+  .open-headline {
+    transform: translateY(calc(var(--intro-progress) * -24px));
+    opacity: calc(1 - var(--intro-progress) * 0.72);
+    filter: blur(calc(var(--intro-progress) * 1.4px));
+    transition: opacity 0.08s linear, filter 0.08s linear;
+  }
+
+  .open-intro {
+    transform: translateY(calc(var(--intro-progress) * -18px));
+    opacity: calc(1 - var(--intro-progress) * 0.92);
+    filter: blur(calc(var(--intro-progress) * 1.8px));
+    transition: opacity 0.08s linear, filter 0.08s linear;
+  }
+
+  .open-footer-strip {
+    border-top: 1px solid var(--trace);
+    padding: 20px 80px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .open-crg-text {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-left: 20px;
+    flex-shrink: 0;
+  }
+
+  .open-footer-strip span {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--red);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }

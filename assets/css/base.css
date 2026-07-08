@@ -1,0 +1,36 @@
+/* base.css — reset + html/body base. Extracted from index.html <style> (src 131-149). Load 2/7. */
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: auto;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    font-family: var(--body);
+    background: var(--off-white);
+    color: var(--ink);
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ── Brand globals (continuity with jwillsoldit.com) ── */
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  button { font: inherit; cursor: pointer; }
+
+  ::selection {
+    background: var(--forest);
+    color: var(--off-white);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 3px;
+  }
+

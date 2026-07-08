@@ -15,13 +15,26 @@ a visitor down one of **six paths** and hands Joey a "Smart Move Brief" in HubSp
 
 ## Architecture
 
-- **`index.html`** — the entire front end: ~6,200 lines with **inline CSS + JS, no build
-  step, no framework, no bundler**. This single-file, no-build design is a *deliberate,
-  documented choice* — **do not propose splitting it into modules or adding a build.**
-  The flow is a global (non-module) script: `FormLogic` (state/validation) plus top-level
-  functions (`goTo`, `selectPath`, `submitContact`, `renderRouteDetails`, …) wired via
-  inline `onclick`. Sections are `section-open,-path,-contact,-trunk,-budget,-area,
-  -details,-brief` (indices 0–7).
+- **Front end = `index.html` (page shell) + `assets/css/*.css` + `assets/js/*.js`.**
+  Still **no build step, no framework, no bundler, no dependencies** — the CSS/JS are
+  plain static files loaded via `<link>` and `<script src>`. As of the
+  `refactor/move-brand-system-v1` pass the old single-file `index.html` (~5,950 lines of
+  inline CSS + JS) was split, *without behavior changes*, into:
+  - **CSS** (in `<head>`, load order matters — later files override earlier; keep this order):
+    `tokens.css` → `base.css` → `progress.css` → `layout.css` → `hero.css` → `form.css`
+    → `responsive.css`. `responsive.css` holds the media queries and the V8/V9/V14 +
+    footer patch blocks, so it **must stay last** or the cascade breaks.
+  - **JS** (at end of `<body>`, **global / non-module** classic scripts, load order matters):
+    `state.js` (`FormLogic` — state/validation/submission shape) → `config.js`
+    (constants, ad-attribution capture, `SECTIONS`, `FormLogic.init()`) → `steps.js`
+    (navigation, auto-advance, path/contact/trunk/budget/area handlers) → `validation.js`
+    (dynamic field rendering + readiness) → `submit.js` (submission/brief builders) →
+    `app.js` (hero/trail/route-cue engines + bootstrap). They share one global scope, so
+    they are **classic scripts, not ES modules** — the flow is `FormLogic` plus top-level
+    functions (`goTo`, `selectPath`, `submitContact`, `renderRouteDetails`, …) wired via
+    inline `onclick`; **do not convert to modules or `defer` them** (inline handlers rely
+    on the globals and on this exact load order). Sections are `section-open,-path,
+    -contact,-trunk,-budget,-area,-details,-brief` (indices 0–7).
 - **`api/smart-move.js`** — the only backend: a Vercel serverless function. Validates
   `contact.name` + `contact.email` (400 otherwise), upserts a HubSpot contact by email
   (creates custom `smart_move_*` properties, attaches the Brief as a note), and sends an
@@ -58,10 +71,11 @@ scenario, UTM/fbclid capture, and partial+final submission capture. Results land
 
 ## Known sharp edges
 
-- **`index.html` has layered patch history** ("V8/V9/V14" CSS patch blocks, ~900 lines of
-  dead `FormLogic` stub code, a dead `detectSmartFlags()` referencing renamed fields). A
+- **The front end has layered patch history** (the "V8/V9/V14" CSS patch blocks now live in
+  `assets/css/responsive.css`; ~900 lines of dead `FormLogic` stub code and a dead
+  `detectSmartFlags()` referencing renamed fields live in `assets/js/state.js`). A
   duplicate patch block has re-broken a fixed row before. **Always run the harness after
-  editing `index.html`** — that is what it exists for.
+  editing any `index.html` / `assets/css` / `assets/js` file** — that is what it exists for.
 - The flow uses auto-advance timers *plus* always-visible Continue buttons as the safety
   net (the fix for the old C1 stranding bug). If you touch `scheduleAutoAdvance`,
   `triggerBlueprintRewind`, or the scroll handlers, re-run the C1 regression check.
