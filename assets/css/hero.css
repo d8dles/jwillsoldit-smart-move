@@ -76,16 +76,6 @@
   .brand-name {
     position: relative;
     display: inline-block;
-    font-size: 0;
-    line-height: 1;
-    color: transparent;
-    will-change: transform;
-  }
-
-  .brand-name::before,
-  .brand-name::after {
-    content: 'JWILLSOLDIT';
-    display: block;
     font-family: var(--display);
     font-size: clamp(3.4rem, 11vw, 9.25rem);
     font-weight: 700;
@@ -93,10 +83,13 @@
     letter-spacing: 0.06em;
     text-transform: uppercase;
     white-space: nowrap;
+    color: rgba(28, 59, 46, 0.12);
+    will-change: transform;
   }
 
-  .brand-name::before {
-    color: rgba(28, 59, 46, 0.12);
+  /* Red period — matches the homepage BrandLockup dot */
+  .brand-dot {
+    color: var(--red);
   }
 
   .brand-lockup {
@@ -106,8 +99,10 @@
     will-change: transform, filter;
   }
 
-  /* Blueprint scan revealed on scroll — restrained warm copper trace */
+  /* Blueprint scan revealed on scroll — restrained warm copper trace.
+     Overlays the wordmark only (the red dot is excluded from the scan). */
   .brand-name::after {
+    content: 'JWILLSOLDIT';
     position: absolute;
     inset: 0;
     color: transparent;
