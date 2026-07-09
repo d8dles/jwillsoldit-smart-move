@@ -87,6 +87,21 @@ re-display an already-issued link (`api/_lib/tokens.js`, `api/_lib/crypto.js`). 
 the "Rental Verification & Invoicing module" section in `README.md` for env vars and
 route details.
 
+**All `/api/admin/*` and `/api/forms/*` endpoints route through two catch-all
+functions** (`api/admin/[...route].js`, `api/forms/[...route].js`) dispatching to
+handlers under `api/_lib/handlers/` — not one file per endpoint. This exists solely
+to stay under Vercel Hobby's 12-Serverless-Functions-per-deployment cap (the module
+has 18 logical endpoints; per-file would blow the budget instantly and fail the
+whole deployment with `exceeded_serverless_functions_per_deployment`). **Adding a new
+admin/forms endpoint means adding a handler module + a case in the router, never a
+new file directly under `api/admin/` or `api/forms/`.** Relatedly: `vercel.json`
+must never gain a rewrite whose `source` matches `/api/(.*)` — even a no-op
+identity rewrite (`destination: /api/$1`) intercepts the request before Vercel's
+filesystem router can match it against `[...route].js` and populate
+`req.query.route`, so every admin/forms API call 404s with "Unknown route" while
+`/api/smart-move` (no dynamic segments) keeps working — this exact bug shipped and
+broke `/admin` sign-in in production once already.
+
 ## Known sharp edges
 
 - **The front end has layered patch history** (the "V8/V9/V14" CSS patch blocks now live in

@@ -1,6 +1,5 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/admin", "destination": "/admin/verifications-list.html" },
     { "source": "/admin/verifications", "destination": "/admin/verifications-list.html" },
     { "source": "/admin/verifications/new", "destination": "/admin/verifications-new.html" },
