@@ -94,13 +94,21 @@ to stay under Vercel Hobby's 12-Serverless-Functions-per-deployment cap (the mod
 has 18 logical endpoints; per-file would blow the budget instantly and fail the
 whole deployment with `exceeded_serverless_functions_per_deployment`). **Adding a new
 admin/forms endpoint means adding a handler module + a case in the router, never a
-new file directly under `api/admin/` or `api/forms/`.** Relatedly: `vercel.json`
-must never gain a rewrite whose `source` matches `/api/(.*)` — even a no-op
-identity rewrite (`destination: /api/$1`) intercepts the request before Vercel's
-filesystem router can match it against `[...route].js` and populate
-`req.query.route`, so every admin/forms API call 404s with "Unknown route" while
-`/api/smart-move` (no dynamic segments) keeps working — this exact bug shipped and
-broke `/admin` sign-in in production once already.
+new file directly under `api/admin/` or `api/forms/`.**
+
+**Both routers parse the route segments and querystring from `req.url` directly —
+they do NOT read `req.query.route`.** On this project's zero-config (frameworkless)
+Vercel setup, a nested catch-all function (`api/admin/[...route].js`, one directory
+below `/api`) did not get `req.query.route` auto-populated from the filename the way
+Vercel's dynamic-API-route docs describe — every `/api/admin/*` and `/api/forms/*`
+call 404'd with "Unknown route" in production despite working in every local test,
+because the local dev harness (`tests/`) faked that param directly rather than
+exercising Vercel's real population of it. (An unrelated, genuinely-harmless leftover
+`/api/(.*)` identity rewrite in `vercel.json` was removed in the same incident and is
+worth avoiding on principle, but it was not the actual cause.) If you touch either
+router, keep the `req.url`-based parsing — don't revert to trusting `req.query.route`
+without redeploying to real Vercel and hitting it live to confirm, since this class of
+bug is invisible to any test that doesn't exercise an actual Vercel deployment.
 
 ## Known sharp edges
 
