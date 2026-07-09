@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verification File | JWillSoldIt Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&family=Libre+Franklin:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/admin.css">
+</head>
+<body class="admin-body" data-page="list">
+<header class="admin-topbar">
+  <div class="admin-brand"><span>JWillSoldIt</span><span class="tag">Rental Verification</span></div>
+  <nav class="admin-nav">
+    <a href="/admin/verifications" data-nav="list">Verifications</a>
+    <a href="/admin/verifications/new" data-nav="new">New File</a>
+    <button class="link-btn" id="admin-logout" type="button">Log Out</button>
+  </nav>
+</header>
+
+<main class="admin-shell">
+  <div id="detail-loading" class="empty-state">Loading verification file…</div>
+
+  <div id="detail-content" style="display:none;">
+    <div class="admin-header-row">
+      <div>
+        <div class="admin-kicker"><a href="/admin/verifications" style="color:inherit;text-decoration:none;">&larr; All Verifications</a></div>
+        <h1 class="admin-h1" id="d-client-name">—</h1>
+        <p class="admin-sub" id="d-property-line"></p>
+      </div>
+      <span class="badge" id="d-status-badge"></span>
+    </div>
+
+    <div id="d-error" class="form-error"></div>
+
+    <!-- File details -->
+    <div class="admin-card">
+      <div class="admin-card-head">
+        <h2>File Details</h2>
+        <button class="admin-btn ghost small" id="edit-toggle" type="button">Edit</button>
+      </div>
+      <div id="d-fields-view" class="admin-grid-2">
+        <div class="field-value"><span class="field-label-inline">Client Name</span><span id="v-clientName">—</span></div>
+        <div class="field-value"><span class="field-label-inline">Property / Community</span><span id="v-propertyName">—</span></div>
+        <div class="field-value"><span class="field-label-inline">Property Address</span><span id="v-propertyAddress">—</span></div>
+        <div class="field-value"><span class="field-label-inline">Unit Number</span><span id="v-unitNumber">—</span></div>
+        <div class="field-value" style="grid-column:1/-1;"><span class="field-label-inline">Internal Notes</span><span id="v-notes">—</span></div>
+      </div>
+      <form id="d-fields-form" style="display:none;">
+        <div class="admin-grid-2">
+          <div class="admin-field"><label>Client Name</label><input type="text" id="f-clientName"></div>
+          <div class="admin-field"><label>Property / Community</label><input type="text" id="f-propertyName"></div>
+          <div class="admin-field"><label>Property Address</label><input type="text" id="f-propertyAddress"></div>
+          <div class="admin-field"><label>Unit Number</label><input type="text" id="f-unitNumber"></div>
+        </div>
+        <div class="admin-field"><label>Internal Notes</label><textarea id="f-notes"></textarea></div>
+        <button type="submit" class="admin-btn primary small">Save</button>
+        <button type="button" class="admin-btn ghost small" id="edit-cancel">Cancel</button>
+      </form>
+    </div>
+
+    <!-- Links -->
+    <div class="admin-card">
+      <h2 style="margin-bottom:16px;">Verification Links</h2>
+      <div class="admin-grid-2">
+        <div>
+          <span class="field-label-inline">Client / Tenant Link</span>
+          <div id="client-link-status" class="admin-card-note" style="margin:6px 0;">No link generated yet.</div>
+          <div id="client-link-box"></div>
+          <button class="admin-btn small" id="gen-client-link" type="button" style="margin-top:10px;">Generate Client Link</button>
+        </div>
+        <div>
+          <span class="field-label-inline">Property Manager Link</span>
+          <div id="pm-link-status" class="admin-card-note" style="margin:6px 0;">No link generated yet.</div>
+          <div id="pm-link-box"></div>
+          <button class="admin-btn small" id="gen-pm-link" type="button" style="margin-top:10px;">Generate PM Link</button>
+        </div>
+      </div>
+      <p class="admin-card-note" style="margin-top:16px;margin-bottom:0;">Generating a new link invalidates the previous one for that role. Copy the link and send it yourself — nothing is emailed automatically.</p>
+    </div>
+
+    <!-- Submissions -->
+    <div class="admin-card">
+      <h2 style="margin-bottom:16px;">Client Submission</h2>
+      <div id="client-submission">
+        <p class="admin-card-note" style="margin:0;">Not submitted yet.</p>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <h2 style="margin-bottom:16px;">Property Manager Submission</h2>
+      <div id="pm-submission">
+        <p class="admin-card-note" style="margin:0;">Not submitted yet.</p>
+      </div>
+    </div>
+
+    <!-- Comparison -->
+    <div class="admin-card" id="comparison-card" style="display:none;">
+      <h2 style="margin-bottom:6px;">Compare Client vs. Property Manager</h2>
+      <p class="admin-card-note">Fields that don't match are highlighted for your review before marking the file verified.</p>
+      <div style="overflow-x:auto;">
+        <table class="admin-table compare-table">
+          <thead><tr><th>Field</th><th>Client Said</th><th>PM Said</th><th></th></tr></thead>
+          <tbody id="comparison-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="admin-card">
+      <h2 style="margin-bottom:16px;">Verification & Invoicing</h2>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="admin-btn forest" id="mark-verified" type="button">Mark Manually Verified</button>
+        <button class="admin-btn primary" id="prepare-invoice" type="button">Prepare Invoice</button>
+        <a class="admin-btn ghost" id="view-invoice" style="display:none;">View Invoice</a>
+      </div>
+      <p class="admin-card-note" id="verified-note" style="margin-top:14px;margin-bottom:0;display:none;"></p>
+    </div>
+
+    <!-- Audit log -->
+    <div class="admin-card">
+      <h2 style="margin-bottom:16px;">Audit Log</h2>
+      <ul class="audit-log" id="audit-log"></ul>
+    </div>
+  </div>
+</main>
+
+<script src="/assets/js/admin-shell.js"></script>
+<script src="/assets/js/admin-detail.js"></script>
+</body>
+</html>

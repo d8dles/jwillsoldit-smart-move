@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rental Verification | JWillSoldIt</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&family=Libre+Franklin:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/admin.css">
+</head>
+<body>
+<div class="public-form-shell">
+  <div class="public-form-logo">JWILLSOLDIT</div>
+  <div class="admin-sub" style="margin-bottom:28px;">Christin Rachelle Group · Rental Placement Verification</div>
+
+  <div id="loading-state" class="loading-state">Loading your verification form…</div>
+
+  <div id="error-state" class="error-state" style="display:none;">
+    <h1></h1>
+    <p></p>
+  </div>
+
+  <div id="success-state" class="loading-state" style="display:none;">
+    <h1 style="font-family:var(--display);color:var(--ink);font-size:1.4rem;margin-bottom:10px;">Thank you</h1>
+    <p>Your information has been submitted to Joey Williams for rental placement verification.</p>
+  </div>
+
+  <div id="form-state" style="display:none;">
+    <span class="progress-pill">Client / Tenant Verification</span>
+    <h1 class="admin-h1" id="form-heading">Confirm Your Rental Details</h1>
+    <p class="admin-sub" style="margin-bottom:20px;">A few details about the rental you were placed in, so Joey can confirm the placement and prepare invoicing with the property.</p>
+
+    <div class="admin-privacy-notice">
+      <strong>Privacy notice:</strong> the information you submit here is used only to verify your rental placement, communicate with the property/community on your behalf, and document Joey Williams' locator commission. It is not shared publicly and is not searchable by anyone outside JWillSoldIt / Christin Rachelle Group.
+    </div>
+
+    <div id="submit-error" class="form-error"></div>
+    <div id="already-note" class="admin-card-note" style="display:none;margin-bottom:16px;">You've already submitted this form — submitting again will update what Joey has on file.</div>
+
+    <form id="client-form">
+      <div class="admin-card">
+        <h2 style="margin-bottom:16px;">About You</h2>
+        <div class="admin-grid-2">
+          <div class="admin-field"><label>Client Legal Name *</label><input type="text" id="clientLegalName" required></div>
+          <div class="admin-field"><label>Preferred Name</label><input type="text" id="preferredName"></div>
+          <div class="admin-field"><label>Email *</label><input type="email" id="email" required></div>
+          <div class="admin-field"><label>Phone *</label><input type="tel" id="phone" required></div>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h2 style="margin-bottom:16px;">The Rental</h2>
+        <div class="admin-field"><label>Property / Community Name *</label><input type="text" id="propertyName" required></div>
+        <div class="admin-grid-2">
+          <div class="admin-field"><label>Property Address</label><input type="text" id="propertyAddress"></div>
+          <div class="admin-field"><label>Unit Number</label><input type="text" id="unitNumber"></div>
+          <div class="admin-field"><label>Property Manager / Leasing Contact Name</label><input type="text" id="pmContactName"></div>
+          <div class="admin-field"><label>Property Manager Email</label><input type="email" id="pmEmail"></div>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h2 style="margin-bottom:16px;">Dates & Terms</h2>
+        <div class="admin-grid-2">
+          <div class="admin-field"><label>Date Toured / Applied</label><input type="date" id="dateToured"></div>
+          <div class="admin-field"><label>Application Date</label><input type="date" id="applicationDate"></div>
+          <div class="admin-field"><label>Move-In Date</label><input type="date" id="moveInDate"></div>
+          <div class="admin-field"><label>Lease Start Date</label><input type="date" id="leaseStartDate"></div>
+          <div class="admin-field"><label>Lease Term</label><input type="text" id="leaseTerm" placeholder="e.g. 12 months"></div>
+          <div class="admin-field"><label>Monthly Rent</label><input type="text" id="monthlyRent" placeholder="$"></div>
+        </div>
+        <div class="admin-field"><label>Concession, if any</label><input type="text" id="concession" placeholder="e.g. 1 month free"></div>
+      </div>
+
+      <div class="admin-card">
+        <h2 style="margin-bottom:16px;">A Bit More</h2>
+        <div class="admin-field">
+          <label>How did you first contact the property?</label>
+          <select id="firstContactMethod">
+            <option value="">Select one</option>
+            <option value="Phone">Phone</option>
+            <option value="Email">Email</option>
+            <option value="Website / Online Listing">Website / Online Listing</option>
+            <option value="In Person / Walk-In">In Person / Walk-In</option>
+            <option value="Referral">Referral</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="admin-field">
+          <label>Did you list Joey Williams / JWILLSOLDIT / Christin Rachelle Group as your agent?</label>
+          <select id="listedReferral">
+            <option value="">Select one</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="Not sure">Not sure</option>
+          </select>
+        </div>
+        <div class="admin-field">
+          <label>Upload Supporting Document / Screenshot</label>
+          <input type="file" id="upload" accept="image/*,.pdf">
+          <div class="hint">Optional — a lease, application confirmation, or screenshot showing Joey/JWillSoldIt as your agent. Max 3MB.</div>
+          <div class="file-preview" id="upload-preview"></div>
+        </div>
+      </div>
+
+      <div class="admin-checkbox-row">
+        <input type="checkbox" id="consent" required>
+        <label for="consent">I authorize JWillSoldIt / Christin Rachelle Group to use the information above for rental placement verification, to communicate with the property/community on my behalf about this placement, and for commission/invoicing documentation.</label>
+      </div>
+
+      <button type="submit" class="admin-btn primary" id="client-submit" style="width:100%;">Submit Verification</button>
+    </form>
+  </div>
+</div>
+
+<script src="/assets/js/public-form-common.js"></script>
+<script src="/assets/js/public-form-client.js"></script>
+</body>
+</html>
