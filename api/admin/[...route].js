@@ -28,11 +28,26 @@ function notFound(res) {
   return res.status(404).json({ success: false, error: 'Unknown admin route' });
 }
 
-export default async function handler(req, res) {
-  // Vercel supplies the segments after /api/admin/ as req.query.route (array).
-  const raw = req.query.route;
-  const seg = Array.isArray(raw) ? raw : raw ? [raw] : [];
+// Parsed directly from req.url rather than trusting Vercel to populate
+// req.query from the [...route] filename — on this project's zero-config
+// (frameworkless) setup that dynamic-segment population did not happen the
+// way Vercel's docs describe for nested catch-all functions, which silently
+// 404'd every /api/admin/* request in production. req.url is the one thing
+// guaranteed to be the actual incoming request path, so both the route
+// segments and the plain querystring are derived from it directly —
+// handlers get req.query populated the same way either way.
+function parseRequest(req) {
+  const [pathname, qs = ''] = (req.url || '').split('?');
+  const prefix = '/api/admin/';
+  const seg = pathname.startsWith(prefix) ? pathname.slice(prefix.length).split('/').filter(Boolean) : [];
+  const query = { ...(req.query || {}) };
+  for (const [k, v] of new URLSearchParams(qs)) query[k] = v;
+  return { seg, query };
+}
 
+export default async function handler(req, res) {
+  const { seg, query } = parseRequest(req);
+  req.query = query;
   const [a, b, c] = seg;
 
   // Flat endpoints
