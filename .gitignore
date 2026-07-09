@@ -3,3 +3,4 @@ tests/last-run.json
 .env
 .env.local
 .vercel
+.data/
