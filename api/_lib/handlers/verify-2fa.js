@@ -1,6 +1,6 @@
-import { applyCors, handlePreflight, parseJsonBody } from '../_lib/http.js';
-import { createAdminSession, verifyLoginChallenge } from '../_lib/auth.js';
-import { withDB } from '../_lib/store.js';
+import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
+import { createAdminSession, verifyLoginChallenge } from '../auth.js';
+import { withDB } from '../store.js';
 
 const REASON_MESSAGES = {
   invalid: 'This sign-in attempt is no longer valid. Start over from the password step.',

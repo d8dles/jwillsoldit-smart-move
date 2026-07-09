@@ -1,8 +1,8 @@
-import { applyCors, handlePreflight, parseJsonBody } from '../../_lib/http.js';
-import { requireAdmin } from '../../_lib/auth.js';
-import { withDB } from '../../_lib/store.js';
-import { newVerification, toListSummary, deriveStatus } from '../../_lib/verification.js';
-import { logEvent, AUDIT_EVENTS } from '../../_lib/audit.js';
+import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
+import { requireAdmin } from '../auth.js';
+import { withDB } from '../store.js';
+import { newVerification, toListSummary, deriveStatus } from '../verification.js';
+import { logEvent, AUDIT_EVENTS } from '../audit.js';
 
 export default async function handler(req, res) {
   applyCors(req, res);

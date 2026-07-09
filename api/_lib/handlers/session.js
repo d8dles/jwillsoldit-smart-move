@@ -1,5 +1,5 @@
-import { applyCors, handlePreflight } from '../_lib/http.js';
-import { isAdminAuthenticated } from '../_lib/auth.js';
+import { applyCors, handlePreflight } from '../http.js';
+import { isAdminAuthenticated } from '../auth.js';
 
 export default async function handler(req, res) {
   applyCors(req, res);

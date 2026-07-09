@@ -1,4 +1,4 @@
-import { applyCors, handlePreflight, parseJsonBody } from '../_lib/http.js';
+import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
 import {
   checkPassword,
   createAdminSession,
@@ -7,8 +7,8 @@ import {
   clearLoginFailures,
   is2faEnabled,
   createLoginChallenge,
-} from '../_lib/auth.js';
-import { withDB } from '../_lib/store.js';
+} from '../auth.js';
+import { withDB } from '../store.js';
 
 async function email2faCode(code) {
   const apiKey = process.env.RESEND_API_KEY;

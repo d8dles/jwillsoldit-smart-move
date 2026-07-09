@@ -1,10 +1,10 @@
-import { applyCors, handlePreflight, parseJsonBody } from '../../../_lib/http.js';
-import { requireAdmin } from '../../../_lib/auth.js';
-import { withDB, readDB } from '../../../_lib/store.js';
-import { deriveStatus } from '../../../_lib/verification.js';
-import { compareSubmissions } from '../../../_lib/invoice.js';
-import { decryptToken } from '../../../_lib/crypto.js';
-import { isLinkValid } from '../../../_lib/tokens.js';
+import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
+import { requireAdmin } from '../auth.js';
+import { withDB, readDB } from '../store.js';
+import { deriveStatus } from '../verification.js';
+import { compareSubmissions } from '../invoice.js';
+import { decryptToken } from '../crypto.js';
+import { isLinkValid } from '../tokens.js';
 
 function baseUrl(req) {
   return process.env.ALLOWED_ORIGIN || `https://${req.headers.host}`;

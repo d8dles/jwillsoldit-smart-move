@@ -1,8 +1,8 @@
-import { applyCors, handlePreflight, parseJsonBody } from '../../../_lib/http.js';
-import { requireAdmin } from '../../../_lib/auth.js';
-import { withDB } from '../../../_lib/store.js';
-import { makeLinkRecord } from '../../../_lib/tokens.js';
-import { logEvent, AUDIT_EVENTS } from '../../../_lib/audit.js';
+import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
+import { requireAdmin } from '../auth.js';
+import { withDB } from '../store.js';
+import { makeLinkRecord } from '../tokens.js';
+import { logEvent, AUDIT_EVENTS } from '../audit.js';
 
 function baseUrl(req) {
   return process.env.ALLOWED_ORIGIN || `https://${req.headers.host}`;

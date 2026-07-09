@@ -6,11 +6,11 @@
 // still marked "sent" (Joey sent it himself another way) — email is a
 // convenience, not a requirement.
 
-import { applyCors, handlePreflight, escapeHtml } from '../../../_lib/http.js';
-import { requireAdmin } from '../../../_lib/auth.js';
-import { readDB, writeDB } from '../../../_lib/store.js';
-import { logEvent, AUDIT_EVENTS } from '../../../_lib/audit.js';
-import { INVOICE_FIELD_LABELS } from '../../../_lib/invoice.js';
+import { applyCors, handlePreflight, escapeHtml } from '../http.js';
+import { requireAdmin } from '../auth.js';
+import { readDB, writeDB } from '../store.js';
+import { logEvent, AUDIT_EVENTS } from '../audit.js';
+import { INVOICE_FIELD_LABELS } from '../invoice.js';
 
 async function tryEmailInvoice(invoice, recipient) {
   const apiKey = process.env.RESEND_API_KEY;

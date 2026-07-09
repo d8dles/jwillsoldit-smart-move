@@ -1,6 +1,6 @@
-import { applyCors, handlePreflight } from '../../../_lib/http.js';
-import { requireAdmin } from '../../../_lib/auth.js';
-import { readDB } from '../../../_lib/store.js';
+import { applyCors, handlePreflight } from '../http.js';
+import { requireAdmin } from '../auth.js';
+import { readDB } from '../store.js';
 
 export default async function handler(req, res) {
   applyCors(req, res);

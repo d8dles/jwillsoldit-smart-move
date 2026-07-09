@@ -1,7 +1,7 @@
-import { applyCors, handlePreflight, parseJsonBody } from '../_lib/http.js';
-import { withDB } from '../_lib/store.js';
-import { findByToken, isLinkValid } from '../_lib/tokens.js';
-import { logEvent, AUDIT_EVENTS } from '../_lib/audit.js';
+import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
+import { withDB } from '../store.js';
+import { findByToken, isLinkValid } from '../tokens.js';
+import { logEvent, AUDIT_EVENTS } from '../audit.js';
 
 const MAX_UPLOAD_DATA_URL_LENGTH = 4_500_000; // ~3.3MB binary after base64 overhead
 

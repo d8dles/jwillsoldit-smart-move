@@ -1,7 +1,7 @@
-import { applyCors, handlePreflight } from '../../../_lib/http.js';
-import { requireAdmin } from '../../../_lib/auth.js';
-import { withDB } from '../../../_lib/store.js';
-import { logEvent, AUDIT_EVENTS } from '../../../_lib/audit.js';
+import { applyCors, handlePreflight } from '../http.js';
+import { requireAdmin } from '../auth.js';
+import { withDB } from '../store.js';
+import { logEvent, AUDIT_EVENTS } from '../audit.js';
 
 export default async function handler(req, res) {
   applyCors(req, res);
@@ -14,25 +14,25 @@ export default async function handler(req, res) {
   const result = await withDB((db) => {
     const invoice = db.invoices[id];
     if (!invoice) return { error: 'not_found' };
-    if (invoice.status !== 'sent') return { error: 'bad_state', invoice };
+    if (invoice.status !== 'draft') return { error: 'bad_state', invoice };
 
-    invoice.status = 'paid';
-    invoice.paidAt = new Date().toISOString();
+    invoice.status = 'approved';
+    invoice.approvedAt = new Date().toISOString();
 
     const verification = db.verifications[invoice.verificationId];
     if (verification) {
-      logEvent(verification, AUDIT_EVENTS.PAID, {
+      logEvent(verification, AUDIT_EVENTS.INVOICE_GENERATED, {
         actor: 'admin',
-        detail: `Invoice ${invoice.fields.invoiceNumber} marked paid`,
+        detail: `Invoice ${invoice.fields.invoiceNumber} approved by Joey — ready to send`,
       });
-      verification.updatedAt = invoice.paidAt;
+      verification.updatedAt = invoice.approvedAt;
     }
     return { invoice };
   });
 
   if (result.error === 'not_found') return res.status(404).json({ success: false, error: 'Not found' });
   if (result.error === 'bad_state') {
-    return res.status(409).json({ success: false, error: `Invoice must be sent before marking paid (currently ${result.invoice.status})` });
+    return res.status(409).json({ success: false, error: `Invoice must be in draft to approve (currently ${result.invoice.status})` });
   }
   return res.status(200).json({ success: true, invoice: result.invoice });
 }

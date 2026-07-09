@@ -1,10 +1,10 @@
-import { applyCors, handlePreflight } from '../../../_lib/http.js';
-import { requireAdmin } from '../../../_lib/auth.js';
-import { withDB } from '../../../_lib/store.js';
-import { newId } from '../../../_lib/ids.js';
-import { buildInvoiceDraft, nextInvoiceNumber } from '../../../_lib/invoice.js';
-import { logEvent, AUDIT_EVENTS } from '../../../_lib/audit.js';
-import { deriveStatus } from '../../../_lib/verification.js';
+import { applyCors, handlePreflight } from '../http.js';
+import { requireAdmin } from '../auth.js';
+import { withDB } from '../store.js';
+import { newId } from '../ids.js';
+import { buildInvoiceDraft, nextInvoiceNumber } from '../invoice.js';
+import { logEvent, AUDIT_EVENTS } from '../audit.js';
+import { deriveStatus } from '../verification.js';
 
 export default async function handler(req, res) {
   applyCors(req, res);
