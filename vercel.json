@@ -1,5 +1,12 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" }
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/admin", "destination": "/admin/verifications-list.html" },
+    { "source": "/admin/verifications", "destination": "/admin/verifications-list.html" },
+    { "source": "/admin/verifications/new", "destination": "/admin/verifications-new.html" },
+    { "source": "/admin/verifications/:id", "destination": "/admin/verification-detail.html" },
+    { "source": "/admin/invoices/:id", "destination": "/admin/invoice-detail.html" },
+    { "source": "/forms/client-verification/:token", "destination": "/forms/client-verification.html" },
+    { "source": "/forms/property-verification/:token", "destination": "/forms/property-verification.html" }
   ]
 }

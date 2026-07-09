@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /forms/
+Disallow: /api/
 
 Sitemap: https://move.jwillsoldit.com/sitemap.xml

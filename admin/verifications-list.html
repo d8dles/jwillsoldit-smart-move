@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verifications | JWillSoldIt Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&family=Libre+Franklin:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/admin.css">
+</head>
+<body class="admin-body" data-page="list">
+<header class="admin-topbar">
+  <div class="admin-brand"><span>JWillSoldIt</span><span class="tag">Rental Verification</span></div>
+  <nav class="admin-nav">
+    <a href="/admin/verifications" data-nav="list">Verifications</a>
+    <a href="/admin/verifications/new" data-nav="new">New File</a>
+    <button class="link-btn" id="admin-logout" type="button">Log Out</button>
+  </nav>
+</header>
+
+<main class="admin-shell">
+  <div class="admin-header-row">
+    <div>
+      <div class="admin-kicker">Rental Placement Verification</div>
+      <h1 class="admin-h1">Verification Files</h1>
+      <p class="admin-sub">Every rental placement file, its verification status, and where it stands on invoicing.</p>
+    </div>
+    <a href="/admin/verifications/new" class="admin-btn primary">+ New Verification</a>
+  </div>
+
+  <div class="admin-card" style="padding:0;overflow-x:auto;">
+    <div id="list-loading" class="empty-state">Loading verification files…</div>
+    <table class="admin-table" id="list-table" style="display:none;">
+      <thead>
+        <tr>
+          <th>Client</th>
+          <th>Property / Unit</th>
+          <th>Status</th>
+          <th>Links</th>
+          <th>Updated</th>
+        </tr>
+      </thead>
+      <tbody id="list-body"></tbody>
+    </table>
+    <div id="list-empty" class="empty-state" style="display:none;">
+      No verification files yet. <a href="/admin/verifications/new">Create the first one</a>.
+    </div>
+  </div>
+</main>
+
+<script src="/assets/js/admin-shell.js"></script>
+<script src="/assets/js/admin-list.js"></script>
+</body>
+</html>

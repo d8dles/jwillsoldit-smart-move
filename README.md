@@ -80,3 +80,48 @@ LEAD_ALERT_FROM=Smart Move Leads <onboarding@resend.dev>
 ```
 
 Then open http://localhost:3000.
+
+---
+
+## Rental Verification & Invoicing module (private)
+
+A second, self-contained module lives alongside the public Smart Move funnel:
+private tools for Joey to verify rental placements and prepare locator
+commission invoices. It does not touch the Smart Move flow, its payloads, or
+its HubSpot fields.
+
+- **`/admin/verifications`** — list every verification file
+- **`/admin/verifications/new`** — start a new file
+- **`/admin/verifications/:id`** — file detail: generate/copy client + PM
+  links, view submissions, compare mismatches, mark manually verified,
+  prepare an invoice
+- **`/admin/invoices/:id`** — invoice-ready fields (CRG locator invoice
+  template), approve → send → mark paid, export JSON
+- **`/forms/client-verification/:token`** and
+  **`/forms/property-verification/:token`** — the tokenized public forms
+  those links point to
+
+**Required env vars** (see `.env.example`):
+
+| Key | Purpose |
+|-----|---------|
+| `ADMIN_PASSWORD` | Shared password for `/admin` sign-in |
+| `ADMIN_2FA_EMAIL` | Strongly recommended; enables two-factor sign-in. When set, a correct password also emails a 6-digit code (via Resend) to this address, and the code must be entered to finish signing in. Requires `RESEND_API_KEY` + `LEAD_ALERT_FROM`; if the code email can't be sent, sign-in fails closed. Leave unset for password-only (local dev). |
+| `KV_REST_API_URL` / `KV_REST_API_TOKEN` | Vercel KV (Storage → KV in the dashboard) — where verification files, links, and invoices are stored. **Required in production** — without it the module falls back to a local JSON file that does not persist on Vercel's serverless runtime. |
+| `TOKEN_ENCRYPTION_KEY` | Optional but recommended; encrypts link tokens at rest. Falls back to deriving a key from `ADMIN_PASSWORD` if unset. |
+
+Sign-in is also throttled: five wrong passwords within 15 minutes locks
+sign-in for 15 minutes, and each emailed code expires after 10 minutes with
+at most five attempts.
+
+Invoice emailing reuses the existing Resend integration (`RESEND_API_KEY` /
+`LEAD_ALERT_FROM`) — nothing is ever sent automatically; email only fires
+when Joey clicks "Send" on an already-approved invoice, and only if Resend
+is configured and a recipient email is on file. Otherwise the invoice is
+still marked sent for manual delivery.
+
+Code lives under `api/_lib/` (storage, auth, tokens, audit, invoice
+builder), `api/admin/` + `api/forms/` (endpoints), `admin/` + `forms/`
+(pages), and `assets/css/admin.css` + `assets/js/admin-*.js` /
+`assets/js/public-form-*.js` (front end) — all separate from the Smart Move
+funnel's files.

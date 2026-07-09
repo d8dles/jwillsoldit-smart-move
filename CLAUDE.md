@@ -69,6 +69,24 @@ the details step, horizontal overflow at 360/390/430/820/1440, the C1 scroll-up 
 scenario, UTM/fbclid capture, and partial+final submission capture. Results land in
 `tests/last-run.json` (gitignored). Harness code: `tests/verify.mjs`, `tests/mock-api.mjs`.
 
+## Rental Verification & Invoicing module (private)
+
+A second, self-contained module for Joey's internal use: `/admin/verifications*`,
+`/admin/invoices/:id`, and the tokenized `/forms/client-verification/:token` +
+`/forms/property-verification/:token` public forms. It **does not touch** the Smart
+Move funnel, its payloads, or HubSpot fields — separate CSS (`assets/css/admin.css`),
+separate JS (`assets/js/admin-*.js`, `assets/js/public-form-*.js`), separate backend
+(`api/_lib/`, `api/admin/`, `api/forms/`). Storage is Vercel KV (`KV_REST_API_URL`/
+`KV_REST_API_TOKEN`, required in production — falls back to a non-persistent local
+JSON file otherwise) behind a single JSON document (`api/_lib/store.js`). Admin auth
+is a shared `ADMIN_PASSWORD` + HttpOnly cookie session, with optional email-code 2FA
+(`ADMIN_2FA_EMAIL`, fails closed if Resend is misconfigured) and a global lockout
+after repeated failed passwords (`api/_lib/auth.js`). Link
+tokens are hashed for validation and separately encrypted at rest so the admin can
+re-display an already-issued link (`api/_lib/tokens.js`, `api/_lib/crypto.js`). See
+the "Rental Verification & Invoicing module" section in `README.md` for env vars and
+route details.
+
 ## Known sharp edges
 
 - **The front end has layered patch history** (the "V8/V9/V14" CSS patch blocks now live in

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login | JWillSoldIt</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&family=Libre+Franklin:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/admin.css">
+<style>
+  .login-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .login-card {
+    width: 100%;
+    max-width: 380px;
+    background: var(--pure);
+    border: 1px solid var(--trace);
+    border-radius: var(--radius);
+    padding: 36px 32px;
+  }
+</style>
+</head>
+<body class="admin-body">
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="admin-kicker">JWillSoldIt · Internal</div>
+    <h1 class="admin-h1">Rental Verification Admin</h1>
+    <p class="admin-sub" style="margin-bottom:24px;">Sign in to manage verification files, links, and invoices.</p>
+    <div id="login-error" class="form-error"></div>
+    <form id="login-form">
+      <div class="admin-field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="admin-btn primary" style="width:100%;" id="login-submit">Sign In</button>
+    </form>
+    <form id="code-form" style="display:none;">
+      <p class="admin-sub" style="margin-bottom:18px;">A 6-digit code was emailed to your admin address. It expires in 10 minutes.</p>
+      <div class="admin-field">
+        <label for="code">Verification Code</label>
+        <input type="text" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required>
+      </div>
+      <button type="submit" class="admin-btn primary" style="width:100%;" id="code-submit">Verify</button>
+      <button type="button" class="admin-btn ghost small" id="code-restart" style="width:100%;margin-top:10px;">Start Over</button>
+    </form>
+  </div>
+</div>
+<script src="/assets/js/admin-shell.js"></script>
+<script>
+  let challengeId = null;
+  const errorBox = document.getElementById('login-error');
+
+  function showError(message) {
+    errorBox.textContent = message;
+    errorBox.classList.add('show');
+  }
+
+  function showPasswordStep() {
+    challengeId = null;
+    document.getElementById('code-form').style.display = 'none';
+    document.getElementById('login-form').style.display = 'block';
+    document.getElementById('code').value = '';
+    document.getElementById('password').value = '';
+  }
+
+  function finishLogin() {
+    const params = new URLSearchParams(window.location.search);
+    window.location.href = params.get('next') || '/admin/verifications';
+  }
+
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('login-submit');
+    errorBox.classList.remove('show');
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: document.getElementById('password').value }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Sign-in failed');
+      if (data.requires2fa) {
+        challengeId = data.challengeId;
+        document.getElementById('login-form').style.display = 'none';
+        document.getElementById('code-form').style.display = 'block';
+        document.getElementById('code').focus();
+      } else {
+        finishLogin();
+        return;
+      }
+    } catch (err) {
+      showError(err.message);
+    }
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+  });
+
+  document.getElementById('code-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('code-submit');
+    errorBox.classList.remove('show');
+    btn.disabled = true;
+    btn.textContent = 'Verifying…';
+    try {
+      const res = await fetch('/api/admin/verify-2fa', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ challengeId, code: document.getElementById('code').value }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        if (data.restart) showPasswordStep();
+        throw new Error(data.error || 'Verification failed');
+      }
+      finishLogin();
+      return;
+    } catch (err) {
+      showError(err.message);
+    }
+    btn.disabled = false;
+    btn.textContent = 'Verify';
+  });
+
+  document.getElementById('code-restart').addEventListener('click', () => {
+    errorBox.classList.remove('show');
+    showPasswordStep();
+  });
+</script>
+</body>
+</html>
