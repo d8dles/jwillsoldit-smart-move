@@ -79,7 +79,9 @@ separate JS (`assets/js/admin-*.js`, `assets/js/public-form-*.js`), separate bac
 (`api/_lib/`, `api/admin/`, `api/forms/`). Storage is Vercel KV (`KV_REST_API_URL`/
 `KV_REST_API_TOKEN`, required in production — falls back to a non-persistent local
 JSON file otherwise) behind a single JSON document (`api/_lib/store.js`). Admin auth
-is a shared `ADMIN_PASSWORD` + HttpOnly cookie session (`api/_lib/auth.js`). Link
+is a shared `ADMIN_PASSWORD` + HttpOnly cookie session, with optional email-code 2FA
+(`ADMIN_2FA_EMAIL`, fails closed if Resend is misconfigured) and a global lockout
+after repeated failed passwords (`api/_lib/auth.js`). Link
 tokens are hashed for validation and separately encrypted at rest so the admin can
 re-display an already-issued link (`api/_lib/tokens.js`, `api/_lib/crypto.js`). See
 the "Rental Verification & Invoicing module" section in `README.md` for env vars and
