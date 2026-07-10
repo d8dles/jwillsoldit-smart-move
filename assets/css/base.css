@@ -24,6 +24,26 @@
   a { color: inherit; }
   button { font: inherit; cursor: pointer; }
 
+  .jw-logo {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: var(--jw-dot-gap, 0.18em);
+    line-height: 1;
+    white-space: nowrap;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .jw-logo::after {
+    content: '';
+    width: var(--jw-dot-size, 0.38em);
+    height: var(--jw-dot-size, 0.38em);
+    margin-top: var(--jw-dot-top, 0.06em);
+    border-radius: 999px;
+    background: var(--ember, var(--red));
+    flex: 0 0 auto;
+  }
+
   ::selection {
     background: var(--forest);
     color: var(--off-white);
@@ -33,4 +53,3 @@
     outline: 2px solid var(--red);
     outline-offset: 3px;
   }
-
