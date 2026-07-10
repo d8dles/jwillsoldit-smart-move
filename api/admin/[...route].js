@@ -38,10 +38,21 @@ function notFound(res) {
 // handlers get req.query populated the same way either way.
 function parseRequest(req) {
   const [pathname, qs = ''] = (req.url || '').split('?');
-  const prefix = '/api/admin/';
-  const seg = pathname.startsWith(prefix) ? pathname.slice(prefix.length).split('/').filter(Boolean) : [];
   const query = { ...(req.query || {}) };
   for (const [k, v] of new URLSearchParams(qs)) query[k] = v;
+
+  // Vercel's explicit /api/admin/:path* rewrite passes the splat as `path`
+  // (or, in some route modes, `route`). Prefer that when present so nested
+  // admin API URLs still resolve even if the platform did not invoke the
+  // original catch-all path directly.
+  const rewrittenPath = query.path || query.route;
+  if (rewrittenPath) {
+    const raw = Array.isArray(rewrittenPath) ? rewrittenPath.join('/') : String(rewrittenPath);
+    return { seg: raw.split('/').filter(Boolean), query };
+  }
+
+  const prefix = '/api/admin/';
+  const seg = pathname.startsWith(prefix) ? pathname.slice(prefix.length).split('/').filter(Boolean) : [];
   return { seg, query };
 }
 
