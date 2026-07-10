@@ -35,6 +35,8 @@ body.admin-body {
   font-weight: 700;
   font-size: 1.05rem;
   letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: none;
 }
 
 .admin-brand .tag {
