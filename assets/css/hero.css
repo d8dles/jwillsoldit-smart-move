@@ -9,6 +9,13 @@
     overflow: hidden;
     --intro-progress: 0;
     --blueprint-alpha: 0;
+    --wordmark-y: 0;
+    --wordmark-z: 0;
+    --wordmark-scale: 0;
+    --wordmark-tilt: 0;
+    --wordmark-shadow-y: 0;
+    --wordmark-shadow-blur: 0;
+    --wordmark-shadow-alpha: 0;
   }
 
   /* Scroll-driven hero stage: brand becomes the blueprint before route selection */
@@ -22,6 +29,8 @@
     position: sticky;
     top: 56px;
     min-height: calc(100vh - 56px);
+    perspective: 900px;
+    transform-style: preserve-3d;
   }
 
   /* Oversized lettermark depth layer — faint forest watermark on paper */
@@ -76,16 +85,6 @@
   .brand-name {
     position: relative;
     display: inline-block;
-    font-size: 0;
-    line-height: 1;
-    color: transparent;
-    will-change: transform;
-  }
-
-  .brand-name::before,
-  .brand-name::after {
-    content: 'JWILLSOLDIT';
-    display: block;
     font-family: var(--display);
     font-size: clamp(3.4rem, 11vw, 9.25rem);
     font-weight: 700;
@@ -93,23 +92,44 @@
     letter-spacing: 0.06em;
     text-transform: uppercase;
     white-space: nowrap;
+    color: rgba(28, 59, 46, 0.12);
+    text-shadow:
+      0 calc(var(--wordmark-shadow-y) * 1px)
+      calc(var(--wordmark-shadow-blur) * 1px)
+      rgba(28, 59, 46, var(--wordmark-shadow-alpha));
+    will-change: transform, text-shadow;
   }
 
-  .brand-name::before {
-    color: rgba(28, 59, 46, 0.12);
+  .brand-dot {
+    color: var(--hot);
+    text-shadow: none;
   }
 
   .brand-lockup {
-    transform: translate3d(0, calc(var(--intro-progress) * -7vh), 0) scale(calc(1 + var(--intro-progress) * 0.55));
+    transform:
+      translate3d(
+        0,
+        calc(var(--intro-progress) * 6vh + var(--wordmark-y) * 1px),
+        calc(var(--wordmark-z) * 1px)
+      )
+      rotateX(calc(var(--wordmark-tilt) * 1deg))
+      scale(calc(1 + var(--intro-progress) * 0.34 + var(--wordmark-scale)));
     filter: blur(calc(var(--intro-progress) * 0.45px));
     transition: filter 0.08s linear;
     will-change: transform, filter;
+    transform-origin: 50% 68%;
   }
 
   /* Blueprint scan revealed on scroll — restrained warm copper trace */
   .brand-name::after {
+    content: attr(data-text);
     position: absolute;
     inset: 0;
+    display: block;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    white-space: inherit;
     color: transparent;
     -webkit-text-stroke: 1px rgba(176, 92, 46, calc(0.18 + var(--blueprint-alpha) * 0.42));
     text-stroke: 1px rgba(176, 92, 46, calc(0.18 + var(--blueprint-alpha) * 0.42));
@@ -123,6 +143,7 @@
     background-clip: text;
     opacity: var(--blueprint-alpha);
     pointer-events: none;
+    text-shadow: none;
   }
 
   @keyframes heroWordmarkDrift {

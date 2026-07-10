@@ -7,8 +7,58 @@
     let autoAdvanced = false;
     let heroSnapTimer = null;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const wordmarkState = {
+      y: 0, z: 0, scale: 0, tilt: 0, shadowY: 0, shadowBlur: 0, shadowAlpha: 0
+    };
+    const wordmarkVelocity = {
+      y: 0, z: 0, scale: 0, tilt: 0, shadowY: 0, shadowBlur: 0, shadowAlpha: 0
+    };
+    const wordmarkTarget = {
+      y: 0, z: 0, scale: 0, tilt: 0, shadowY: 0, shadowBlur: 0, shadowAlpha: 0
+    };
+    let lastScrollY = window.scrollY || 0;
+    let lastScrollAt = performance.now();
 
     function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+
+    function setWordmarkTargets(progress, scrollVelocity) {
+      const downImpulse = clamp(scrollVelocity / 2.2, 0, 1);
+      const backImpulse = clamp(scrollVelocity / -2.4, 0, 1);
+      const settled = clamp(progress, 0, 1);
+
+      wordmarkTarget.y = settled * 32 + downImpulse * 18 - backImpulse * 7;
+      wordmarkTarget.z = settled * 150 + downImpulse * 70;
+      wordmarkTarget.scale = settled * 0.08 + downImpulse * 0.035;
+      wordmarkTarget.tilt = settled * 3.8 + downImpulse * 2.2 - backImpulse * 1.1;
+      wordmarkTarget.shadowY = settled * 12 + downImpulse * 9;
+      wordmarkTarget.shadowBlur = settled * 26 + downImpulse * 20;
+      wordmarkTarget.shadowAlpha = settled * 0.14 + downImpulse * 0.08;
+    }
+
+    function writeWordmarkPhysics() {
+      hero.style.setProperty('--wordmark-y', wordmarkState.y.toFixed(2));
+      hero.style.setProperty('--wordmark-z', wordmarkState.z.toFixed(2));
+      hero.style.setProperty('--wordmark-scale', wordmarkState.scale.toFixed(4));
+      hero.style.setProperty('--wordmark-tilt', wordmarkState.tilt.toFixed(3));
+      hero.style.setProperty('--wordmark-shadow-y', wordmarkState.shadowY.toFixed(2));
+      hero.style.setProperty('--wordmark-shadow-blur', wordmarkState.shadowBlur.toFixed(2));
+      hero.style.setProperty('--wordmark-shadow-alpha', clamp(wordmarkState.shadowAlpha, 0, 0.24).toFixed(3));
+    }
+
+    function runWordmarkPhysics() {
+      if (reduceMotion) return;
+
+      const activeHero = hero.classList.contains('visible') && currentStep === 0;
+      if (!activeHero) setWordmarkTargets(0, 0);
+
+      Object.keys(wordmarkState).forEach((key) => {
+        wordmarkVelocity[key] += (wordmarkTarget[key] - wordmarkState[key]) * 0.072;
+        wordmarkVelocity[key] *= 0.74;
+        wordmarkState[key] += wordmarkVelocity[key];
+      });
+      writeWordmarkPhysics();
+      requestAnimationFrame(runWordmarkPhysics);
+    }
 
     function completeHeroHandoff(reason = 'scroll') {
       if (autoAdvanced || currentStep !== 0) return;
@@ -16,6 +66,7 @@
       document.body.classList.remove('hero-ready-to-snap');
       hero.style.setProperty('--intro-progress', '1');
       hero.style.setProperty('--blueprint-alpha', '1');
+      setWordmarkTargets(1, 0.6);
       goTo(1, { behavior: 'smooth' });
       setTimeout(() => { autoAdvanced = false; }, 700);
     }
@@ -26,18 +77,27 @@
       if (reduceMotion) {
         hero.style.setProperty('--intro-progress', '0');
         hero.style.setProperty('--blueprint-alpha', '0');
+        setWordmarkTargets(0, 0);
         return;
       }
+
+      const now = performance.now();
+      const dt = Math.max(16, now - lastScrollAt);
+      const scrollY = window.scrollY || 0;
+      const scrollVelocity = clamp((scrollY - lastScrollY) / dt * 16.67, -3, 3);
+      lastScrollY = scrollY;
+      lastScrollAt = now;
 
       const maxScroll = Math.max(1, hero.offsetHeight - window.innerHeight);
       // Finish the visual transformation before the physical end of the hero runway.
       // This avoids the awkward dead zone where the screen looks done but does not advance.
-      const raw = window.scrollY / maxScroll;
+      const raw = scrollY / maxScroll;
       const p = clamp(raw / 0.72, 0, 1);
       const blueprint = clamp((p - 0.12) / 0.48, 0, 1);
 
       hero.style.setProperty('--intro-progress', p.toFixed(3));
       hero.style.setProperty('--blueprint-alpha', blueprint.toFixed(3));
+      setWordmarkTargets(p, scrollVelocity);
       document.body.classList.toggle('hero-ready-to-snap', p >= 0.48 && p < 0.9);
 
       clearTimeout(heroSnapTimer);
@@ -61,6 +121,7 @@
     window.addEventListener('scroll', updateHeroProgress, { passive: true });
     window.addEventListener('resize', updateHeroProgress);
     updateHeroProgress();
+    runWordmarkPhysics();
   }());
 
   // ── TRAIL + PARALLAX ENGINE ─────────────────────────────
@@ -445,4 +506,3 @@
   setTimeout(() => {
     if (typeof updateAreaSelectionUI === 'function') updateAreaSelectionUI();
   }, 300);
-

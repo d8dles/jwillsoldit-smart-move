@@ -83,14 +83,24 @@
   }
 
   #section-open .brand-lockup {
-    transform: translate3d(0, calc(var(--intro-progress) * -9vh), calc(var(--intro-progress) * 180px)) scale(calc(1 + var(--intro-progress) * 0.78)) !important;
+    transform:
+      translate3d(
+        0,
+        calc(var(--intro-progress) * 8vh + var(--wordmark-y) * 1px),
+        calc(var(--wordmark-z) * 1px)
+      )
+      rotateX(calc(var(--wordmark-tilt) * 1deg))
+      scale(calc(1 + var(--intro-progress) * 0.42 + var(--wordmark-scale))) !important;
     filter: blur(calc(var(--intro-progress) * 0.28px));
-    transform-origin: center center;
+    transform-origin: 50% 68%;
     will-change: transform, filter;
   }
 
   #section-open .brand-name {
-    text-shadow: none;
+    text-shadow:
+      0 calc(var(--wordmark-shadow-y) * 1px)
+      calc(var(--wordmark-shadow-blur) * 1px)
+      rgba(28, 59, 46, var(--wordmark-shadow-alpha));
   }
 
   #section-open .blueprint-overlay {
@@ -1005,4 +1015,3 @@
       margin-top: 20px;
     }
   }
-
