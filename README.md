@@ -107,7 +107,8 @@ its HubSpot fields.
 |-----|---------|
 | `ADMIN_PASSWORD` | Shared password for `/admin` sign-in |
 | `ADMIN_2FA_EMAIL` | Strongly recommended; enables two-factor sign-in. When set, a correct password also emails a 6-digit code (via Resend) to this address, and the code must be entered to finish signing in. Requires `RESEND_API_KEY` + `LEAD_ALERT_FROM`; if the code email can't be sent, sign-in fails closed. Leave unset for password-only (local dev). |
-| `KV_REST_API_URL` / `KV_REST_API_TOKEN` | Vercel KV (Storage → KV in the dashboard) — where verification files, links, and invoices are stored. **Required in production** — without it the module falls back to a local JSON file that does not persist on Vercel's serverless runtime. |
+| `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | Preferred production store for verification files, links, invoices, admin sessions, and login throttling. Uses the private `smart_move_store` table in Supabase Postgres. The service-role key must stay server-side in Vercel env vars. |
+| `KV_REST_API_URL` / `KV_REST_API_TOKEN` | Legacy/alternate production store. Used only if Supabase env vars are not set. |
 | `TOKEN_ENCRYPTION_KEY` | Optional but recommended; encrypts link tokens at rest. Falls back to deriving a key from `ADMIN_PASSWORD` if unset. |
 
 Sign-in is also throttled: five wrong passwords within 15 minutes locks
