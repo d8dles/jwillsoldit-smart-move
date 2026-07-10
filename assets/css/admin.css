@@ -386,6 +386,47 @@ body.admin-body {
 
 .link-box input:focus { outline: none; }
 
+/* Evidence / guest cards */
+.evidence-list {
+  display: grid;
+  gap: 10px;
+}
+
+.evidence-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--paper-2);
+  border: 1px solid var(--trace);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+
+.evidence-item strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.evidence-item span {
+  display: block;
+  color: var(--mid);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.evidence-item a {
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--forest);
+  text-decoration: none;
+}
+
 /* ── Misc ────────────────────────────────────────────── */
 .empty-state {
   text-align: center;

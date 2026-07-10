@@ -70,6 +70,48 @@
     });
   }
 
+  function formatBytes(size) {
+    if (!size) return '';
+    if (size < 1024 * 1024) return `${Math.round(size / 1024)}KB`;
+    return `${(size / (1024 * 1024)).toFixed(1)}MB`;
+  }
+
+  function renderEvidence(items) {
+    const el = document.getElementById('evidence-list');
+    const evidence = Array.isArray(items) ? items : [];
+    if (!evidence.length) {
+      el.innerHTML = '<p class="admin-card-note" style="margin:0;">No guest cards or evidence uploaded yet.</p>';
+      return;
+    }
+    el.innerHTML = evidence.slice().reverse().map((item) => `
+      <div class="evidence-item">
+        <div>
+          <strong>${AdminShell.escapeHtml(item.label || item.name || 'Evidence')}</strong>
+          <span>${AdminShell.escapeHtml(item.name || 'File')} | ${formatBytes(item.size)} | ${AdminShell.formatDate(item.uploadedAt)}</span>
+        </div>
+        <a href="${item.dataUrl}" target="_blank" rel="noopener" download="${AdminShell.escapeHtml(item.name || 'evidence')}">Open</a>
+      </div>
+    `).join('');
+  }
+
+  function readFileAsDataUrl(file) {
+    const maxBytes = 3 * 1024 * 1024;
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        reject(new Error('Choose a file to upload.'));
+        return;
+      }
+      if (file.size > maxBytes) {
+        reject(new Error('File is too large (max 3MB).'));
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => resolve({ name: file.name, type: file.type, size: file.size, dataUrl: reader.result });
+      reader.onerror = () => reject(new Error('Could not read the selected file.'));
+      reader.readAsDataURL(file);
+    });
+  }
+
   let current = null;
 
   async function load() {
@@ -93,9 +135,14 @@
       document.getElementById('v-propertyAddress').textContent = current.propertyAddress || '—';
       document.getElementById('v-unitNumber').textContent = current.unitNumber || '—';
       document.getElementById('v-notes').textContent = current.notes || '—';
+      document.getElementById('client-email-input').value =
+        current.clientEmail?.to || current.clientSubmission?.email || '';
+      document.getElementById('pm-email-input').value =
+        current.pmEmailStatus?.to || current.pmSubmission?.pmEmail || current.clientSubmission?.pmEmail || '';
 
       linkBox(current.clientLink, document.getElementById('client-link-status'), document.getElementById('client-link-box'), 'client');
       linkBox(current.pmLink, document.getElementById('pm-link-status'), document.getElementById('pm-link-box'), 'pm');
+      renderEvidence(current.evidence);
 
       document.getElementById('client-submission').innerHTML = fieldGrid(current.clientSubmission, CLIENT_LABELS);
       document.getElementById('pm-submission').innerHTML = fieldGrid(current.pmSubmission, PM_LABELS);
@@ -164,6 +211,30 @@
     }
   });
 
+  document.getElementById('email-client').addEventListener('click', async (e) => {
+    const btn = e.target;
+    const email = document.getElementById('client-email-input').value.trim();
+    if (!email) {
+      AdminShell.toast('Enter a client email first', { error: true });
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    try {
+      const data = await AdminShell.api(`/api/admin/verifications/${id}/client-email`, {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+      });
+      AdminShell.toast(data.emailed ? 'Client email sent' : 'Client link created; email service is not configured');
+      await load();
+    } catch (err) {
+      AdminShell.toast(err.message, { error: true });
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Email Client';
+    }
+  });
+
   document.getElementById('gen-pm-link').addEventListener('click', async (e) => {
     const btn = e.target;
     btn.disabled = true;
@@ -175,6 +246,57 @@
       AdminShell.toast(err.message, { error: true });
     } finally {
       btn.disabled = false;
+    }
+  });
+
+  document.getElementById('email-pm').addEventListener('click', async (e) => {
+    const btn = e.target;
+    const email = document.getElementById('pm-email-input').value.trim();
+    if (!email) {
+      AdminShell.toast('Enter a property email first', { error: true });
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    try {
+      const data = await AdminShell.api(`/api/admin/verifications/${id}/pm-email`, {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+      });
+      AdminShell.toast(data.emailed ? 'Property email sent' : 'Property link created; email service is not configured');
+      await load();
+    } catch (err) {
+      AdminShell.toast(err.message, { error: true });
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Email Property';
+    }
+  });
+
+  document.getElementById('evidence-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('evidence-submit');
+    btn.disabled = true;
+    btn.textContent = 'Uploading...';
+    try {
+      const file = document.getElementById('evidence-file').files[0];
+      const payload = {
+        label: document.getElementById('evidence-label').value.trim(),
+        file: await readFileAsDataUrl(file),
+      };
+      await AdminShell.api(`/api/admin/verifications/${id}/evidence`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+      document.getElementById('evidence-label').value = '';
+      document.getElementById('evidence-file').value = '';
+      AdminShell.toast('Evidence uploaded');
+      await load();
+    } catch (err) {
+      AdminShell.toast(err.message, { error: true });
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Upload Evidence';
     }
   });
 
