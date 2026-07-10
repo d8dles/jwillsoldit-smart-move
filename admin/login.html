@@ -37,18 +37,18 @@
     <h1 class="admin-h1">Rental Verification Admin</h1>
     <p class="admin-sub" style="margin-bottom:24px;">Sign in to manage verification files, links, and invoices.</p>
     <div id="login-error" class="form-error"></div>
-    <form id="login-form">
+    <form id="login-form" novalidate>
       <div class="admin-field">
         <label for="password">Password</label>
         <input type="password" id="password" name="password" autocomplete="current-password" required>
       </div>
       <button type="submit" class="admin-btn primary" style="width:100%;" id="login-submit">Sign In</button>
     </form>
-    <form id="code-form" style="display:none;">
+    <form id="code-form" style="display:none;" novalidate>
       <p class="admin-sub" style="margin-bottom:18px;">A 6-digit code was emailed to your admin address. It expires in 10 minutes.</p>
       <div class="admin-field">
         <label for="code">Verification Code</label>
-        <input type="text" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required>
+        <input type="text" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required>
       </div>
       <button type="submit" class="admin-btn primary" style="width:100%;" id="code-submit">Verify</button>
       <button type="button" class="admin-btn ghost small" id="code-restart" style="width:100%;margin-top:10px;">Start Over</button>
@@ -63,6 +63,17 @@
   function showError(message) {
     errorBox.textContent = message;
     errorBox.classList.add('show');
+  }
+
+  // Only messages we deliberately threw (server responses, or our own
+  // 'Sign-in failed' / 'Verification failed' fallbacks) are safe to show
+  // as-is. Anything else is an unexpected browser/runtime exception —
+  // log it for debugging, but show a plain message instead of leaking
+  // cryptic native error text (e.g. Safari's autofill-related exceptions).
+  function showFriendlyError(err, fallback) {
+    const known = err instanceof Error && !(err instanceof TypeError) && !(err instanceof DOMException);
+    if (!known) console.error('Unexpected sign-in error:', err);
+    showError(known ? err.message : fallback);
   }
 
   function showPasswordStep() {
@@ -103,7 +114,7 @@
         return;
       }
     } catch (err) {
-      showError(err.message);
+      showFriendlyError(err, 'Something went wrong signing in. Please try again.');
     }
     btn.disabled = false;
     btn.textContent = 'Sign In';
@@ -130,7 +141,7 @@
       finishLogin();
       return;
     } catch (err) {
-      showError(err.message);
+      showFriendlyError(err, 'Something went wrong verifying the code. Please try again.');
     }
     btn.disabled = false;
     btn.textContent = 'Verify';
