@@ -1,14 +1,16 @@
 // store.js — single-document JSON store for the rental verification module.
 //
 // Backend selection (in order):
-//   1. Vercel KV / Upstash Redis REST API, if KV_REST_API_URL + KV_REST_API_TOKEN
-//      are set (Vercel dashboard → Storage → KV). This is the required backend
-//      for production — it's the only one that survives across serverless
-//      invocations and cold starts.
-//   2. A local JSON file (.data/verification-db.json) for local dev with
+//   1. Supabase Postgres via the Data API, if SUPABASE_URL +
+//      SUPABASE_SERVICE_ROLE_KEY are set. This is the preferred production
+//      backend because it survives serverless cold starts.
+//   2. Vercel KV / Upstash Redis REST API, if KV_REST_API_URL +
+//      KV_REST_API_TOKEN are set.
+//   3. A local JSON file (.data/verification-db.json) for local dev with
 //      `vercel dev` / `node`. NOT durable on Vercel's production runtime
 //      (the filesystem there is read-only outside /tmp), so this path exists
-//      purely so the module can be exercised without provisioning KV first.
+//      purely so the module can be exercised without provisioning a durable
+//      backend first.
 //
 // The whole module's state (verifications, invoices, admin sessions, a
 // counter) lives under one KV key. Traffic through this module is a single
@@ -20,6 +22,7 @@ import path from 'path';
 
 const DB_KEY = 'smart_move_verification_db_v1';
 const LOCAL_DB_PATH = path.join(process.cwd(), '.data', 'verification-db.json');
+const SUPABASE_TABLE = process.env.SUPABASE_STORE_TABLE || 'smart_move_store';
 
 function emptyDB() {
   return {
@@ -32,6 +35,54 @@ function emptyDB() {
 
 function hasKV() {
   return !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+}
+
+function hasSupabase() {
+  return !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+}
+
+function supabaseRestUrl(pathname, query = '') {
+  const base = process.env.SUPABASE_URL.replace(/\/+$/, '');
+  return `${base}/rest/v1/${pathname}${query ? `?${query}` : ''}`;
+}
+
+function supabaseHeaders(extra = {}) {
+  return {
+    apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+    ...extra,
+  };
+}
+
+async function supabaseError(prefix, res) {
+  const body = await res.text().catch(() => '');
+  return new Error(`${prefix} failed: ${res.status}${body ? ` ${body}` : ''}`);
+}
+
+async function supabaseGet(key) {
+  const query = new URLSearchParams({
+    key: `eq.${key}`,
+    select: 'value',
+    limit: '1',
+  });
+  const res = await fetch(supabaseRestUrl(SUPABASE_TABLE, query.toString()), {
+    headers: supabaseHeaders(),
+  });
+  if (!res.ok) throw await supabaseError('Supabase get', res);
+  const rows = await res.json();
+  return rows?.[0]?.value || null;
+}
+
+async function supabaseSet(key, value) {
+  const res = await fetch(supabaseRestUrl(SUPABASE_TABLE, 'on_conflict=key'), {
+    method: 'POST',
+    headers: supabaseHeaders({
+      'Content-Type': 'application/json',
+      Prefer: 'resolution=merge-duplicates',
+    }),
+    body: JSON.stringify([{ key, value }]),
+  });
+  if (!res.ok) throw await supabaseError('Supabase set', res);
 }
 
 async function kvGet(key) {
@@ -78,6 +129,10 @@ async function fileWrite(value) {
 let warnedNoBackend = false;
 
 export async function readDB() {
+  if (hasSupabase()) {
+    const db = await supabaseGet(DB_KEY);
+    return db || emptyDB();
+  }
   if (hasKV()) {
     const db = await kvGet(DB_KEY);
     return db || emptyDB();
@@ -85,9 +140,9 @@ export async function readDB() {
   if (!warnedNoBackend) {
     warnedNoBackend = true;
     console.warn(
-      '[verification-store] KV_REST_API_URL/KV_REST_API_TOKEN not set — falling back to ' +
+      '[verification-store] No durable backend configured — falling back to ' +
       'a local JSON file. This is fine for local development but does NOT persist on ' +
-      'Vercel\'s production runtime. Provision Vercel KV before relying on this module in production.'
+      'Vercel\'s production runtime. Configure Supabase or Vercel KV before relying on this module in production.'
     );
   }
   const db = await fileRead();
@@ -95,6 +150,10 @@ export async function readDB() {
 }
 
 export async function writeDB(db) {
+  if (hasSupabase()) {
+    await supabaseSet(DB_KEY, db);
+    return;
+  }
   if (hasKV()) {
     await kvSet(DB_KEY, db);
     return;
@@ -112,5 +171,5 @@ export async function withDB(mutator) {
 }
 
 export function isDurableBackendConfigured() {
-  return hasKV();
+  return hasSupabase() || hasKV();
 }
