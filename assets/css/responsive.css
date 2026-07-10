@@ -83,7 +83,7 @@
   }
 
   #section-open .brand-lockup {
-    transform: translate3d(0, calc(var(--intro-progress) * -9vh), calc(var(--intro-progress) * 180px)) scale(calc(1 + var(--intro-progress) * 0.78)) !important;
+    transform: translate3d(0, calc(var(--intro-progress) * 8vh), calc(var(--intro-progress) * -220px)) rotateX(calc(var(--intro-progress) * 5deg)) scale(calc(1 - var(--intro-progress) * 0.08)) !important;
     filter: blur(calc(var(--intro-progress) * 0.28px));
     transform-origin: center center;
     will-change: transform, filter;
@@ -1005,4 +1005,3 @@
       margin-top: 20px;
     }
   }
-
