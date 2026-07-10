@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/api/admin/:path*", "destination": "/api/admin/[...route]" },
     { "source": "/admin", "destination": "/admin/verifications-list.html" },
     { "source": "/admin/verifications", "destination": "/admin/verifications-list.html" },
     { "source": "/admin/verifications/new", "destination": "/admin/verifications-new.html" },
