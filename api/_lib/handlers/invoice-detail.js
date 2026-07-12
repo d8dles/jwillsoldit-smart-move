@@ -14,11 +14,20 @@ export default async function handler(req, res) {
     const invoice = db.invoices[id];
     if (!invoice) return res.status(404).json({ success: false, error: 'Not found' });
     const verification = db.verifications[invoice.verificationId] || null;
+    const detectedEmail = verification
+      ? verification.pmSubmission?.pmEmail || verification.clientSubmission?.pmEmail || null
+      : null;
     return res.status(200).json({
       success: true,
       invoice,
       verification: verification
-        ? { id: verification.id, clientName: verification.clientName, propertyName: verification.propertyName }
+        ? {
+            id: verification.id,
+            clientName: verification.clientName,
+            propertyName: verification.propertyName,
+            auditLog: verification.auditLog,
+            detectedEmail,
+          }
         : null,
     });
   }

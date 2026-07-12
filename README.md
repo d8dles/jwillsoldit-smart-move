@@ -95,8 +95,10 @@ its HubSpot fields.
 - **`/admin/verifications/:id`** — file detail: generate/copy client + PM
   links, view submissions, compare mismatches, mark manually verified,
   prepare an invoice
+- **`/admin/invoices`** — list every invoice, with an archived filter
 - **`/admin/invoices/:id`** — invoice-ready fields (CRG locator invoice
-  template), approve → send → mark paid, export JSON
+  template), approve → download PDF / send (with the PDF attached, to an
+  editable recipient) → mark paid, plus archive/delete and a raw JSON export
 - **`/forms/client-verification/:token`** and
   **`/forms/property-verification/:token`** — the tokenized public forms
   those links point to
@@ -117,9 +119,13 @@ at most five attempts.
 
 Invoice emailing reuses the existing Resend integration (`RESEND_API_KEY` /
 `LEAD_ALERT_FROM`) — nothing is ever sent automatically; email only fires
-when Joey clicks "Send" on an already-approved invoice, and only if Resend
-is configured and a recipient email is on file. Otherwise the invoice is
-still marked sent for manual delivery.
+when Joey clicks "Send" on an already-approved invoice, to a "Send Invoice
+To" field prefilled from the property manager's submission but editable/
+overridable, with a generated PDF (`pdfkit`) attached. If Resend isn't
+configured or there's no recipient, the invoice is still marked sent for
+manual delivery — the same PDF is available any time via "Download PDF".
+Invoices can be archived (reversible, any status) or deleted (drafts only —
+anything approved/sent/paid is kept as a financial record).
 
 Code lives under `api/_lib/` (storage, auth, tokens, audit, invoice
 builder), `api/admin/` + `api/forms/` (endpoints), `admin/` + `forms/`

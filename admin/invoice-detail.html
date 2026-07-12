@@ -32,6 +32,7 @@
   <nav class="admin-nav">
     <a href="/admin/verifications" data-nav="list">Verifications</a>
     <a href="/admin/verifications/new" data-nav="new">New File</a>
+    <a href="/admin/invoices" data-nav="invoices">Invoices</a>
     <a href="/admin/listings" data-nav="listings">Listings</a>
     <button class="link-btn" id="admin-logout" type="button">Log Out</button>
   </nav>
@@ -47,7 +48,10 @@
         <h1 class="admin-h1">Invoice <span id="inv-number">—</span></h1>
         <p class="admin-sub" id="inv-sub"></p>
       </div>
-      <span class="badge" id="inv-status-badge"></span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span class="badge" id="inv-archived-badge" style="display:none;background:var(--mid);color:var(--pure);">Archived</span>
+        <span class="badge" id="inv-status-badge"></span>
+      </div>
     </div>
 
     <div id="inv-error" class="form-error"></div>
@@ -66,12 +70,28 @@
     <div class="admin-card">
       <h2 style="margin-bottom:16px;">Workflow</h2>
       <p class="admin-card-note">No invoice is ever sent automatically. Each step below requires you to click it.</p>
+
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
         <button class="admin-btn forest" id="btn-approve" type="button">Approve Invoice</button>
+        <a class="admin-btn primary" id="btn-download" href="#" download>Download PDF</a>
+      </div>
+
+      <div class="admin-field" id="send-email-row" style="margin-top:20px;max-width:420px;">
+        <label for="send-email">Send Invoice To</label>
+        <input type="email" id="send-email" placeholder="property manager's email">
+        <div class="hint">Prefilled from what the property manager submitted — edit it, or add one, before sending.</div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
         <button class="admin-btn primary" id="btn-send" type="button">Send Invoice</button>
         <button class="admin-btn forest" id="btn-paid" type="button">Mark Paid</button>
-        <a class="admin-btn ghost" id="btn-export" href="#">Export JSON</a>
       </div>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;padding-top:20px;border-top:1px solid var(--trace);">
+        <button class="admin-btn ghost small" id="btn-archive" type="button">Archive</button>
+        <button class="admin-btn ghost small" id="btn-delete" type="button" style="color:var(--red);border-color:var(--red);">Delete Draft</button>
+        <a class="admin-btn ghost small" id="btn-export" href="#">Export Raw Data (JSON)</a>
+      </div>
+      <p class="admin-card-note" style="margin-top:8px;margin-bottom:0;">"Export Raw Data" is a machine-readable backup, not a document to send — use "Download PDF" for that.</p>
     </div>
 
     <div class="admin-card">

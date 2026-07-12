@@ -13,6 +13,8 @@ export const AUDIT_EVENTS = Object.freeze({
   PAID: 'paid',
   APPROVED: 'approved',
   REMINDER: 'reminder',
+  INVOICE_ARCHIVED: 'invoice_archived',
+  INVOICE_DELETED: 'invoice_deleted',
 });
 
 export function logEvent(verification, type, { actor = 'admin', role = null, detail = '' } = {}) {
