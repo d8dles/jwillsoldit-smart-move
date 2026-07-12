@@ -46,3 +46,16 @@ export function findByToken(db, token, role) {
   }
   return null;
 }
+
+// Same idea for listing-intake links. Separate function (not a new param on
+// findByToken) so existing verification flows keep their exact behavior.
+export function findListingByToken(db, token) {
+  const hash = hashToken(token);
+  for (const listing of Object.values(db.listings || {})) {
+    const link = listing.clientLink;
+    if (link && link.tokenHash === hash) {
+      return { listing, link };
+    }
+  }
+  return null;
+}

@@ -28,6 +28,7 @@ function emptyDB() {
   return {
     verifications: {},
     invoices: {},
+    listings: {},
     adminSessions: {},
     counters: { invoice: 0 },
   };

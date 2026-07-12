@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listing File | JWillSoldIt Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&family=Libre+Franklin:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/admin.css">
+</head>
+<body class="admin-body" data-page="listings">
+<header class="admin-topbar">
+  <a class="admin-brand" href="https://www.jwillsoldit.com/"><span class="jw-logo">JWillSoldIt</span><span class="tag">Listings</span></a>
+  <nav class="admin-nav">
+    <a href="/admin/verifications" data-nav="list">Verifications</a>
+    <a href="/admin/listings" data-nav="listings">Listings</a>
+    <a href="/admin/listings/new" data-nav="listings-new">New Listing</a>
+    <button class="link-btn" id="admin-logout" type="button">Log Out</button>
+  </nav>
+</header>
+
+<main class="admin-shell">
+  <div id="detail-loading" class="empty-state">Loading listing file…</div>
+
+  <div id="detail-state" style="display:none;">
+    <div class="admin-header-row">
+      <div>
+        <div class="admin-kicker" id="detail-kicker">Listing Intake</div>
+        <h1 class="admin-h1" id="detail-title">—</h1>
+        <p class="admin-sub" id="detail-sub"></p>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <span class="badge" id="detail-status">—</span>
+      </div>
+    </div>
+
+    <div id="detail-flags" style="margin-bottom:18px;"></div>
+
+    <div class="admin-card">
+      <h2 style="margin-bottom:6px;">Client Link</h2>
+      <p class="admin-sub" style="margin-bottom:14px;">The tokenized checklist the client fills out. Generating a new link replaces the old one.</p>
+      <div id="link-info" class="admin-sub" style="margin-bottom:12px;"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="admin-btn" id="btn-gen-link" type="button">Generate Link</button>
+        <button class="admin-btn" id="btn-copy-link" type="button" style="display:none;">Copy Link</button>
+      </div>
+      <div class="admin-field" style="margin-top:16px;">
+        <label for="send-email">Send / Re-send Checklist Email</label>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <input type="email" id="send-email" placeholder="client@email.com" style="flex:1;min-width:220px;">
+          <button class="admin-btn" id="btn-send-email" type="button">Email Client</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <h2 style="margin-bottom:6px;">Checklist</h2>
+      <p class="admin-sub" style="margin-bottom:14px;">Auto-checks when the client uploads a document. Toggle anything you received outside the form.</p>
+      <div id="checklist-items"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
+        <button class="admin-btn" id="btn-reminder" type="button">Email "Still Needed" Reminder</button>
+        <button class="admin-btn primary" id="btn-approve" type="button">Approve Listing</button>
+        <button class="admin-btn" id="btn-live" type="button">Mark Live</button>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <h2 style="margin-bottom:16px;">File Details</h2>
+      <div id="detail-error" class="form-error"></div>
+      <div class="admin-grid-2">
+        <div class="admin-field"><label for="f-clientName">Client Name</label><input type="text" id="f-clientName"></div>
+        <div class="admin-field"><label for="f-clientEmail">Client Email</label><input type="email" id="f-clientEmail"></div>
+        <div class="admin-field"><label for="f-propertyAddress">Property Address</label><input type="text" id="f-propertyAddress"></div>
+        <div class="admin-field"><label for="f-unitNumber">Unit / Suite</label><input type="text" id="f-unitNumber"></div>
+        <div class="admin-field"><label for="f-targetGoLiveDate">Target Go-Live</label><input type="date" id="f-targetGoLiveDate"></div>
+      </div>
+      <div class="admin-field"><label for="f-notes">Internal Notes</label><textarea id="f-notes"></textarea></div>
+      <button class="admin-btn" id="btn-save" type="button">Save Changes</button>
+    </div>
+
+    <div class="admin-card" id="submission-card" style="display:none;">
+      <h2 style="margin-bottom:16px;">Client Submission</h2>
+      <div id="submission-body"></div>
+    </div>
+
+    <div class="admin-card">
+      <h2 style="margin-bottom:16px;">Activity</h2>
+      <div id="audit-log" class="admin-sub"></div>
+    </div>
+  </div>
+</main>
+
+<script src="/assets/js/admin-shell.js"></script>
+<script src="/assets/js/admin-listing-detail.js"></script>
+</body>
+</html>

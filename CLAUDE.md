@@ -96,6 +96,15 @@ whole deployment with `exceeded_serverless_functions_per_deployment`). **Adding 
 admin/forms endpoint means adding a handler module + a case in the router, never a
 new file directly under `api/admin/` or `api/forms/`.**
 
+**Listing Intake** is the module's third document type (after verifications and
+invoices): `/admin/listings*` pages, tokenized `/forms/listing-intake/:token` client
+checklist with sale/lease branches, and per-branch outstanding-items tracking. Model +
+checklist engine live in `api/_lib/listing.js`; handlers follow the same
+router-dispatch pattern (`listings-list`, `listing-detail`, `listing-client-link`,
+`listing-client-email`, `listing-approve`, `listing-reminder`, `listing-token`,
+`submit-listing`). It stores under `db.listings` in the same single JSON document —
+handlers call `ensureListings(db)` because the production document predates the key.
+
 **Both routers parse the route segments and querystring from `req.url` directly —
 they do NOT read `req.query.route`.** On this project's zero-config (frameworkless)
 Vercel setup, a nested catch-all function (`api/admin/[...route].js`, one directory
