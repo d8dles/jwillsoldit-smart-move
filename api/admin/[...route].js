@@ -26,6 +26,12 @@ import invoiceApproveHandler from '../_lib/handlers/invoice-approve.js';
 import invoiceSendHandler from '../_lib/handlers/invoice-send.js';
 import invoicePaidHandler from '../_lib/handlers/invoice-paid.js';
 import invoiceExportHandler from '../_lib/handlers/invoice-export.js';
+import listingsListHandler from '../_lib/handlers/listings-list.js';
+import listingDetailHandler from '../_lib/handlers/listing-detail.js';
+import listingClientLinkHandler from '../_lib/handlers/listing-client-link.js';
+import listingClientEmailHandler from '../_lib/handlers/listing-client-email.js';
+import listingApproveHandler from '../_lib/handlers/listing-approve.js';
+import listingReminderHandler from '../_lib/handlers/listing-reminder.js';
 
 function notFound(res) {
   return res.status(404).json({ success: false, error: 'Unknown admin route' });
@@ -71,6 +77,7 @@ export default async function handler(req, res) {
     if (a === 'session') return sessionHandler(req, res);
     if (a === 'verify-2fa') return verify2faHandler(req, res);
     if (a === 'verifications') return verificationsListHandler(req, res);
+    if (a === 'listings') return listingsListHandler(req, res);
     return notFound(res);
   }
 
@@ -85,6 +92,17 @@ export default async function handler(req, res) {
     if (c === 'evidence') return evidenceHandler(req, res);
     if (c === 'verify') return verifyHandler(req, res);
     if (c === 'prepare-invoice') return prepareInvoiceHandler(req, res);
+    return notFound(res);
+  }
+
+  // listings/:id[/action]
+  if (a === 'listings' && b) {
+    req.query.id = b;
+    if (seg.length === 2) return listingDetailHandler(req, res);
+    if (c === 'client-link') return listingClientLinkHandler(req, res);
+    if (c === 'client-email') return listingClientEmailHandler(req, res);
+    if (c === 'approve') return listingApproveHandler(req, res);
+    if (c === 'reminder') return listingReminderHandler(req, res);
     return notFound(res);
   }
 

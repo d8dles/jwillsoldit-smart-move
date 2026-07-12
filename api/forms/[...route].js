@@ -5,6 +5,8 @@
 import verifyTokenHandler from '../_lib/handlers/verify-token.js';
 import submitClientHandler from '../_lib/handlers/submit-client.js';
 import submitPmHandler from '../_lib/handlers/submit-pm.js';
+import listingTokenHandler from '../_lib/handlers/listing-token.js';
+import submitListingHandler from '../_lib/handlers/submit-listing.js';
 
 // See api/admin/[...route].js for why this parses req.url directly instead
 // of relying on Vercel to populate req.query from the filename.
@@ -26,6 +28,8 @@ export default async function handler(req, res) {
     if (a === 'verify-token') return verifyTokenHandler(req, res);
     if (a === 'submit-client') return submitClientHandler(req, res);
     if (a === 'submit-pm') return submitPmHandler(req, res);
+    if (a === 'listing-token') return listingTokenHandler(req, res);
+    if (a === 'submit-listing') return submitListingHandler(req, res);
   }
 
   return res.status(404).json({ success: false, error: 'Unknown forms route' });

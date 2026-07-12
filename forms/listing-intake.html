@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listing Checklist | JWillSoldIt</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&family=Libre+Franklin:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/admin.css">
+</head>
+<body>
+<div class="public-form-shell">
+  <a class="public-form-logo jw-logo" href="https://www.jwillsoldit.com/">JWILLSOLDIT</a>
+  <div class="admin-sub" style="margin-bottom:28px;">Christin Rachelle Group · Listing Checklist</div>
+
+  <div id="loading-state" class="loading-state">Loading your listing checklist…</div>
+
+  <div id="error-state" class="error-state" style="display:none;">
+    <h1></h1>
+    <p></p>
+  </div>
+
+  <div id="success-state" class="loading-state" style="display:none;">
+    <h1 style="font-family:var(--display);color:var(--ink);font-size:1.4rem;margin-bottom:10px;">Thank you</h1>
+    <p>Your listing details are in. Joey will review everything and follow up with next steps.</p>
+    <div id="success-outstanding" style="text-align:left;margin-top:18px;"></div>
+  </div>
+
+  <div id="form-state" style="display:none;">
+    <span class="progress-pill" id="type-pill">Listing Checklist</span>
+    <h1 class="admin-h1" id="form-heading">Let's Get Your Listing Live</h1>
+    <p class="admin-sub" style="margin-bottom:20px;" id="form-sub">Everything Joey needs to prepare your property for market — details, documents, and acknowledgments in one pass.</p>
+
+    <div class="admin-privacy-notice">
+      <strong>Privacy notice:</strong> the information you submit here is used only to prepare and market your listing and to document the required brokerage paperwork. It is not shared publicly and is not searchable by anyone outside JWillSoldIt / Christin Rachelle Group.
+    </div>
+
+    <div id="submit-error" class="form-error"></div>
+    <div id="already-note" class="admin-card-note" style="display:none;margin-bottom:16px;">You've already submitted this checklist — submitting again will update what Joey has on file.</div>
+
+    <form id="listing-form">
+      <div class="admin-card">
+        <h2 style="margin-bottom:16px;">About You</h2>
+        <div class="admin-grid-2">
+          <div class="admin-field"><label>Legal Name *</label><input type="text" id="clientLegalName" required></div>
+          <div class="admin-field"><label>Phone *</label><input type="tel" id="phone" required></div>
+          <div class="admin-field"><label>Email *</label><input type="email" id="email" required></div>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h2 style="margin-bottom:16px;">The Property</h2>
+        <div class="admin-field"><label>Property Address *</label><input type="text" id="propertyAddress" required></div>
+        <div class="admin-grid-2">
+          <div class="admin-field"><label>Unit / Suite</label><input type="text" id="unitNumber"></div>
+          <div class="admin-field">
+            <label>Property Type</label>
+            <select id="propertyType">
+              <option value="">Select one</option>
+              <option value="Single-family">Single-family</option>
+              <option value="Townhome">Townhome</option>
+              <option value="Condo">Condo</option>
+              <option value="Duplex / Multi-family">Duplex / Multi-family</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="admin-field"><label>Bedrooms</label><input type="text" id="bedrooms" inputmode="numeric"></div>
+          <div class="admin-field"><label>Bathrooms</label><input type="text" id="bathrooms" inputmode="decimal"></div>
+          <div class="admin-field"><label>Approx. Sq Ft</label><input type="text" id="sqft" inputmode="numeric"></div>
+          <div class="admin-field"><label>Year Built</label><input type="text" id="yearBuilt" inputmode="numeric" placeholder="e.g. 1998"></div>
+        </div>
+        <div class="admin-field">
+          <label>Who lives there now?</label>
+          <select id="occupancy">
+            <option value="">Select one</option>
+            <option value="owner">I do (owner-occupied)</option>
+            <option value="tenant">A tenant</option>
+            <option value="vacant">Nobody — it's vacant</option>
+          </select>
+        </div>
+        <div class="admin-field"><label>Access notes (lockbox, appointment, tenant notice…)</label><input type="text" id="accessNotes"></div>
+        <div class="admin-field">
+          <label>Is the property in an HOA?</label>
+          <select id="hasHoa">
+            <option value="">Select one</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div id="hoa-details" style="display:none;">
+          <div class="admin-grid-2">
+            <div class="admin-field"><label>HOA Name</label><input type="text" id="hoaName"></div>
+            <div class="admin-field"><label>HOA Dues</label><input type="text" id="hoaDues" placeholder="$ / period"></div>
+          </div>
+          <div class="admin-field"><label>Known HOA restrictions (leasing caps, approvals…)</label><input type="text" id="hoaRestrictions"></div>
+        </div>
+        <div class="admin-field"><label>Target date to go live</label><input type="date" id="targetGoLiveDate"></div>
+      </div>
+
+      <!-- SALE branch -->
+      <div class="admin-card" data-branch="sale" style="display:none;">
+        <h2 style="margin-bottom:16px;">The Sale</h2>
+        <div class="admin-grid-2">
+          <div class="admin-field">
+            <label>Mortgage status</label>
+            <select id="mortgageStatus">
+              <option value="">Select one</option>
+              <option value="Paid off">Paid off</option>
+              <option value="One mortgage">One mortgage</option>
+              <option value="Multiple liens">Multiple liens</option>
+              <option value="Not sure">Not sure</option>
+            </select>
+          </div>
+          <div class="admin-field"><label>Approx. payoff, if any</label><input type="text" id="payoffEstimate" placeholder="$"></div>
+          <div class="admin-field"><label>Price you have in mind</label><input type="text" id="priceExpectation" placeholder="$"></div>
+          <div class="admin-field">
+            <label>Property condition</label>
+            <select id="condition">
+              <option value="">Select one</option>
+              <option value="move-in-ready">Move-in ready</option>
+              <option value="minor">Needs minor work</option>
+              <option value="significant">Needs significant work</option>
+              <option value="as-is">Selling as-is</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-field">
+          <label>What's driving the sale?</label>
+          <select id="motivation">
+            <option value="">Select one</option>
+            <option value="Upsizing / downsizing">Upsizing / downsizing</option>
+            <option value="Relocating">Relocating</option>
+            <option value="Investment / cashing out">Investment / cashing out</option>
+            <option value="Life change">Life change</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="admin-field"><label>Recent updates & repairs</label><textarea id="updatesRepairs" rows="2"></textarea></div>
+        <div class="admin-field"><label>Known issues or insurance claims</label><textarea id="knownIssues" rows="2"></textarea></div>
+      </div>
+
+      <!-- LEASE branch -->
+      <div class="admin-card" data-branch="lease" style="display:none;">
+        <h2 style="margin-bottom:16px;">The Lease</h2>
+        <div class="admin-grid-2">
+          <div class="admin-field"><label>Asking rent</label><input type="text" id="askingRent" placeholder="$ / month"></div>
+          <div class="admin-field"><label>Security deposit</label><input type="text" id="securityDeposit" placeholder="$"></div>
+          <div class="admin-field"><label>Available date</label><input type="date" id="availableDate"></div>
+          <div class="admin-field"><label>Lease terms offered</label><input type="text" id="leaseTerms" placeholder="e.g. 12–24 months"></div>
+        </div>
+        <div class="admin-field">
+          <label>Pets allowed?</label>
+          <select id="petsAllowed">
+            <option value="">Select one</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+            <option value="case-by-case">Case-by-case</option>
+          </select>
+        </div>
+        <div class="admin-field" id="pet-policy-field" style="display:none;">
+          <label>Pet policy (types, deposit/fee)</label><input type="text" id="petPolicy">
+        </div>
+        <div class="admin-grid-2">
+          <div class="admin-field">
+            <label>Smoking policy</label>
+            <select id="smokingPolicy">
+              <option value="">Select one</option>
+              <option value="No smoking">No smoking</option>
+              <option value="Outside only">Outside only</option>
+              <option value="Allowed">Allowed</option>
+            </select>
+          </div>
+          <div class="admin-field"><label>Utilities included, if any</label><input type="text" id="utilitiesIncluded"></div>
+        </div>
+        <div class="admin-field"><label>Appliances staying</label><input type="text" id="appliancesIncluded" placeholder="e.g. fridge, washer/dryer"></div>
+        <div class="admin-field"><label>Tenant screening criteria (income multiple, credit…)</label><input type="text" id="screeningCriteria"></div>
+        <div class="admin-field"><label>Make-ready / cleaning status</label><input type="text" id="makeReadyStatus"></div>
+      </div>
+
+      <div class="admin-card">
+        <h2 style="margin-bottom:6px;">Documents</h2>
+        <p class="admin-sub" style="margin-bottom:16px;">Upload what you have now — anything you skip shows up on your "still needed" list, and you can send it to Joey later.</p>
+        <div id="doc-slots"></div>
+      </div>
+
+      <div class="admin-card">
+        <h2 style="margin-bottom:16px;">Anything else</h2>
+        <div class="admin-field"><label>Anything Joey should know</label><textarea id="notes" rows="3"></textarea></div>
+      </div>
+
+      <div class="admin-checkbox-row">
+        <input type="checkbox" id="ackListingAgreement" required>
+        <label for="ackListingAgreement" id="ack-listing-label">I acknowledge that I will be required to sign a listing agreement before any marketing of my property occurs.</label>
+      </div>
+      <div class="admin-checkbox-row">
+        <input type="checkbox" id="ackIabs" required>
+        <label for="ackIabs">I acknowledge receipt of the <a href="/assets/docs/iabs.pdf" target="_blank" rel="noopener">Information About Brokerage Services (IABS)</a> form and understand my rights under Texas law.</label>
+      </div>
+
+      <button type="submit" class="admin-btn primary" id="listing-submit" style="width:100%;">Submit Listing Checklist</button>
+    </form>
+  </div>
+</div>
+
+<script src="/assets/js/public-form-common.js"></script>
+<script src="/assets/js/public-form-listing.js"></script>
+</body>
+</html>

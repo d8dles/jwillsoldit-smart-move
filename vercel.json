@@ -6,7 +6,11 @@
     { "source": "/admin/verifications/new", "destination": "/admin/verifications-new.html" },
     { "source": "/admin/verifications/:id", "destination": "/admin/verification-detail.html" },
     { "source": "/admin/invoices/:id", "destination": "/admin/invoice-detail.html" },
+    { "source": "/admin/listings", "destination": "/admin/listings-list.html" },
+    { "source": "/admin/listings/new", "destination": "/admin/listings-new.html" },
+    { "source": "/admin/listings/:id", "destination": "/admin/listing-detail.html" },
     { "source": "/forms/client-verification/:token", "destination": "/forms/client-verification.html" },
-    { "source": "/forms/property-verification/:token", "destination": "/forms/property-verification.html" }
+    { "source": "/forms/property-verification/:token", "destination": "/forms/property-verification.html" },
+    { "source": "/forms/listing-intake/:token", "destination": "/forms/listing-intake.html" }
   ]
 }

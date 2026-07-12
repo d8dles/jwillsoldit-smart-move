@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Listing | JWillSoldIt Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&family=Libre+Franklin:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/admin.css">
+</head>
+<body class="admin-body" data-page="listings-new">
+<header class="admin-topbar">
+  <a class="admin-brand" href="https://www.jwillsoldit.com/"><span class="jw-logo">JWillSoldIt</span><span class="tag">Listings</span></a>
+  <nav class="admin-nav">
+    <a href="/admin/verifications" data-nav="list">Verifications</a>
+    <a href="/admin/listings" data-nav="listings">Listings</a>
+    <a href="/admin/listings/new" data-nav="listings-new">New Listing</a>
+    <button class="link-btn" id="admin-logout" type="button">Log Out</button>
+  </nav>
+</header>
+
+<main class="admin-shell" style="max-width:640px;">
+  <div class="admin-kicker">Listing Intake</div>
+  <h1 class="admin-h1">New Listing File</h1>
+  <p class="admin-sub" style="margin-bottom:28px;">Start a file for a listing capture. Pick sale or lease — the client's checklist adapts to it. Generate their link right after creating.</p>
+
+  <div class="admin-card">
+    <div id="new-error" class="form-error"></div>
+    <form id="new-form">
+      <div class="admin-field">
+        <label for="listingType">Listing Type *</label>
+        <select id="listingType" required>
+          <option value="sale">For Sale</option>
+          <option value="lease">For Lease</option>
+        </select>
+      </div>
+      <div class="admin-grid-2">
+        <div class="admin-field">
+          <label for="clientName">Client Name *</label>
+          <input type="text" id="clientName" required>
+        </div>
+        <div class="admin-field">
+          <label for="clientEmail">Client Email</label>
+          <input type="email" id="clientEmail">
+        </div>
+      </div>
+      <div class="admin-grid-2">
+        <div class="admin-field">
+          <label for="propertyAddress">Property Address *</label>
+          <input type="text" id="propertyAddress" required>
+        </div>
+        <div class="admin-field">
+          <label for="unitNumber">Unit / Suite</label>
+          <input type="text" id="unitNumber">
+        </div>
+      </div>
+      <div class="admin-field">
+        <label for="targetGoLiveDate">Target Go-Live Date</label>
+        <input type="date" id="targetGoLiveDate">
+      </div>
+      <div class="admin-field">
+        <label for="notes">Internal Notes</label>
+        <textarea id="notes" placeholder="Optional — anything you want to remember about this file."></textarea>
+      </div>
+      <button type="submit" class="admin-btn primary" id="new-submit">Create Listing File</button>
+    </form>
+  </div>
+</main>
+
+<script src="/assets/js/admin-shell.js"></script>
+<script src="/assets/js/admin-listings-new.js"></script>
+</body>
+</html>
