@@ -35,7 +35,10 @@ export default async function handler(req, res) {
       createdAt: new Date().toISOString(),
       approvedAt: null,
       sentAt: null,
+      sentTo: null,
       paidAt: null,
+      archived: false,
+      archivedAt: null,
     };
     db.invoices[invoice.id] = invoice;
     v.invoiceId = invoice.id;

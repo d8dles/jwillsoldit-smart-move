@@ -87,6 +87,17 @@ re-display an already-issued link (`api/_lib/tokens.js`, `api/_lib/crypto.js`). 
 the "Rental Verification & Invoicing module" section in `README.md` for env vars and
 route details.
 
+**Invoices** get a real PDF, not just JSON. `/admin/invoices` lists every invoice
+(with an archived filter); `/admin/invoices/:id` adds a "Download PDF" button
+(`api/_lib/pdf.js`, via `pdfkit` — the module's one runtime npm dependency) and an
+editable "Send Invoice To" field (prefilled from the property manager's submitted
+email, overridable) so `invoice-send.js` can attach that same PDF to the email.
+Archiving (`invoice-archive.js`) is reversible and available at any status; deleting
+(`invoice-delete.js`) only works on `draft` invoices — anything approved/sent/paid is
+a financial record and can only be archived, never removed, to keep the audit trail
+intact. "Export JSON" is deliberately separate and de-emphasized in the UI — it's a
+raw-data backup, not something to hand to a property manager.
+
 **All `/api/admin/*` and `/api/forms/*` endpoints route through two catch-all
 functions** (`api/admin/[...route].js`, `api/forms/[...route].js`) dispatching to
 handlers under `api/_lib/handlers/` — not one file per endpoint. This exists solely

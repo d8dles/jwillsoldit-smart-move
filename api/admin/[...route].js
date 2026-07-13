@@ -21,11 +21,15 @@ import pmEmailHandler from '../_lib/handlers/pm-email.js';
 import evidenceHandler from '../_lib/handlers/evidence.js';
 import verifyHandler from '../_lib/handlers/verify.js';
 import prepareInvoiceHandler from '../_lib/handlers/prepare-invoice.js';
+import invoicesListHandler from '../_lib/handlers/invoices-list.js';
 import invoiceDetailHandler from '../_lib/handlers/invoice-detail.js';
 import invoiceApproveHandler from '../_lib/handlers/invoice-approve.js';
 import invoiceSendHandler from '../_lib/handlers/invoice-send.js';
 import invoicePaidHandler from '../_lib/handlers/invoice-paid.js';
 import invoiceExportHandler from '../_lib/handlers/invoice-export.js';
+import invoicePdfHandler from '../_lib/handlers/invoice-pdf.js';
+import invoiceArchiveHandler from '../_lib/handlers/invoice-archive.js';
+import invoiceDeleteHandler from '../_lib/handlers/invoice-delete.js';
 import listingsListHandler from '../_lib/handlers/listings-list.js';
 import listingDetailHandler from '../_lib/handlers/listing-detail.js';
 import listingClientLinkHandler from '../_lib/handlers/listing-client-link.js';
@@ -78,6 +82,7 @@ export default async function handler(req, res) {
     if (a === 'verify-2fa') return verify2faHandler(req, res);
     if (a === 'verifications') return verificationsListHandler(req, res);
     if (a === 'listings') return listingsListHandler(req, res);
+    if (a === 'invoices') return invoicesListHandler(req, res);
     return notFound(res);
   }
 
@@ -114,6 +119,9 @@ export default async function handler(req, res) {
     if (c === 'send') return invoiceSendHandler(req, res);
     if (c === 'paid') return invoicePaidHandler(req, res);
     if (c === 'export') return invoiceExportHandler(req, res);
+    if (c === 'pdf') return invoicePdfHandler(req, res);
+    if (c === 'archive') return invoiceArchiveHandler(req, res);
+    if (c === 'delete') return invoiceDeleteHandler(req, res);
     return notFound(res);
   }
 

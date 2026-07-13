@@ -21,8 +21,10 @@
   const WIDE = new Set(['commissionDescription', 'paymentInstructions', 'brokerW9Note']);
 
   const STATUS_LABELS = { draft: 'Draft', approved: 'Approved', sent: 'Sent', paid: 'Paid' };
+  const ACTIVITY_TYPES = ['invoice_generated', 'invoice_sent', 'paid', 'invoice_archived', 'invoice_deleted'];
 
   let invoice = null;
+  let emailPrefilled = false;
 
   async function load() {
     try {
@@ -45,6 +47,7 @@
       const badge = document.getElementById('inv-status-badge');
       badge.textContent = STATUS_LABELS[invoice.status] || invoice.status;
       badge.className = `badge status-${invoice.status === 'paid' ? 'invoiced' : invoice.status === 'draft' ? 'new' : 'both_submitted'}`;
+      document.getElementById('inv-archived-badge').style.display = invoice.archived ? 'inline-flex' : 'none';
 
       const isDraft = invoice.status === 'draft';
       document.getElementById('inv-lock-note').textContent = isDraft
@@ -62,13 +65,31 @@
         </div>
       `).join('');
 
-      document.getElementById('btn-approve').disabled = invoice.status !== 'draft';
-      document.getElementById('btn-send').disabled = invoice.status !== 'approved';
-      document.getElementById('btn-paid').disabled = invoice.status !== 'sent';
+      // Only prefill once, so we don't stomp on something Joey already typed
+      // if he reloads mid-edit.
+      if (!emailPrefilled) {
+        const emailField = document.getElementById('send-email');
+        emailField.value = invoice.sentTo || verification?.detectedEmail || '';
+        emailPrefilled = true;
+      }
+
+      const blockedByArchive = !!invoice.archived;
+      document.getElementById('btn-approve').disabled = invoice.status !== 'draft' || blockedByArchive;
+      document.getElementById('btn-send').disabled = invoice.status !== 'approved' || blockedByArchive;
+      document.getElementById('btn-paid').disabled = invoice.status !== 'sent' || blockedByArchive;
+      document.getElementById('send-email').disabled = invoice.status !== 'approved' || blockedByArchive;
+      document.getElementById('send-email-row').style.display = invoice.status === 'draft' ? 'none' : 'block';
+
+      document.getElementById('btn-download').href = `/api/admin/invoices/${id}/pdf`;
       document.getElementById('btn-export').href = `/api/admin/invoices/${id}/export`;
 
+      document.getElementById('btn-archive').textContent = invoice.archived ? 'Restore from Archive' : 'Archive';
+
+      const deleteBtn = document.getElementById('btn-delete');
+      deleteBtn.style.display = invoice.status === 'draft' ? 'inline-flex' : 'none';
+
       const auditList = (verification?.auditLog || [])
-        .filter((e) => ['invoice_generated', 'invoice_sent', 'paid'].includes(e.type))
+        .filter((e) => ACTIVITY_TYPES.includes(e.type))
         .reverse();
       document.getElementById('inv-audit').innerHTML = auditList.length
         ? auditList.map((e) => `<li><time>${AdminShell.formatDate(e.at)}</time><span>${AdminShell.escapeHtml(e.detail || e.type)}</span></li>`).join('')
@@ -103,10 +124,15 @@
   });
 
   document.getElementById('btn-send').addEventListener('click', async () => {
-    if (!confirm('Send this invoice now? This is the only step that can email the property manager.')) return;
+    const email = document.getElementById('send-email').value.trim();
+    if (!email) {
+      AdminShell.toast('Add an email to send to, or mark it sent manually and deliver the PDF yourself', { error: true });
+      return;
+    }
+    if (!confirm(`Send this invoice to ${email}? This is the only step that emails the property manager.`)) return;
     try {
-      const data = await AdminShell.api(`/api/admin/invoices/${id}/send`, { method: 'POST', body: '{}' });
-      AdminShell.toast(data.emailed ? 'Invoice emailed to the property manager' : 'Invoice marked sent');
+      const data = await AdminShell.api(`/api/admin/invoices/${id}/send`, { method: 'POST', body: JSON.stringify({ email }) });
+      AdminShell.toast(data.emailed ? `Invoice emailed to ${data.recipient}` : 'Invoice marked sent');
       await load();
     } catch (err) {
       AdminShell.toast(err.message, { error: true });
@@ -118,6 +144,29 @@
       await AdminShell.api(`/api/admin/invoices/${id}/paid`, { method: 'POST', body: '{}' });
       AdminShell.toast('Invoice marked paid');
       await load();
+    } catch (err) {
+      AdminShell.toast(err.message, { error: true });
+    }
+  });
+
+  document.getElementById('btn-archive').addEventListener('click', async () => {
+    const archiving = !invoice.archived;
+    try {
+      await AdminShell.api(`/api/admin/invoices/${id}/archive`, { method: 'POST', body: JSON.stringify({ archived: archiving }) });
+      AdminShell.toast(archiving ? 'Invoice archived' : 'Invoice restored');
+      await load();
+    } catch (err) {
+      AdminShell.toast(err.message, { error: true });
+    }
+  });
+
+  document.getElementById('btn-delete').addEventListener('click', async () => {
+    if (!confirm('Permanently delete this draft invoice? This cannot be undone.')) return;
+    try {
+      await AdminShell.api(`/api/admin/invoices/${id}/delete`, { method: 'POST', body: '{}' });
+      AdminShell.toast('Draft invoice deleted');
+      const back = document.getElementById('inv-back').querySelector('a');
+      window.location.href = back ? back.href : '/admin/invoices';
     } catch (err) {
       AdminShell.toast(err.message, { error: true });
     }

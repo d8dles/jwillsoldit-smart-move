@@ -5,6 +5,7 @@
     { "source": "/admin/verifications", "destination": "/admin/verifications-list.html" },
     { "source": "/admin/verifications/new", "destination": "/admin/verifications-new.html" },
     { "source": "/admin/verifications/:id", "destination": "/admin/verification-detail.html" },
+    { "source": "/admin/invoices", "destination": "/admin/invoices-list.html" },
     { "source": "/admin/invoices/:id", "destination": "/admin/invoice-detail.html" },
     { "source": "/admin/listings", "destination": "/admin/listings-list.html" },
     { "source": "/admin/listings/new", "destination": "/admin/listings-new.html" },
