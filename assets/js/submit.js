@@ -69,10 +69,9 @@
       notsure:    'No pressure — Joey will reach out for a quick 15-minute call to help you figure out the right move and the right timing.'
     };
     const nextEl = document.getElementById('brief-next-text');
-    if (nextEl) nextEl.textContent = NEXT_STEP[path] || 'Joey will reach out to confirm details and map your move.';
+    if (nextEl) nextEl.textContent = NEXT_STEP[path] || 'I will reach out to confirm the details and talk through the next step.';
 
     // Build and log submission object
     const submission = buildEnhancedSubmission(FormLogic.buildSubmissionObject());
     console.log('[SmartMove] Submission JSON:', JSON.stringify(submission, null, 2));
   }
-
