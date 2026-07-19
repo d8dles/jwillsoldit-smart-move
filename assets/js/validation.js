@@ -257,7 +257,7 @@
     notsure: [
       { group:'Point me in the right direction', type:'multi', store:'pathData.Q8_questionCategory', label:'What are you trying to figure out?', required:true,
         options:[['mortgage','Mortgage / financing'],['market','Market timing'],['investment','Investment'],['rent','Renting'],['buy','Buying'],['sell','Selling'],['commercial','Commercial'],['process','The process'],['other','Other']] },
-      { group:'Point me in the right direction', type:'textarea', store:'pathData.Q9_questionDetails', label:'Tell me what you need help with.', required:true },
+      { group:'Point me in the right direction', type:'textarea', store:'pathData.Q9_questionDetails', label:'Notes', required:false },
       { group:'Follow-up', type:'single', store:'pathData.Q10_callback', label:'How should Joey follow up?', required:true,
         options:[['yes','Call me'],['text','Text me'],['email','Email me']] }
     ]
@@ -509,4 +509,3 @@
     // Move Brief" button (and the route cue) are the way forward here.
     updateRouteCue();
   }
-

@@ -58,9 +58,6 @@
     if (step === 6) renderRouteDetails();
     if (step === 7) buildBrief();
 
-    const gf = document.getElementById('global-footer');
-    if (gf) gf.style.display = step === 7 ? 'none' : 'flex';
-
     if (shouldScroll) {
       setTimeout(() => scrollToSection(step, options.behavior || 'smooth'), 40);
     }
@@ -111,8 +108,6 @@
       currentStep = best.i;
       updatePlotline(best.i);
       if (best.i < previousStep) triggerBlueprintRewind();
-      const gf = document.getElementById('global-footer');
-      if (gf) gf.style.display = best.i === 7 ? 'none' : 'flex';
     }
   }
 
@@ -391,6 +386,5 @@
     toggleArea(faux);
     input.value = '';
   }
-
 
 
