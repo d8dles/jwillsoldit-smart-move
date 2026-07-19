@@ -1,0 +1,217 @@
+.jw-brand-footer {
+  background: #0d0d0d;
+  color: #fafafa;
+  padding: 72px 0 48px;
+  width: 100%;
+}
+
+.jwbf-container {
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.jwbf-compliance {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(250, 250, 250, 0.2);
+  margin-bottom: 32px;
+}
+
+.jwbf-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.jwbf-wordmark {
+  color: #fafafa;
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.jwbf-dot {
+  color: #e03a1f;
+}
+
+.jwbf-id {
+  color: #a7a19a;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  line-height: 1.7;
+}
+
+.jwbf-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.jwbf-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #fafafa;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(250, 250, 250, 0.2);
+  padding-bottom: 2px;
+}
+
+.jwbf-links a:hover,
+.jwbf-links a:focus-visible {
+  color: #e03a1f;
+  border-color: #e03a1f;
+}
+
+.jwbf-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px;
+}
+
+.jwbf-logo-frame {
+  position: relative;
+  flex: 0 0 auto;
+  width: 1.5in;
+  height: 1in;
+  overflow: hidden;
+}
+
+.jwbf-logo {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 249.8%;
+  max-width: none;
+  height: auto;
+  transform: translate(-28.3%, -28.6%);
+  filter: brightness(0) invert(1);
+  opacity: 0.85;
+}
+
+.jwbf-fineprint {
+  color: #a7a19a;
+  font-family: 'Libre Franklin', system-ui, sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.7;
+  max-width: 720px;
+}
+
+/* Smart Move keeps its compliance footer available throughout the intake.
+   The content and CRG artwork are canonical; only the layout becomes compact. */
+#global-footer.jw-brand-footer {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 99;
+  display: flex !important;
+  height: auto;
+  padding: 10px 0;
+  overflow: visible;
+  border-top: 0;
+}
+
+#global-footer .jwbf-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1.5in;
+  align-items: center;
+  gap: 18px;
+}
+
+#global-footer .jwbf-compliance {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px 20px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+#global-footer .jwbf-links {
+  justify-content: flex-end;
+  gap: 4px 12px;
+}
+
+#global-footer .jwbf-links a {
+  min-height: 24px;
+  font-size: 0.5625rem;
+}
+
+#global-footer .jwbf-id {
+  font-size: 0.5625rem;
+}
+
+#global-footer .jwbf-bottom {
+  display: block;
+}
+
+#global-footer .jwbf-fineprint {
+  display: none;
+}
+
+.brief-footer-strip,
+.open-footer-strip {
+  display: none !important;
+}
+
+.section,
+#section-brief {
+  padding-bottom: 140px;
+}
+
+@media (max-width: 760px) {
+  .jwbf-container {
+    width: min(100% - 32px, 1180px);
+  }
+
+  #global-footer .jwbf-container {
+    grid-template-columns: minmax(0, 1fr) 1.5in;
+    gap: 12px;
+  }
+
+  #global-footer .jwbf-compliance {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  #global-footer .jwbf-wordmark {
+    font-size: 1rem;
+  }
+
+  #global-footer .jwbf-id {
+    line-height: 1.35;
+  }
+
+  #global-footer .jwbf-links {
+    justify-content: flex-start;
+    gap: 2px 9px;
+  }
+
+  #global-footer .jwbf-links a {
+    min-height: 20px;
+    font-size: 0.5rem;
+  }
+
+  .section,
+  #section-brief {
+    padding-bottom: 170px;
+  }
+}
+
+@media print {
+  .jw-brand-footer {
+    display: none !important;
+  }
+}
