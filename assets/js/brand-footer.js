@@ -10,8 +10,8 @@
 
   const existing = document.getElementById('global-footer');
   const footer = document.createElement('footer');
-  footer.id = existing ? 'global-footer' : 'jw-brand-footer';
-  footer.className = `jw-brand-footer${existing ? ' jw-brand-footer--fixed' : ''}`;
+  footer.id = 'jw-brand-footer';
+  footer.className = 'jw-brand-footer';
   footer.innerHTML = `
     <div class="jwbf-container">
       <div class="jwbf-compliance">
@@ -26,7 +26,6 @@
           <a href="https://www.jwillsoldit.com/assets/cpn.pdf">Consumer Protection Notice</a>
           <a href="https://www.jwillsoldit.com/privacy.html">Privacy</a>
           <a href="https://www.jwillsoldit.com/houston">Houston Guides</a>
-          <a href="https://www.jwillsoldit.com/houston/methodology">Methodology</a>
           <a href="https://move.jwillsoldit.com/">Smart Move</a>
         </nav>
       </div>
