@@ -7,6 +7,7 @@ import {
   restoreInventory,
   validateInventoryPatch,
 } from '../api/_lib/inventory.js';
+import { filterPublicInventory } from '../api/inventory.js';
 
 const rental = newInventory({
   slug: '4231-tulip-oak-dr',
@@ -43,5 +44,12 @@ assert.deepEqual(
 assert.equal(validateInventoryPatch({ publicStatus: 'booked', offeringType: 'stay' }).ok, true);
 assert.equal(validateInventoryPatch({ offeringType: 'sale', rentalMode: 'short_term' }).ok, false);
 assert.equal(validateInventoryPatch({ slug: '../private' }).ok, false);
+
+const publicRecords = filterPublicInventory({ inventory: {
+  live: newInventory({ slug: 'live', publicStatus: 'available', published: true }),
+  hidden: newInventory({ slug: 'hidden', publicStatus: 'available', published: false }),
+  archived: archiveInventory(newInventory({ slug: 'archived', publicStatus: 'available', published: true })),
+}});
+assert.deepEqual(publicRecords.map((record) => record.slug), ['live']);
 
 console.log('inventory domain tests passed');

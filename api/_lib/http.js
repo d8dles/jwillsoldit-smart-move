@@ -2,11 +2,20 @@
 // routes. Mirrors the pattern already used in api/smart-move.js.
 
 export function applyCors(req, res) {
-  const allowedOrigin = process.env.ALLOWED_ORIGIN || 'https://move.jwillsoldit.com';
+  const fallbackOrigin = process.env.ALLOWED_ORIGIN || 'https://move.jwillsoldit.com';
+  const publicOrigins = String(process.env.PUBLIC_ALLOWED_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+  const requestOrigin = req.headers?.origin;
+  const allowedOrigin = requestOrigin && [fallbackOrigin, ...publicOrigins].includes(requestOrigin)
+    ? requestOrigin
+    : fallbackOrigin;
   res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Vary', 'Origin');
   res.setHeader('X-Content-Type-Options', 'nosniff');
 }
 
