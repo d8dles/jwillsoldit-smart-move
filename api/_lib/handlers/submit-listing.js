@@ -7,6 +7,7 @@ import {
 } from '../listing.js';
 import { logEvent, AUDIT_EVENTS } from '../audit.js';
 import { sendEmail, fieldRows } from '../email.js';
+import { validateUploadDataUrl, UPLOAD_REJECTED_MESSAGE } from '../uploads.js';
 
 // Same per-file cap as the verification form (see submit-client.js). The
 // whole module lives in one JSON document, so uploads are also capped in
@@ -18,6 +19,10 @@ function sanitizeUpload(raw) {
   const dataUrl = String(raw.dataUrl || '');
   if (!dataUrl) return null;
   if (dataUrl.length > MAX_UPLOAD_DATA_URL_LENGTH) return { tooLarge: true };
+  // Length is checked first (above) so this never runs a regex over an
+  // unbounded string. Anything that isn't a base64 image/PDF data: URL is
+  // rejected here rather than stored — see uploads.js for why.
+  if (!validateUploadDataUrl(dataUrl).ok) return { invalid: true };
   return {
     name: String(raw.name || 'upload').slice(0, 200),
     type: String(raw.type || '').slice(0, 100),
@@ -160,6 +165,7 @@ export default async function handler(req, res) {
         if (!docKeys.has(key)) continue;
         const upload = sanitizeUpload(raw);
         if (upload?.tooLarge) return { error: 'too_large', key };
+        if (upload?.invalid) return { error: 'invalid_upload', key };
         if (upload) uploads[key] = upload;
       }
     }
@@ -194,6 +200,9 @@ export default async function handler(req, res) {
   }
   if (result.error === 'too_large') {
     return res.status(413).json({ success: false, error: 'One of the uploaded files is too large (max ~3MB each)' });
+  }
+  if (result.error === 'invalid_upload') {
+    return res.status(400).json({ success: false, error: UPLOAD_REJECTED_MESSAGE });
   }
 
   // Emails are soft-fail — the store write above is the source of truth.

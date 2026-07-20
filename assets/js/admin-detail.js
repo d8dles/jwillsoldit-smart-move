@@ -40,7 +40,7 @@
     let uploadRow = '';
     if (submission.upload && submission.upload.dataUrl) {
       uploadRow = `<div class="field-value" style="grid-column:1/-1;"><span class="field-label-inline">Supporting Document</span>
-        <a href="${submission.upload.dataUrl}" target="_blank" rel="noopener" download="${AdminShell.escapeHtml(submission.upload.name || 'upload')}">
+        <a href="${AdminShell.escapeHtml(submission.upload.dataUrl)}" target="_blank" rel="noopener" download="${AdminShell.escapeHtml(submission.upload.name || 'upload')}">
           ${AdminShell.escapeHtml(submission.upload.name || 'View file')}
         </a></div>`;
     }
@@ -89,7 +89,7 @@
           <strong>${AdminShell.escapeHtml(item.label || item.name || 'Evidence')}</strong>
           <span>${AdminShell.escapeHtml(item.name || 'File')} | ${formatBytes(item.size)} | ${AdminShell.formatDate(item.uploadedAt)}</span>
         </div>
-        <a href="${item.dataUrl}" target="_blank" rel="noopener" download="${AdminShell.escapeHtml(item.name || 'evidence')}">Open</a>
+        <a href="${AdminShell.escapeHtml(item.dataUrl)}" target="_blank" rel="noopener" download="${AdminShell.escapeHtml(item.name || 'evidence')}">Open</a>
       </div>
     `).join('');
   }
