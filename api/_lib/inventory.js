@@ -27,6 +27,14 @@ const STATUS_BY_TYPE = Object.freeze({
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+export const INVENTORY_EDITABLE_FIELDS = Object.freeze([
+  'listingFileId', 'slug', 'publicPath', 'offeringType', 'rentalMode',
+  'publicStatus', 'published', 'title', 'addressLine', 'city', 'state',
+  'zip', 'neighborhood', 'price', 'priceLabel', 'pricePeriod', 'bedrooms',
+  'bathrooms', 'squareFeet', 'description', 'features', 'heroImageUrl',
+  'galleryUrls', 'sourceLinks', 'stayDetails', 'internalNotes',
+]);
+
 export function ensureInventory(db) {
   if (!db.inventory || typeof db.inventory !== 'object') db.inventory = {};
   return db.inventory;
@@ -147,6 +155,31 @@ export function isPublicInventory(record) {
     && record.published === true
     && !record.archivedAt
     && record.publicStatus !== 'draft';
+}
+
+export function applyInventoryPatch(record, body) {
+  for (const key of INVENTORY_EDITABLE_FIELDS) {
+    if (!Object.prototype.hasOwnProperty.call(body, key)) continue;
+    if (key === 'features' || key === 'galleryUrls') {
+      record[key] = stringArray(body[key]);
+    } else if (key === 'sourceLinks') {
+      record[key] = linkArray(body[key]);
+    } else if (key === 'stayDetails') {
+      record[key] = body[key] && typeof body[key] === 'object' ? { ...body[key] } : null;
+    } else if (key === 'price' || key === 'bedrooms' || key === 'bathrooms' || key === 'squareFeet') {
+      record[key] = Number.isFinite(body[key]) ? body[key] : null;
+    } else if (key === 'published') {
+      record[key] = body[key] === true;
+    } else if (key === 'rentalMode' && body[key] == null) {
+      record[key] = null;
+    } else {
+      record[key] = valueOrEmpty(body[key]);
+    }
+  }
+
+  if (record.offeringType === 'sale') record.rentalMode = null;
+  record.updatedAt = new Date().toISOString();
+  return record;
 }
 
 export function toInventorySummary(record) {

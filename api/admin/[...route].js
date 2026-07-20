@@ -36,6 +36,8 @@ import listingClientLinkHandler from '../_lib/handlers/listing-client-link.js';
 import listingClientEmailHandler from '../_lib/handlers/listing-client-email.js';
 import listingApproveHandler from '../_lib/handlers/listing-approve.js';
 import listingReminderHandler from '../_lib/handlers/listing-reminder.js';
+import inventoryListHandler from '../_lib/handlers/inventory-list.js';
+import inventoryDetailHandler from '../_lib/handlers/inventory-detail.js';
 
 function notFound(res) {
   return res.status(404).json({ success: false, error: 'Unknown admin route' });
@@ -82,6 +84,7 @@ export default async function handler(req, res) {
     if (a === 'verify-2fa') return verify2faHandler(req, res);
     if (a === 'verifications') return verificationsListHandler(req, res);
     if (a === 'listings') return listingsListHandler(req, res);
+    if (a === 'inventory') return inventoryListHandler(req, res);
     if (a === 'invoices') return invoicesListHandler(req, res);
     return notFound(res);
   }
@@ -108,6 +111,13 @@ export default async function handler(req, res) {
     if (c === 'client-email') return listingClientEmailHandler(req, res);
     if (c === 'approve') return listingApproveHandler(req, res);
     if (c === 'reminder') return listingReminderHandler(req, res);
+    return notFound(res);
+  }
+
+  // inventory/:id
+  if (a === 'inventory' && b) {
+    req.query.id = b;
+    if (seg.length === 2) return inventoryDetailHandler(req, res);
     return notFound(res);
   }
 
