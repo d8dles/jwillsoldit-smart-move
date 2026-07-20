@@ -1,6 +1,6 @@
 import { applyCors, handlePreflight } from '../http.js';
 import { requireAdmin } from '../auth.js';
-import { readDB } from '../store.js';
+import { readDB, getRecord } from '../store.js';
 import { renderInvoicePdf } from '../pdf.js';
 
 export default async function handler(req, res) {
@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
   const { id } = req.query;
   const db = await readDB();
-  const invoice = db.invoices[id];
+  const invoice = getRecord(db.invoices, id);
   if (!invoice) return res.status(404).json({ success: false, error: 'Not found' });
 
   const buffer = await renderInvoicePdf(invoice.fields);

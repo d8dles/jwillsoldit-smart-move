@@ -1,6 +1,6 @@
 import { applyCors, handlePreflight } from '../http.js';
 import { requireAdmin } from '../auth.js';
-import { withDB } from '../store.js';
+import { withDB, getRecord } from '../store.js';
 import { newId } from '../ids.js';
 import { buildInvoiceDraft, nextInvoiceNumber } from '../invoice.js';
 import { logEvent, AUDIT_EVENTS } from '../audit.js';
@@ -15,14 +15,14 @@ export default async function handler(req, res) {
   const { id } = req.query;
 
   const result = await withDB((db) => {
-    const v = db.verifications[id];
+    const v = getRecord(db.verifications, id);
     if (!v) return { error: 'not_found' };
 
     // Reuse the existing invoice record if one was already prepared for this
     // file, rather than minting a new invoice number every time the admin
     // revisits the page.
-    if (v.invoiceId && db.invoices[v.invoiceId]) {
-      return { invoice: db.invoices[v.invoiceId], verification: v };
+    if (v.invoiceId && getRecord(db.invoices, v.invoiceId)) {
+      return { invoice: getRecord(db.invoices, v.invoiceId), verification: v };
     }
 
     const invoiceNumber = nextInvoiceNumber(db);

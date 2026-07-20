@@ -1,6 +1,6 @@
 import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
 import { requireAdmin } from '../auth.js';
-import { withDB } from '../store.js';
+import { withDB, getRecord } from '../store.js';
 import { logEvent, AUDIT_EVENTS } from '../audit.js';
 
 // Archiving is a reversible hide — invoices are financial records, so they
@@ -17,13 +17,13 @@ export default async function handler(req, res) {
   const archived = body.archived !== false;
 
   const result = await withDB((db) => {
-    const invoice = db.invoices[id];
+    const invoice = getRecord(db.invoices, id);
     if (!invoice) return { error: 'not_found' };
 
     invoice.archived = archived;
     invoice.archivedAt = archived ? new Date().toISOString() : null;
 
-    const verification = db.verifications[invoice.verificationId];
+    const verification = getRecord(db.verifications, invoice.verificationId);
     if (verification) {
       logEvent(verification, AUDIT_EVENTS.INVOICE_ARCHIVED, {
         actor: 'admin',

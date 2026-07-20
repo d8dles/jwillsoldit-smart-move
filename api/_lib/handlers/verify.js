@@ -1,6 +1,6 @@
 import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
 import { requireAdmin } from '../auth.js';
-import { withDB } from '../store.js';
+import { withDB, getRecord } from '../store.js';
 import { logEvent, AUDIT_EVENTS } from '../audit.js';
 import { deriveStatus } from '../verification.js';
 
@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   const note = String(body.note || '').trim();
 
   const result = await withDB((db) => {
-    const v = db.verifications[id];
+    const v = getRecord(db.verifications, id);
     if (!v) return null;
     v.manuallyVerified = true;
     v.manuallyVerifiedAt = new Date().toISOString();

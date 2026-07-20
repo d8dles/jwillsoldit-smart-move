@@ -1,6 +1,6 @@
 import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
 import { requireAdmin } from '../auth.js';
-import { withDB } from '../store.js';
+import { withDB, getRecord } from '../store.js';
 import { newId } from '../ids.js';
 import { logEvent } from '../audit.js';
 import { validateUploadDataUrl, UPLOAD_REJECTED_MESSAGE } from '../uploads.js';
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
   };
 
   const result = await withDB((db) => {
-    const v = db.verifications[id];
+    const v = getRecord(db.verifications, id);
     if (!v) return null;
     if (!Array.isArray(v.evidence)) v.evidence = [];
     v.evidence.push(evidence);

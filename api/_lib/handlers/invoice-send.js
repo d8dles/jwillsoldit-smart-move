@@ -10,7 +10,7 @@
 
 import { applyCors, handlePreflight, escapeHtml, parseJsonBody } from '../http.js';
 import { requireAdmin } from '../auth.js';
-import { readDB, writeDB } from '../store.js';
+import { readDB, writeDB, getRecord } from '../store.js';
 import { logEvent, AUDIT_EVENTS } from '../audit.js';
 import { INVOICE_FIELD_LABELS } from '../invoice.js';
 import { renderInvoicePdf } from '../pdf.js';
@@ -84,13 +84,13 @@ export default async function handler(req, res) {
   const overrideEmail = isValidEmail(body.email) ? body.email.trim() : null;
 
   const db = await readDB();
-  const invoice = db.invoices[id];
+  const invoice = getRecord(db.invoices, id);
   if (!invoice) return res.status(404).json({ success: false, error: 'Not found' });
   if (invoice.status !== 'approved') {
     return res.status(409).json({ success: false, error: `Invoice must be approved before sending (currently ${invoice.status})` });
   }
 
-  const verification = db.verifications[invoice.verificationId];
+  const verification = getRecord(db.verifications, invoice.verificationId);
   const detectedRecipient =
     verification?.pmSubmission?.pmEmail ||
     verification?.clientSubmission?.pmEmail ||

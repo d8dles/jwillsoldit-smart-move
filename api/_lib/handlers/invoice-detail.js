@@ -1,6 +1,6 @@
 import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
 import { requireAdmin } from '../auth.js';
-import { withDB, readDB } from '../store.js';
+import { withDB, readDB, getRecord } from '../store.js';
 
 export default async function handler(req, res) {
   applyCors(req, res);
@@ -11,9 +11,9 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     const db = await readDB();
-    const invoice = db.invoices[id];
+    const invoice = getRecord(db.invoices, id);
     if (!invoice) return res.status(404).json({ success: false, error: 'Not found' });
-    const verification = db.verifications[invoice.verificationId] || null;
+    const verification = getRecord(db.verifications, invoice.verificationId) || null;
     const detectedEmail = verification
       ? verification.pmSubmission?.pmEmail || verification.clientSubmission?.pmEmail || null
       : null;
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
     if (!patch) return res.status(400).json({ success: false, error: 'fields object is required' });
 
     const result = await withDB((db) => {
-      const invoice = db.invoices[id];
+      const invoice = getRecord(db.invoices, id);
       if (!invoice) return null;
       if (invoice.status !== 'draft') return { locked: true, invoice };
       for (const [key, value] of Object.entries(patch)) {
