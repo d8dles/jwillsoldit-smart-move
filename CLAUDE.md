@@ -76,16 +76,19 @@ A second, self-contained module for Joey's internal use: `/admin/verifications*`
 `/forms/property-verification/:token` public forms. It **does not touch** the Smart
 Move funnel, its payloads, or HubSpot fields — separate CSS (`assets/css/admin.css`),
 separate JS (`assets/js/admin-*.js`, `assets/js/public-form-*.js`), separate backend
-(`api/_lib/`, `api/admin/`, `api/forms/`). Storage is Vercel KV (`KV_REST_API_URL`/
-`KV_REST_API_TOKEN`, required in production — falls back to a non-persistent local
-JSON file otherwise) behind a single JSON document (`api/_lib/store.js`). Admin auth
-is a shared `ADMIN_PASSWORD` + HttpOnly cookie session, with optional email-code 2FA
-(`ADMIN_2FA_EMAIL`, fails closed if Resend is misconfigured) and a global lockout
-after repeated failed passwords (`api/_lib/auth.js`). Link
-tokens are hashed for validation and separately encrypted at rest so the admin can
-re-display an already-issued link (`api/_lib/tokens.js`, `api/_lib/crypto.js`). See
-the "Rental Verification & Invoicing module" section in `README.md` for env vars and
-route details.
+(`api/_lib/`, `api/admin/`, `api/forms/`). Storage is Supabase Postgres via the Data
+API (`SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY`, the preferred production backend —
+survives serverless cold starts), with Vercel KV (`KV_REST_API_URL`/`KV_REST_API_TOKEN`)
+as a fallback tier and a non-persistent local JSON file below that, behind a single
+JSON document (`api/_lib/store.js`). Admin auth is a shared `ADMIN_PASSWORD` + HttpOnly
+cookie session, with optional email-code 2FA (`ADMIN_2FA_EMAIL`, fails closed if Resend
+is misconfigured) and a per-IP lockout after repeated failed passwords
+(`api/_lib/auth.js`, `api/_lib/rate-limit.js` — scoped per client IP so a remote
+attacker locks out their own bucket, not Joey's; the public form endpoints share the
+same rate-limit module). Link tokens are hashed for validation and separately
+encrypted at rest so the admin can re-display an already-issued link
+(`api/_lib/tokens.js`, `api/_lib/crypto.js`). See the "Rental Verification & Invoicing
+module" section in `README.md` for env vars and route details.
 
 **Invoices** get a real PDF, not just JSON. `/admin/invoices` lists every invoice
 (with an archived filter); `/admin/invoices/:id` adds a "Download PDF" button
@@ -102,10 +105,10 @@ raw-data backup, not something to hand to a property manager.
 functions** (`api/admin/[...route].js`, `api/forms/[...route].js`) dispatching to
 handlers under `api/_lib/handlers/` — not one file per endpoint. This exists solely
 to stay under Vercel Hobby's 12-Serverless-Functions-per-deployment cap (the module
-has 18 logical endpoints; per-file would blow the budget instantly and fail the
-whole deployment with `exceeded_serverless_functions_per_deployment`). **Adding a new
-admin/forms endpoint means adding a handler module + a case in the router, never a
-new file directly under `api/admin/` or `api/forms/`.**
+has 26 logical endpoints across the two routers; per-file would blow the budget
+instantly and fail the whole deployment with `exceeded_serverless_functions_per_deployment`).
+**Adding a new admin/forms endpoint means adding a handler module + a case in the
+router, never a new file directly under `api/admin/` or `api/forms/`.**
 
 **Listing Intake** is the module's third document type (after verifications and
 invoices): `/admin/listings*` pages, tokenized `/forms/listing-intake/:token` client
@@ -115,6 +118,23 @@ router-dispatch pattern (`listings-list`, `listing-detail`, `listing-client-link
 `listing-client-email`, `listing-approve`, `listing-reminder`, `listing-token`,
 `submit-listing`). It stores under `db.listings` in the same single JSON document —
 handlers call `ensureListings(db)` because the production document predates the key.
+
+**CDA (Commission Disbursement Authorization)** is the fourth document type, same
+recipe: `/admin/cdas*` pages, tokenized `/forms/cda/:token` payee confirmation form,
+a single flat checklist (signed CDA + W-9, no sale/lease branches). Model lives in
+`api/_lib/cda.js`; handlers are `cdas-list`, `cda-detail`, `cda-client-link`,
+`cda-client-email`, `cda-approve`, `cda-reminder`, `cda-token`, `submit-cda`. Stores
+under `db.cdas` via `ensureCdas(db)`. Its one real difference from Listing Intake:
+`POST /admin/cdas` accepts an optional `sourceInvoiceId` and prefills client/property/
+commission fields from that invoice via `buildCdaDraft()` (mirrors `buildInvoiceDraft`
+in `invoice.js`, which now exports `AGENT_NAME`/`TREC_NUMBER` so `cda.js` doesn't
+hardcode a third copy). **Deliberately does not collect bank routing/account numbers
+or a plaintext SSN/EIN** — the payee form only captures identity, contact, a payment-
+method *preference* (ACH vs. check), and the two document uploads; matches the
+existing `invoice.js` convention of directing payees to contact Joey directly to
+arrange ACH details rather than typing them into a web form. If that changes later,
+treat it as a deliberate security-reviewed decision, not a default to reintroduce
+casually.
 
 **Both routers parse the route segments and querystring from `req.url` directly —
 they do NOT read `req.query.route`.** On this project's zero-config (frameworkless)

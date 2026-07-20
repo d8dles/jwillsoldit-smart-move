@@ -36,6 +36,12 @@ import listingClientLinkHandler from '../_lib/handlers/listing-client-link.js';
 import listingClientEmailHandler from '../_lib/handlers/listing-client-email.js';
 import listingApproveHandler from '../_lib/handlers/listing-approve.js';
 import listingReminderHandler from '../_lib/handlers/listing-reminder.js';
+import cdasListHandler from '../_lib/handlers/cdas-list.js';
+import cdaDetailHandler from '../_lib/handlers/cda-detail.js';
+import cdaClientLinkHandler from '../_lib/handlers/cda-client-link.js';
+import cdaClientEmailHandler from '../_lib/handlers/cda-client-email.js';
+import cdaApproveHandler from '../_lib/handlers/cda-approve.js';
+import cdaReminderHandler from '../_lib/handlers/cda-reminder.js';
 import inventoryListHandler from '../_lib/handlers/inventory-list.js';
 import inventoryDetailHandler from '../_lib/handlers/inventory-detail.js';
 
@@ -84,6 +90,7 @@ export default async function handler(req, res) {
     if (a === 'verify-2fa') return verify2faHandler(req, res);
     if (a === 'verifications') return verificationsListHandler(req, res);
     if (a === 'listings') return listingsListHandler(req, res);
+    if (a === 'cdas') return cdasListHandler(req, res);
     if (a === 'inventory') return inventoryListHandler(req, res);
     if (a === 'invoices') return invoicesListHandler(req, res);
     return notFound(res);
@@ -111,6 +118,17 @@ export default async function handler(req, res) {
     if (c === 'client-email') return listingClientEmailHandler(req, res);
     if (c === 'approve') return listingApproveHandler(req, res);
     if (c === 'reminder') return listingReminderHandler(req, res);
+    return notFound(res);
+  }
+
+  // cdas/:id[/action]
+  if (a === 'cdas' && b) {
+    req.query.id = b;
+    if (seg.length === 2) return cdaDetailHandler(req, res);
+    if (c === 'client-link') return cdaClientLinkHandler(req, res);
+    if (c === 'client-email') return cdaClientEmailHandler(req, res);
+    if (c === 'approve') return cdaApproveHandler(req, res);
+    if (c === 'reminder') return cdaReminderHandler(req, res);
     return notFound(res);
   }
 

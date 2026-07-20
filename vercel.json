@@ -10,11 +10,15 @@
     { "source": "/admin/listings", "destination": "/admin/listings-list.html" },
     { "source": "/admin/listings/new", "destination": "/admin/listings-new.html" },
     { "source": "/admin/listings/:id", "destination": "/admin/listing-detail.html" },
+    { "source": "/admin/cdas", "destination": "/admin/cdas-list.html" },
+    { "source": "/admin/cdas/new", "destination": "/admin/cdas-new.html" },
+    { "source": "/admin/cdas/:id", "destination": "/admin/cda-detail.html" },
     { "source": "/admin/inventory", "destination": "/admin/inventory-list.html" },
     { "source": "/admin/inventory/new", "destination": "/admin/inventory-new.html" },
     { "source": "/admin/inventory/:id", "destination": "/admin/inventory-detail.html" },
     { "source": "/forms/client-verification/:token", "destination": "/forms/client-verification.html" },
     { "source": "/forms/property-verification/:token", "destination": "/forms/property-verification.html" },
-    { "source": "/forms/listing-intake/:token", "destination": "/forms/listing-intake.html" }
+    { "source": "/forms/listing-intake/:token", "destination": "/forms/listing-intake.html" },
+    { "source": "/forms/cda/:token", "destination": "/forms/cda.html" }
   ]
 }

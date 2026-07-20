@@ -2,8 +2,10 @@
 // submissions, matching the CRG locator invoicing template fields exactly,
 // plus the client/PM submission comparison used to highlight mismatches.
 
-const AGENT_NAME = 'Joey Williams';
-const TREC_NUMBER = '0702090';
+// Exported so cda.js can reuse the same constants rather than hardcoding a
+// third copy -- keep this file as the one place these are defined.
+export const AGENT_NAME = 'Joey Williams';
+export const TREC_NUMBER = '0702090';
 
 function num(value) {
   if (value === '' || value == null) return NaN;

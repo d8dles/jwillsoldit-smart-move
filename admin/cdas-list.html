@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Listings | JWillSoldIt Admin</title>
+<title>CDAs | JWillSoldIt Admin</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,16 +13,15 @@
 <link rel="stylesheet" href="/assets/css/base.css">
 <link rel="stylesheet" href="/assets/css/admin.css">
 </head>
-<body class="admin-body" data-page="listings">
+<body class="admin-body" data-page="cdas">
 <header class="admin-topbar">
-  <a class="admin-brand" href="https://www.jwillsoldit.com/"><span class="jw-logo">JWillSoldIt</span><span class="tag">Listings</span></a>
+  <a class="admin-brand" href="https://www.jwillsoldit.com/"><span class="jw-logo">JWillSoldIt</span><span class="tag">CDAs</span></a>
   <nav class="admin-nav">
     <a href="/admin/verifications" data-nav="list">Verifications</a>
     <a href="/admin/invoices" data-nav="invoices">Invoices</a>
     <a href="/admin/listings" data-nav="listings">Listings</a>
     <a href="/admin/cdas" data-nav="cdas">CDAs</a>
     <a href="/admin/cdas/new" data-nav="cdas-new">New CDA</a>
-    <a href="/admin/listings/new" data-nav="listings-new">New Listing</a>
     <a href="/admin/inventory" data-nav="inventory">Public Inventory</a>
     <button class="link-btn" id="admin-logout" type="button">Log Out</button>
   </nav>
@@ -31,21 +30,21 @@
 <main class="admin-shell">
   <div class="admin-header-row">
     <div>
-      <div class="admin-kicker">Listing Intake</div>
-      <h1 class="admin-h1">Listing Files</h1>
-      <p class="admin-sub">Every sale and lease listing intake, its checklist status, and what's still outstanding.</p>
+      <div class="admin-kicker">Commission Disbursement</div>
+      <h1 class="admin-h1">CDA Files</h1>
+      <p class="admin-sub">Every commission disbursement authorization, its status, and what's still outstanding from the payee.</p>
     </div>
-    <a href="/admin/listings/new" class="admin-btn primary">+ New Listing</a>
+    <a href="/admin/cdas/new" class="admin-btn primary">+ New CDA</a>
   </div>
 
   <div class="admin-card" style="padding:0;overflow-x:auto;">
-    <div id="list-loading" class="empty-state">Loading listing files…</div>
+    <div id="list-loading" class="empty-state">Loading CDA files…</div>
     <table class="admin-table" id="list-table" style="display:none;">
       <thead>
         <tr>
-          <th>Client</th>
-          <th>Property</th>
-          <th>Type</th>
+          <th>Client / Property</th>
+          <th>Payee</th>
+          <th>Amount</th>
           <th>Status</th>
           <th>Outstanding</th>
           <th>Updated</th>
@@ -54,13 +53,13 @@
       <tbody id="list-body"></tbody>
     </table>
     <div id="list-empty" class="empty-state" style="display:none;">
-      No listing files yet. <a href="/admin/listings/new">Create the first one</a>.
+      No CDA files yet. <a href="/admin/cdas/new">Create the first one</a>.
     </div>
   </div>
 </main>
 
 <script src="/assets/js/admin-shell.js"></script>
-<script src="/assets/js/admin-listings-list.js"></script>
+<script src="/assets/js/admin-cdas-list.js"></script>
 <script src="/assets/js/brand-footer.js"></script>
 </body>
 </html>
