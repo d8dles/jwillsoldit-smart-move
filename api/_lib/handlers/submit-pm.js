@@ -1,7 +1,8 @@
-import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
+import { applyCors, handlePreflight, parseJsonBody, getClientIp } from '../http.js';
 import { withDB } from '../store.js';
 import { findByToken, isLinkValid } from '../tokens.js';
 import { logEvent, AUDIT_EVENTS } from '../audit.js';
+import { checkRateLimit } from '../rate-limit.js';
 
 const FIELDS = [
   'communityName', 'managementCompany', 'communityAddress', 'pmContactName', 'pmEmail',
@@ -40,7 +41,12 @@ export default async function handler(req, res) {
   const commissionBasis = COMMISSION_BASES.has(body.commissionBasis) ? body.commissionBasis : '';
   const invoiceMethod = INVOICE_METHODS.has(body.invoiceMethod) ? body.invoiceMethod : '';
 
+  const ip = getClientIp(req);
+
   const result = await withDB((db) => {
+    const rl = checkRateLimit(db, `submit-pm:${ip}`, { max: 8, windowMs: 10 * 60 * 1000, lockoutMs: 15 * 60 * 1000 });
+    if (!rl.allowed) return { error: 'rate_limited', retryAfterSeconds: rl.retryAfterSeconds };
+
     const found = findByToken(db, token, 'pm');
     if (!found) return { error: 'invalid' };
     const { verification, link } = found;
@@ -65,6 +71,10 @@ export default async function handler(req, res) {
     return { ok: true };
   });
 
+  if (result.error === 'rate_limited') {
+    const minutes = Math.max(1, Math.ceil(result.retryAfterSeconds / 60));
+    return res.status(429).json({ success: false, error: `Too many attempts. Try again in about ${minutes} minute${minutes === 1 ? '' : 's'}.` });
+  }
   if (result.error === 'invalid') return res.status(404).json({ success: false, error: 'This link is not valid' });
   if (result.error === 'revoked' || result.error === 'expired') {
     return res.status(410).json({ success: false, error: 'This link has expired. Please contact Joey Williams for a new one.' });

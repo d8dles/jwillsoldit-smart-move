@@ -1,8 +1,9 @@
-import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
+import { applyCors, handlePreflight, parseJsonBody, getClientIp } from '../http.js';
 import { withDB } from '../store.js';
 import { findByToken, isLinkValid } from '../tokens.js';
 import { logEvent, AUDIT_EVENTS } from '../audit.js';
 import { validateUploadDataUrl, UPLOAD_REJECTED_MESSAGE } from '../uploads.js';
+import { checkRateLimit } from '../rate-limit.js';
 
 const MAX_UPLOAD_DATA_URL_LENGTH = 4_500_000; // ~3.3MB binary after base64 overhead
 
@@ -56,7 +57,15 @@ export default async function handler(req, res) {
     };
   }
 
+  const ip = getClientIp(req);
+
   const result = await withDB((db) => {
+    // Stricter than the read-only token check: this writes a submission and
+    // sends email. One real client submits once; a handful of retries after
+    // a network hiccup or a typo'd field is normal, scripted spam is not.
+    const rl = checkRateLimit(db, `submit-client:${ip}`, { max: 8, windowMs: 10 * 60 * 1000, lockoutMs: 15 * 60 * 1000 });
+    if (!rl.allowed) return { error: 'rate_limited', retryAfterSeconds: rl.retryAfterSeconds };
+
     const found = findByToken(db, token, 'client');
     if (!found) return { error: 'invalid' };
     const { verification, link } = found;
@@ -84,6 +93,10 @@ export default async function handler(req, res) {
     return { ok: true };
   });
 
+  if (result.error === 'rate_limited') {
+    const minutes = Math.max(1, Math.ceil(result.retryAfterSeconds / 60));
+    return res.status(429).json({ success: false, error: `Too many attempts. Try again in about ${minutes} minute${minutes === 1 ? '' : 's'}.` });
+  }
   if (result.error === 'invalid') return res.status(404).json({ success: false, error: 'This link is not valid' });
   if (result.error === 'revoked' || result.error === 'expired') {
     return res.status(410).json({ success: false, error: 'This link has expired. Please contact Joey Williams for a new one.' });

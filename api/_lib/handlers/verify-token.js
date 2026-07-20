@@ -1,7 +1,8 @@
-import { applyCors, handlePreflight } from '../http.js';
+import { applyCors, handlePreflight, getClientIp } from '../http.js';
 import { withDB } from '../store.js';
 import { findByToken, isLinkValid } from '../tokens.js';
 import { logEvent, AUDIT_EVENTS } from '../audit.js';
+import { checkRateLimit } from '../rate-limit.js';
 
 export default async function handler(req, res) {
   applyCors(req, res);
@@ -15,7 +16,14 @@ export default async function handler(req, res) {
     return res.status(400).json({ success: false, error: 'role and token are required' });
   }
 
+  const ip = getClientIp(req);
+
   const result = await withDB((db) => {
+    // Generous limit — a read-only token check, and legitimate users reload
+    // or retry a mistyped token a few times. Still stops scripted guessing.
+    const rl = checkRateLimit(db, `verify-token:${ip}`, { max: 30, windowMs: 5 * 60 * 1000, lockoutMs: 10 * 60 * 1000 });
+    if (!rl.allowed) return { rateLimited: true, retryAfterSeconds: rl.retryAfterSeconds };
+
     const found = findByToken(db, token, role);
     if (!found) return { valid: false, reason: 'not_found' };
 
@@ -40,6 +48,11 @@ export default async function handler(req, res) {
       clientName: role === 'pm' ? verification.clientName || '' : undefined,
     };
   });
+
+  if (result.rateLimited) {
+    const minutes = Math.max(1, Math.ceil(result.retryAfterSeconds / 60));
+    return res.status(429).json({ success: false, error: `Too many requests. Try again in about ${minutes} minute${minutes === 1 ? '' : 's'}.` });
+  }
 
   if (!result.valid) {
     return res.status(200).json({ success: true, valid: false, reason: result.reason });
