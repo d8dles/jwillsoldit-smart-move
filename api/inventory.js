@@ -28,8 +28,9 @@ export default async function handler(req, res) {
 
   const db = await readDB();
   const records = filterPublicInventory(db, req.query || {});
+  const inventoryConfigured = Object.keys(ensureInventory(db)).length > 0;
   if (queryValue(req.query?.slug) && records.length === 0) {
     return res.status(404).json({ success: false, error: 'Not found' });
   }
-  return res.status(200).json({ success: true, inventory: records });
+  return res.status(200).json({ success: true, inventoryConfigured, inventory: records });
 }
