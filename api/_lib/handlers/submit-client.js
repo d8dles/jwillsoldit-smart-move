@@ -2,6 +2,7 @@ import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
 import { withDB } from '../store.js';
 import { findByToken, isLinkValid } from '../tokens.js';
 import { logEvent, AUDIT_EVENTS } from '../audit.js';
+import { validateUploadDataUrl, UPLOAD_REJECTED_MESSAGE } from '../uploads.js';
 
 const MAX_UPLOAD_DATA_URL_LENGTH = 4_500_000; // ~3.3MB binary after base64 overhead
 
@@ -42,6 +43,10 @@ export default async function handler(req, res) {
     const dataUrl = String(body.upload.dataUrl || '');
     if (dataUrl.length > MAX_UPLOAD_DATA_URL_LENGTH) {
       return res.status(413).json({ success: false, error: 'Uploaded file is too large (max ~3MB)' });
+    }
+    const validated = validateUploadDataUrl(dataUrl);
+    if (!validated.ok) {
+      return res.status(400).json({ success: false, error: UPLOAD_REJECTED_MESSAGE });
     }
     upload = {
       name: String(body.upload.name || 'upload').slice(0, 200),

@@ -3,6 +3,7 @@ import { requireAdmin } from '../auth.js';
 import { withDB } from '../store.js';
 import { newId } from '../ids.js';
 import { logEvent } from '../audit.js';
+import { validateUploadDataUrl, UPLOAD_REJECTED_MESSAGE } from '../uploads.js';
 
 const MAX_EVIDENCE_BYTES = 3 * 1024 * 1024;
 
@@ -28,6 +29,17 @@ export default async function handler(req, res) {
   }
   if (!Number.isFinite(size) || size <= 0 || size > MAX_EVIDENCE_BYTES) {
     return res.status(400).json({ success: false, error: 'Evidence file must be 3MB or smaller' });
+  }
+  // NOTE: the size gate above checks the client-reported `size` field, not
+  // dataUrl.length — a spoofed `size` doesn't bound what reaches this regex.
+  // The regex itself is linear (anchored, no nested quantifiers, no
+  // backtracking blowup), so that's a request-size/cost concern, not a
+  // ReDoS one, and this handler is admin-only. Left as-is; the size-field
+  // mismatch is a separate, already-tracked fix.
+  // `startsWith('data:')` alone lets `data:text/html,...` through, which is
+  // exactly what this rejects — see uploads.js.
+  if (!validateUploadDataUrl(dataUrl).ok) {
+    return res.status(400).json({ success: false, error: UPLOAD_REJECTED_MESSAGE });
   }
 
   const evidence = {

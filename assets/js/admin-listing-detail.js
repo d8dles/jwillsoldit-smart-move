@@ -117,7 +117,7 @@
         .join('');
       const uploads = Object.entries(s.uploads || {}).map(([key, u]) => `
         <li style="margin-bottom:4px;">
-          <a href="${u.dataUrl}" download="${AdminShell.escapeHtml(u.name)}">${AdminShell.escapeHtml(u.name)}</a>
+          <a href="${AdminShell.escapeHtml(u.dataUrl)}" download="${AdminShell.escapeHtml(u.name)}">${AdminShell.escapeHtml(u.name)}</a>
           <span class="muted">(${Math.round((u.size || 0) / 1024)}KB · ${AdminShell.escapeHtml(key)})</span>
         </li>`).join('');
       card.querySelector('#submission-body').innerHTML = `
