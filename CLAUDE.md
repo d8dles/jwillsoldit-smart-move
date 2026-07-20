@@ -133,10 +133,13 @@ bug is invisible to any test that doesn't exercise an actual Vercel deployment.
 ## Known sharp edges
 
 - **The front end has layered patch history** (the "V8/V9/V14" CSS patch blocks now live in
-  `assets/css/responsive.css`; ~900 lines of dead `FormLogic` stub code and a dead
-  `detectSmartFlags()` referencing renamed fields live in `assets/js/state.js`). A
-  duplicate patch block has re-broken a fixed row before. **Always run the harness after
-  editing any `index.html` / `assets/css` / `assets/js` file** — that is what it exists for.
+  `assets/css/responsive.css`). `assets/js/state.js`'s `FormLogic` object is the live state
+  engine for the whole funnel (`config.js`/`steps.js`/`app.js`/`validation.js`/`submit.js`
+  all call into it directly) — it is not dead code, don't remove it. The one part of it that
+  genuinely was dead, `detectSmartFlags()` (computed `flags`/`urgencyScore` that nothing
+  downstream ever read), was removed. A duplicate patch block has re-broken a fixed row
+  before. **Always run the harness after editing any `index.html` / `assets/css` /
+  `assets/js` file** — that is what it exists for.
 - The flow uses auto-advance timers *plus* always-visible Continue buttons as the safety
   net (the fix for the old C1 stranding bug). If you touch `scheduleAutoAdvance`,
   `triggerBlueprintRewind`, or the scroll handlers, re-run the C1 regression check.

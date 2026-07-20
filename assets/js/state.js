@@ -1,19 +1,18 @@
-// state.js — FormLogic model: state init, path defs, question sequencing, smart flags, field validation, submission-object shape. Extracted from index.html (src 3788-4439). Global (non-module). Load 1/6.
+// state.js — FormLogic model: state init, path defs, question sequencing, field validation, submission-object shape. Extracted from index.html (src 3788-4439). Global (non-module). Load 1/6.
 /* Inline FormLogic.js so this HTML works as a standalone preview file. */
 /**
  * Real Estate Intake Form Logic Module
  * Version: 1.0
- * Purpose: Core form state management, routing, conditional visibility, smart flags, and submission
+ * Purpose: Core form state management, routing, conditional visibility, and submission
  *
  * This module handles:
  * 1. Path routing (Q1 selection)
  * 2. Question sequencing (shared trunk + branch-specific)
  * 3. Conditional visibility (sub-questions, dynamic question counts)
- * 4. Smart flag detection (R1-R18)
- * 5. Progress bar calculation
- * 6. Submission data structure
- * 7. Lender link tracking (Buyer path)
- * 8. Sell+Buy auto-routing (smart logic)
+ * 4. Progress bar calculation
+ * 5. Submission data structure
+ * 6. Lender link tracking (Buyer path)
+ * 7. Sell+Buy auto-routing (smart logic)
  */
 
 const FormLogic = {
@@ -93,11 +92,7 @@ const FormLogic = {
       Q8_questionCategory: null, // "mortgage", "market", "investment", "process", "other"
       Q9_questionDetails: null,  // Free text
       Q10_callback: null        // "yes", "no", "text"
-    },
-
-    // Smart flags and scoring
-    flags: [],           // Array of flag strings (R1-R18)
-    urgencyScore: 0      // 0-10 scale
+    }
   },
 
   // ============================================================================
@@ -228,9 +223,7 @@ const FormLogic = {
         Q8_questionCategory: null,
         Q9_questionDetails: null,
         Q10_callback: null
-      },
-      flags: [],
-      urgencyScore: 0
+      }
     };
   },
 
@@ -278,124 +271,6 @@ const FormLogic = {
   },
 
   // ============================================================================
-  // 7. SMART FLAGS (R1-R18)
-  // ============================================================================
-
-  /**
-   * Detects all smart flags and calculates urgency score
-   * Called before submission
-   */
-  detectSmartFlags() {
-    this.formData.flags = [];
-    let urgencyScore = 0;
-
-    // R1: Buyer + not preapproved
-    if (this.formData.path === "buyer" &&
-        this.formData.pathData.Q8_preApproval !== "pre-approved") {
-      this.formData.flags.push("needs-preapproval");
-      urgencyScore += 2;
-    }
-
-    // R2: Buyer + preapproved (HOT)
-    if (this.formData.path === "buyer" &&
-        this.formData.pathData.Q8_preApproval === "pre-approved") {
-      this.formData.flags.push("preapproved-buyer");
-      urgencyScore += 9;
-    }
-
-    // R3: Buyer + cash (HOT)
-    if (this.formData.path === "buyer" &&
-        this.formData.pathData.Q8_preApproval === "cash") {
-      this.formData.flags.push("cash-buyer");
-      urgencyScore += 10;
-    }
-
-    // R4: Buyer owns home + will sell first (reroute to SELL+BUY)
-    if (this.formData.path === "buyer" &&
-        this.formData.trunk.Q6_homeStatus === "own" &&
-        this.formData.trunk.Q6_sellFirstRequired === "yes_must_sell") {
-      // This triggers auto-routing, flag it
-      this.formData.flags.push("needs-sell-first");
-      urgencyScore += 5;
-    }
-
-    // R6: Seller + ASAP timeline
-    if (this.formData.path === "seller" &&
-        this.formData.pathData.Q9_motivatedTimeline === "asap") {
-      this.formData.flags.push("urgent-sale");
-      urgencyScore += 9;
-    }
-
-    // R7: Renter + has pets
-    if (this.formData.path === "renter" &&
-        this.formData.trunk.Q7_pets === "yes") {
-      this.formData.flags.push("has-pets");
-      urgencyScore += 3;
-    }
-
-    // R8: Renter + self-employed
-    if (this.formData.path === "renter" &&
-        this.formData.pathData.Q14_employment === "self_employed") {
-      this.formData.flags.push("future-buyer-investor");
-      urgencyScore += 6;
-    }
-
-    // R9: ANY + existing agent (from Q7 context - adapt to your field name)
-    // NOTE: Adjust field name if different in your form
-    if (this.formData.trunk.Q7_existingAgent === "yes") {
-      this.formData.flags.push("existing-agent");
-      urgencyScore += 2;
-    }
-
-    // R10: Commercial + >25K SF
-    if (this.formData.path === "commercial" &&
-        (this.formData.pathData.Q9_squareFootage === "25k-50k" ||
-         this.formData.pathData.Q9_squareFootage === "50k+")) {
-      this.formData.flags.push("commercial-large");
-      urgencyScore += 7;
-    }
-
-    // R11: Timeline pressure (any path, ASAP)
-    if (this.formData.trunk.Q2_timeline === "within_month") {
-      this.formData.flags.push("timeline-urgent");
-      urgencyScore += 4;
-    }
-
-    // R12: Budget high-end (buyer)
-    if (this.formData.path === "buyer" &&
-        (this.formData.trunk.Q4_budget === "1m-2m" ||
-         this.formData.trunk.Q4_budget === "2m+")) {
-      this.formData.flags.push("high-budget-buyer");
-      urgencyScore += 8;
-    }
-
-    // R13: Lender link NOT clicked (buyer at not_yet stage)
-    if (this.formData.path === "buyer" &&
-        this.formData.pathData.Q8_preApproval === "not_yet" &&
-        !this.formData.pathData.Q9_lenderLinkClicked) {
-      this.formData.flags.push("lender-link-not-clicked");
-      urgencyScore += 1;
-    }
-
-    // R14: Sell+Buy path (complex transaction)
-    if (this.formData.path === "sellbuy") {
-      this.formData.flags.push("sell-buy-bridge");
-      urgencyScore += 7;
-    }
-
-    // Cap urgency score at 10
-    this.formData.urgencyScore = Math.min(urgencyScore, 10);
-
-    console.log(`[FormLogic] Detected flags:`, this.formData.flags);
-    console.log(`[FormLogic] Urgency score:`, this.formData.urgencyScore);
-
-    return {
-      flags: this.formData.flags,
-      urgencyScore: this.formData.urgencyScore
-    };
-  },
-
-  // ============================================================================
   // 10. SUBMISSION DATA STRUCTURE
   // ============================================================================
 
@@ -404,9 +279,6 @@ const FormLogic = {
    */
   buildSubmissionObject() {
     this.formData.submissionTime = new Date().toISOString();
-
-    // Detect smart flags
-    this.detectSmartFlags();
 
     const submission = {
       // Metadata
@@ -436,10 +308,6 @@ const FormLogic = {
 
       // Path-specific data (subset based on path)
       pathData: this.buildPathDataForSubmission(),
-
-      // Smart flags and scoring
-      flags: this.formData.flags,
-      urgencyScore: this.formData.urgencyScore,
 
       // Lender link tracking (buyer only)
       lenderLinkClicked: this.formData.pathData.Q9_lenderLinkClicked
