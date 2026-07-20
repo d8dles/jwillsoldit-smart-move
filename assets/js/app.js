@@ -10,12 +10,50 @@
 
     function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
 
+    // Keep the interaction thresholds tied to raw scroll while the visual layer
+    // follows with a little mass. This avoids making the intake timing sluggish.
+    let displayP = 0;
+    let displayBlueprint = 0;
+    let targetP = 0;
+    let targetBlueprint = 0;
+    let heroRunning = false;
+
+    function applyHeroProgress() {
+      hero.style.setProperty('--intro-progress', displayP.toFixed(3));
+      hero.style.setProperty('--blueprint-alpha', displayBlueprint.toFixed(3));
+    }
+
+    function tickHeroProgress() {
+      displayP += (targetP - displayP) * 0.14;
+      displayBlueprint += (targetBlueprint - displayBlueprint) * 0.14;
+      if (Math.abs(targetP - displayP) < 0.001) displayP = targetP;
+      if (Math.abs(targetBlueprint - displayBlueprint) < 0.001) displayBlueprint = targetBlueprint;
+      applyHeroProgress();
+
+      if (displayP !== targetP || displayBlueprint !== targetBlueprint) {
+        requestAnimationFrame(tickHeroProgress);
+      } else {
+        heroRunning = false;
+      }
+    }
+
+    function runHeroProgress() {
+      if (heroRunning || reduceMotion) return;
+      heroRunning = true;
+      requestAnimationFrame(tickHeroProgress);
+    }
+
     function completeHeroHandoff(reason = 'scroll') {
       if (autoAdvanced || currentStep !== 0) return;
       autoAdvanced = true;
       document.body.classList.remove('hero-ready-to-snap');
-      hero.style.setProperty('--intro-progress', '1');
-      hero.style.setProperty('--blueprint-alpha', '1');
+      // Finish toward the settled state through the follower. Do not overwrite
+      // displayP here: that caused a visible jump at the 0.68 handoff threshold.
+      if (!reduceMotion) {
+        targetP = 1;
+        targetBlueprint = 1;
+        runHeroProgress();
+      }
       goTo(1, { behavior: 'smooth' });
       setTimeout(() => { autoAdvanced = false; }, 700);
     }
@@ -24,8 +62,9 @@
       if (!hero.classList.contains('visible') || currentStep !== 0) return;
 
       if (reduceMotion) {
-        hero.style.setProperty('--intro-progress', '0');
-        hero.style.setProperty('--blueprint-alpha', '0');
+        displayP = targetP = 0;
+        displayBlueprint = targetBlueprint = 0;
+        applyHeroProgress();
         return;
       }
 
@@ -36,8 +75,9 @@
       const p = clamp(raw / 0.72, 0, 1);
       const blueprint = clamp((p - 0.12) / 0.48, 0, 1);
 
-      hero.style.setProperty('--intro-progress', p.toFixed(3));
-      hero.style.setProperty('--blueprint-alpha', blueprint.toFixed(3));
+      targetP = p;
+      targetBlueprint = blueprint;
+      runHeroProgress();
       document.body.classList.toggle('hero-ready-to-snap', p >= 0.48 && p < 0.9);
 
       clearTimeout(heroSnapTimer);
@@ -445,4 +485,3 @@
   setTimeout(() => {
     if (typeof updateAreaSelectionUI === 'function') updateAreaSelectionUI();
   }, 300);
-

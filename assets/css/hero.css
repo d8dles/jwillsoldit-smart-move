@@ -113,7 +113,7 @@
   }
 
   .brand-lockup {
-    transform: translate3d(0, calc(var(--intro-progress) * -7vh), 0) scale(calc(1 + var(--intro-progress) * 0.55));
+    transform: translate3d(0, calc(var(--intro-progress) * 8vh), calc(var(--intro-progress) * -220px)) scale(calc(1 - var(--intro-progress) * 0.08));
     filter: blur(calc(var(--intro-progress) * 0.45px));
     transition: filter 0.08s linear;
     will-change: transform, filter;
@@ -274,14 +274,14 @@
   }
 
   .open-headline {
-    transform: translateY(calc(var(--intro-progress) * -24px));
+    transform: translateY(0);
     opacity: calc(1 - var(--intro-progress) * 0.72);
     filter: blur(calc(var(--intro-progress) * 1.4px));
     transition: opacity 0.08s linear, filter 0.08s linear;
   }
 
   .open-intro {
-    transform: translateY(calc(var(--intro-progress) * -18px));
+    transform: translateY(0);
     opacity: calc(1 - var(--intro-progress) * 0.92);
     filter: blur(calc(var(--intro-progress) * 1.8px));
     transition: opacity 0.08s linear, filter 0.08s linear;
