@@ -286,6 +286,31 @@ body.admin-body {
   color: var(--ink);
 }
 
+.admin-checkbox-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--mid);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-checkbox-inline input {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--forest);
+}
+
+.inventory-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 /* ── Privacy notice ──────────────────────────────────── */
 .admin-privacy-notice {
   background: var(--forest);
@@ -316,6 +341,15 @@ body.admin-body {
 }
 
 .badge.status-new { background: var(--paper-2); color: var(--mid); }
+.badge.status-draft { background: var(--paper-2); color: var(--mid); }
+.badge.status-coming_soon { background: #FFF3E0; color: var(--ember); }
+.badge.status-available { background: #E7F0EA; color: var(--forest); }
+.badge.status-pending { background: #FCEFE7; color: var(--copper); }
+.badge.status-rented,
+.badge.status-booked,
+.badge.status-sold { background: var(--forest); color: var(--pure); }
+.badge.status-off_market,
+.badge.status-archived { background: #FCE7E5; color: var(--red); }
 .badge.status-client_submitted,
 .badge.status-pm_submitted { background: #FCEFE7; color: var(--copper); }
 .badge.status-both_submitted { background: #FFF3E0; color: var(--ember); }

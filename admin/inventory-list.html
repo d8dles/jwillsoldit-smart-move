@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Public Inventory | JWillSoldIt Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&family=Libre+Franklin:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/admin.css">
+</head>
+<body class="admin-body" data-page="inventory">
+<header class="admin-topbar">
+  <a class="admin-brand" href="https://www.jwillsoldit.com/"><span class="jw-logo">JWillSoldIt</span><span class="tag">Inventory</span></a>
+  <nav class="admin-nav">
+    <a href="/admin/verifications" data-nav="list">Verifications</a>
+    <a href="/admin/invoices" data-nav="invoices">Invoices</a>
+    <a href="/admin/listings" data-nav="listings">Listing Files</a>
+    <a href="/admin/inventory" data-nav="inventory">Public Inventory</a>
+    <a href="/admin/inventory/new" data-nav="inventory-new">New Inventory</a>
+    <button class="link-btn" id="admin-logout" type="button">Log Out</button>
+  </nav>
+</header>
+
+<main class="admin-shell">
+  <div class="admin-header-row">
+    <div>
+      <div class="admin-kicker">JWILLSOLDIT Public Surface</div>
+      <h1 class="admin-h1">Public Inventory</h1>
+      <p class="admin-sub">Control what appears on the listings pages. This is separate from private listing intake files.</p>
+    </div>
+    <a href="/admin/inventory/new" class="admin-btn primary">+ New Public Inventory</a>
+  </div>
+
+  <div class="admin-card inventory-toolbar">
+    <label class="admin-checkbox-inline"><input type="checkbox" id="include-archived"> Include archived properties</label>
+    <button class="admin-btn ghost small" type="button" id="refresh-inventory">Refresh</button>
+  </div>
+
+  <div class="admin-card" style="padding:0;overflow-x:auto;">
+    <div id="inventory-loading" class="empty-state">Loading public inventory…</div>
+    <table class="admin-table" id="inventory-table" style="display:none;">
+      <thead>
+        <tr><th>Property</th><th>Offering</th><th>Status</th><th>Published</th><th>Updated</th><th>Archive</th></tr>
+      </thead>
+      <tbody id="inventory-body"></tbody>
+    </table>
+    <div id="inventory-empty" class="empty-state" style="display:none;">No public inventory records yet. <a href="/admin/inventory/new">Create the first one</a>.</div>
+  </div>
+</main>
+
+<script src="/assets/js/admin-shell.js"></script>
+<script src="/assets/js/admin-inventory-list.js"></script>
+<script src="/assets/js/brand-footer.js"></script>
+</body>
+</html>
