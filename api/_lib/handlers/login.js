@@ -1,4 +1,4 @@
-import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
+import { applyCors, handlePreflight, parseJsonBody, getClientIp } from '../http.js';
 import {
   checkPassword,
   createAdminSession,
@@ -48,16 +48,18 @@ export default async function handler(req, res) {
   const body = parseJsonBody(req);
   if (body == null) return res.status(400).json({ success: false, error: 'Invalid JSON' });
 
+  const ip = getClientIp(req);
+
   const result = await withDB((db) => {
-    const lock = isLoginLocked(db);
+    const lock = isLoginLocked(db, ip);
     if (lock.locked) return { locked: true, retryAfterSeconds: lock.retryAfterSeconds };
 
     if (!checkPassword(body.password)) {
-      recordLoginFailure(db);
+      recordLoginFailure(db, ip);
       return { badPassword: true };
     }
 
-    clearLoginFailures(db);
+    clearLoginFailures(db, ip);
     if (!is2faEnabled()) return { direct: true };
     return { challenge: createLoginChallenge(db) };
   });

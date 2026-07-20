@@ -29,6 +29,22 @@ export function handlePreflight(req, res) {
   return false;
 }
 
+// Best-effort client IP, for rate-limiting only — never for anything
+// security-load-bearing on its own (that's what auth.js sessions are for).
+// On Vercel, the platform terminates the connection at its edge and sets
+// x-forwarded-for / x-real-ip itself from the true socket address; a client
+// cannot inject its own value into either header from outside Vercel's edge.
+// Locally (`vercel dev`, bare `node`), neither header is present, so every
+// request falls into the same 'local' bucket — fine for dev, never hit in
+// production traffic.
+export function getClientIp(req) {
+  const real = req.headers?.['x-real-ip'];
+  if (typeof real === 'string' && real) return real;
+  const forwarded = req.headers?.['x-forwarded-for'];
+  if (typeof forwarded === 'string' && forwarded) return forwarded.split(',')[0].trim();
+  return 'local';
+}
+
 export function escapeHtml(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;')

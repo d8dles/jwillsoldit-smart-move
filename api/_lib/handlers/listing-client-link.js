@@ -1,6 +1,6 @@
 import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
 import { requireAdmin } from '../auth.js';
-import { withDB } from '../store.js';
+import { withDB, getRecord } from '../store.js';
 import { makeLinkRecord } from '../tokens.js';
 import { ensureListings } from '../listing.js';
 import { logEvent, AUDIT_EVENTS } from '../audit.js';
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
   const { raw, record } = makeLinkRecord(ttlDays);
 
   const result = await withDB((db) => {
-    const l = ensureListings(db)[id];
+    const l = getRecord(ensureListings(db), id);
     if (!l) return null;
     l.clientLink = record;
     l.updatedAt = new Date().toISOString();

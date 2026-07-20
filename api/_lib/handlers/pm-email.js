@@ -1,6 +1,6 @@
 import { applyCors, handlePreflight, parseJsonBody, escapeHtml } from '../http.js';
 import { requireAdmin } from '../auth.js';
-import { withDB } from '../store.js';
+import { withDB, getRecord } from '../store.js';
 import { makeLinkRecord } from '../tokens.js';
 import { decryptToken } from '../crypto.js';
 import { logEvent, AUDIT_EVENTS } from '../audit.js';
@@ -68,7 +68,7 @@ export default async function handler(req, res) {
   if (!recipient) return res.status(400).json({ success: false, error: 'Property email is required' });
 
   const result = await withDB((db) => {
-    const v = db.verifications[id];
+    const v = getRecord(db.verifications, id);
     if (!v) return null;
     if (!v.pmLink) v.pmLink = makeLinkRecord().record;
     v.updatedAt = new Date().toISOString();
@@ -93,7 +93,7 @@ export default async function handler(req, res) {
 
   if (emailResult.sent) {
     await withDB((db) => {
-      const v = db.verifications[id];
+      const v = getRecord(db.verifications, id);
       if (!v) return;
       if (!v.pmEmailStatus) v.pmEmailStatus = { to: recipient };
       v.pmEmailStatus.to = recipient;

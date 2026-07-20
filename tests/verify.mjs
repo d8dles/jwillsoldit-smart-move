@@ -262,6 +262,69 @@ async function runRegression(browser) {
   return { advancedTo, bodyClass, recovered };
 }
 
+async function runHeroMotionChecks(browser) {
+  const { context, page, pageErrors } = await newFlowPage(browser, 1440);
+
+  const motion = await page.evaluate(() => {
+    const hero = document.getElementById('section-open');
+    hero.style.setProperty('--intro-progress', '1');
+    const lockup = document.querySelector('#section-open .brand-lockup');
+    const headline = document.querySelector('#section-open .open-headline');
+    const intro = document.querySelector('#section-open .open-intro');
+    const dot = document.querySelector('#section-open .brand-dot');
+    const matrix = new DOMMatrix(getComputedStyle(lockup).transform);
+    const dotStyle = getComputedStyle(dot);
+    return {
+      y: matrix.m42,
+      z: matrix.m43,
+      scaleX: Math.hypot(matrix.m11, matrix.m12, matrix.m13),
+      headlineTransform: getComputedStyle(headline).transform,
+      introTransform: getComputedStyle(intro).transform,
+      dotWidth: parseFloat(dotStyle.width),
+      dotHeight: parseFloat(dotStyle.height),
+      dotRadius: parseFloat(dotStyle.borderTopLeftRadius),
+      dotColor: dotStyle.backgroundColor,
+    };
+  });
+
+  check(motion.y > 0, `hero wordmark must move down; computed Y=${motion.y}`);
+  check(motion.z < 0, `hero wordmark must recede; computed Z=${motion.z}`);
+  check(motion.scaleX <= 1, `hero wordmark must not grow; computed scale=${motion.scaleX}`);
+  check(motion.headlineTransform === 'none' || motion.headlineTransform === 'matrix(1, 0, 0, 1, 0, 0)', `headline moves on scroll: ${motion.headlineTransform}`);
+  check(motion.introTransform === 'none' || motion.introTransform === 'matrix(1, 0, 0, 1, 0, 0)', `intro moves on scroll: ${motion.introTransform}`);
+  check(motion.dotWidth > 0 && Math.abs(motion.dotWidth - motion.dotHeight) < 0.1 && motion.dotRadius >= motion.dotWidth / 2, `orange dot is not circular: ${JSON.stringify(motion)}`);
+  check(motion.dotColor !== 'rgba(0, 0, 0, 0)', 'orange dot has no visible background color');
+
+  // The handoff may change sections immediately, but visual progress must finish
+  // through the follower instead of being assigned directly to 1.
+  await page.evaluate(() => {
+    const hero = document.getElementById('section-open');
+    hero.style.setProperty('--intro-progress', '0');
+    document.querySelector('#section-open .scroll-cue')?.click();
+  });
+  const handoffProgress = parseFloat(await page.evaluate(() => getComputedStyle(document.getElementById('section-open')).getPropertyValue('--intro-progress'))) || 0;
+  check(handoffProgress < 0.95, `hero handoff snapped visual progress to ${handoffProgress}`);
+  check(pageErrors.length === 0, `hero motion page errors: ${pageErrors.join('; ')}`);
+  await context.close();
+
+  const reducedContext = await browser.newContext({
+    viewport: { width: 1440, height: VIEWPORT_HEIGHT },
+    reducedMotion: 'reduce',
+  });
+  const reducedPage = await reducedContext.newPage();
+  await reducedPage.goto(`${BASE_URL}/`, { waitUntil: 'load' });
+  await reducedPage.waitForFunction(() => typeof currentStep !== 'undefined');
+  await reducedPage.evaluate(() => {
+    window.scrollTo(0, 300);
+    window.dispatchEvent(new Event('scroll'));
+  });
+  const reducedProgress = parseFloat(await reducedPage.evaluate(() => getComputedStyle(document.getElementById('section-open')).getPropertyValue('--intro-progress'))) || 0;
+  check(reducedProgress === 0, `reduced-motion progress must remain 0; got ${reducedProgress}`);
+  await reducedContext.close();
+
+  return { ...motion, handoffProgress, reducedProgress };
+}
+
 // ── Main ─────────────────────────────────────────────────────────────────
 
 let BASE_URL;
@@ -277,9 +340,11 @@ async function main() {
     browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
   }
 
-  const results = { e2e: [], regression: null, viewports: [], tracking: null, submissions: null };
+  const results = { e2e: [], regression: null, heroMotion: null, viewports: [], tracking: null, submissions: null };
 
   try {
+    results.heroMotion = await runHeroMotionChecks(browser);
+
     // 1. Six paths end-to-end at 390. Load rent with tracking params so the
     //    tracking check rides the real flow.
     for (const p of PATHS) {
@@ -399,6 +464,9 @@ function printSummary(r) {
 
   console.log('\nRegression (C1 scroll-up recovery):');
   console.log(`  advancedTo=${r.regression.advancedTo}  bodyClass="${r.regression.bodyClass}"  recovered=${r.regression.recovered}`);
+
+  console.log('\nHero motion:');
+  console.log(`  y=${r.heroMotion.y.toFixed(2)}  z=${r.heroMotion.z.toFixed(2)}  scale=${r.heroMotion.scaleX.toFixed(3)}  handoffProgress=${r.heroMotion.handoffProgress}  reducedProgress=${r.heroMotion.reducedProgress}`);
 
   console.log('\nOverflow by viewport (full flow):');
   for (const v of r.viewports) {

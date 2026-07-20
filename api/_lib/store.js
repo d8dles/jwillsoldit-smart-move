@@ -175,3 +175,18 @@ export async function withDB(mutator) {
 export function isDurableBackendConfigured() {
   return hasSupabase() || hasKV();
 }
+
+// Every record collection (verifications, invoices, listings) is a plain
+// object keyed by an id that ultimately comes from a URL path segment. A
+// bare `collection[id]` lookup resolves `__proto__`/`constructor`/`prototype`
+// via the prototype chain instead of failing closed, and every handler here
+// then does `record.someField = ...` on whatever came back — which pollutes
+// Object.prototype for the life of the warm serverless instance rather than
+// touching the collection at all. hasOwnProperty is the one check that
+// correctly excludes inherited names while still allowing a real record that
+// happened to be named, say, "toString" (newId()-generated ids never are,
+// but this doesn't rely on that).
+export function getRecord(collection, id) {
+  if (!collection || typeof id !== 'string' || !id) return undefined;
+  return Object.prototype.hasOwnProperty.call(collection, id) ? collection[id] : undefined;
+}

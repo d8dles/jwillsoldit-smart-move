@@ -1,6 +1,6 @@
 import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
 import { requireAdmin } from '../auth.js';
-import { withDB, readDB } from '../store.js';
+import { withDB, readDB, getRecord } from '../store.js';
 import { deriveStatus } from '../verification.js';
 import { compareSubmissions } from '../invoice.js';
 import { decryptToken } from '../crypto.js';
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     const db = await readDB();
-    const v = db.verifications[id];
+    const v = getRecord(db.verifications, id);
     if (!v) return res.status(404).json({ success: false, error: 'Not found' });
 
     return res.status(200).json({
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
 
     const editable = ['clientName', 'propertyName', 'propertyAddress', 'unitNumber', 'notes'];
     const result = await withDB((db) => {
-      const v = db.verifications[id];
+      const v = getRecord(db.verifications, id);
       if (!v) return null;
       for (const key of editable) {
         if (Object.prototype.hasOwnProperty.call(body, key)) {

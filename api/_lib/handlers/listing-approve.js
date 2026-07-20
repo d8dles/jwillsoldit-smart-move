@@ -1,6 +1,6 @@
 import { applyCors, handlePreflight } from '../http.js';
 import { requireAdmin } from '../auth.js';
-import { withDB } from '../store.js';
+import { withDB, getRecord } from '../store.js';
 import { ensureListings, deriveListingStatus } from '../listing.js';
 import { logEvent, AUDIT_EVENTS } from '../audit.js';
 
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   const { id } = req.query;
 
   const result = await withDB((db) => {
-    const l = ensureListings(db)[id];
+    const l = getRecord(ensureListings(db), id);
     if (!l) return { error: 'not_found' };
     if (l.approved) return { error: 'bad_state', listing: l };
 
