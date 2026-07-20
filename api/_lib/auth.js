@@ -1,14 +1,19 @@
 import crypto from 'crypto';
 import { newToken, newId, hashToken } from './ids.js';
 import { readDB, writeDB } from './store.js';
+import { checkRateLimit, clearRateLimit } from './rate-limit.js';
 
 const COOKIE_NAME = 'smadmin_session';
 const SESSION_TTL_HOURS = 12;
 
-// Login throttle: the admin password is a single shared secret, so throttle
-// globally (not per-IP — forwarded-for headers are spoofable and there is
-// exactly one legitimate user). After MAX_LOGIN_FAILURES wrong passwords
-// within LOCKOUT_WINDOW_MS, all logins are refused for LOCKOUT_MS.
+// Login throttle: the admin password is a single shared secret with exactly
+// one legitimate user, so this used to throttle globally rather than
+// per-IP. That meant anyone, from anywhere, could send MAX_LOGIN_FAILURES
+// wrong passwords and lock Joey out of his own admin for LOCKOUT_MS,
+// repeatably — a denial-of-service against the real user, not a defense.
+// Scoped per-IP via rate-limit.js instead: on Vercel the forwarded-IP
+// headers reflect the true connecting client (see http.js getClientIp), so
+// a remote attacker locks out their own bucket, not Joey's.
 const MAX_LOGIN_FAILURES = 5;
 const LOCKOUT_WINDOW_MS = 15 * 60 * 1000;
 const LOCKOUT_MS = 15 * 60 * 1000;
@@ -122,28 +127,34 @@ export function checkPassword(candidate) {
 // ── Login throttle ─────────────────────────────────────────
 // All three helpers mutate the db object in place; call inside withDB.
 
-export function isLoginLocked(db) {
-  const throttle = db.loginThrottle;
-  if (!throttle?.lockedUntil) return { locked: false };
-  const until = new Date(throttle.lockedUntil).getTime();
+function loginRateLimitKey(ip) {
+  return `login:${ip}`;
+}
+
+export function isLoginLocked(db, ip) {
+  const key = loginRateLimitKey(ip);
+  const bucket = db.rateLimits?.[key];
+  if (!bucket?.lockedUntil) return { locked: false };
+  const until = new Date(bucket.lockedUntil).getTime();
   if (until <= Date.now()) return { locked: false };
   return { locked: true, retryAfterSeconds: Math.ceil((until - Date.now()) / 1000) };
 }
 
-export function recordLoginFailure(db) {
-  if (!db.loginThrottle) db.loginThrottle = { failures: [], lockedUntil: null };
-  const now = Date.now();
-  db.loginThrottle.failures = (db.loginThrottle.failures || [])
-    .filter((t) => now - new Date(t).getTime() < LOCKOUT_WINDOW_MS);
-  db.loginThrottle.failures.push(new Date(now).toISOString());
-  if (db.loginThrottle.failures.length >= MAX_LOGIN_FAILURES) {
-    db.loginThrottle.lockedUntil = new Date(now + LOCKOUT_MS).toISOString();
-    db.loginThrottle.failures = [];
-  }
+export function recordLoginFailure(db, ip) {
+  // MAX_LOGIN_FAILURES wrong passwords from the same IP within
+  // LOCKOUT_WINDOW_MS locks that IP out for LOCKOUT_MS. checkRateLimit's
+  // "max" is the count that triggers the lockout on the next hit, so pass
+  // MAX_LOGIN_FAILURES - 1 to keep the existing "5th failure locks it"
+  // behavior exactly as before.
+  checkRateLimit(db, loginRateLimitKey(ip), {
+    max: MAX_LOGIN_FAILURES - 1,
+    windowMs: LOCKOUT_WINDOW_MS,
+    lockoutMs: LOCKOUT_MS,
+  });
 }
 
-export function clearLoginFailures(db) {
-  db.loginThrottle = { failures: [], lockedUntil: null };
+export function clearLoginFailures(db, ip) {
+  clearRateLimit(db, loginRateLimitKey(ip));
 }
 
 // ── 2FA email-code challenges ──────────────────────────────
