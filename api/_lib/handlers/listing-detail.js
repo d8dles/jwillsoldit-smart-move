@@ -1,6 +1,6 @@
 import { applyCors, handlePreflight, parseJsonBody } from '../http.js';
 import { requireAdmin } from '../auth.js';
-import { withDB, readDB } from '../store.js';
+import { withDB, readDB, getRecord } from '../store.js';
 import {
   ensureListings, deriveListingStatus, applicableItems,
   computeOutstandingItems, computeListingFlags,
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     const db = await readDB();
-    const l = ensureListings(db)[id];
+    const l = getRecord(ensureListings(db), id);
     if (!l) return res.status(404).json({ success: false, error: 'Not found' });
     return res.status(200).json({ success: true, listing: detailView(l, req) });
   }
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
 
     const editable = ['clientName', 'clientEmail', 'propertyAddress', 'unitNumber', 'targetGoLiveDate', 'notes'];
     const result = await withDB((db) => {
-      const l = ensureListings(db)[id];
+      const l = getRecord(ensureListings(db), id);
       if (!l) return null;
 
       for (const key of editable) {

@@ -1,6 +1,6 @@
 import { applyCors, handlePreflight, parseJsonBody, escapeHtml } from '../http.js';
 import { requireAdmin } from '../auth.js';
-import { withDB } from '../store.js';
+import { withDB, getRecord } from '../store.js';
 import { makeLinkRecord } from '../tokens.js';
 import { decryptToken } from '../crypto.js';
 import { ensureListings } from '../listing.js';
@@ -75,7 +75,7 @@ export default async function handler(req, res) {
   if (!recipient) return res.status(400).json({ success: false, error: 'Client email is required' });
 
   const result = await withDB((db) => {
-    const l = ensureListings(db)[id];
+    const l = getRecord(ensureListings(db), id);
     if (!l) return null;
     if (!l.clientLink) l.clientLink = makeLinkRecord().record;
     l.clientEmail = recipient;
@@ -96,7 +96,7 @@ export default async function handler(req, res) {
 
   if (emailResult.sent) {
     await withDB((db) => {
-      const l = ensureListings(db)[id];
+      const l = getRecord(ensureListings(db), id);
       if (!l) return;
       l.updatedAt = new Date().toISOString();
       logEvent(l, AUDIT_EVENTS.SENT, { actor: 'admin', role: 'client', detail: `Listing checklist email sent to ${recipient}` });

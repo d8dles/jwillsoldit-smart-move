@@ -1,6 +1,6 @@
 import { applyCors, handlePreflight } from '../http.js';
 import { requireAdmin } from '../auth.js';
-import { readDB } from '../store.js';
+import { readDB, getRecord } from '../store.js';
 
 export default async function handler(req, res) {
   applyCors(req, res);
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   const list = Object.values(db.invoices)
     .filter((inv) => (showArchived ? true : !inv.archived))
     .map((inv) => {
-      const verification = db.verifications[inv.verificationId];
+      const verification = getRecord(db.verifications, inv.verificationId);
       return {
         id: inv.id,
         invoiceNumber: inv.fields.invoiceNumber || inv.id,

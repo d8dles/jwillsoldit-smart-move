@@ -1,6 +1,6 @@
 import { applyCors, handlePreflight, parseJsonBody, escapeHtml } from '../http.js';
 import { requireAdmin } from '../auth.js';
-import { withDB } from '../store.js';
+import { withDB, getRecord } from '../store.js';
 import { makeLinkRecord } from '../tokens.js';
 import { decryptToken } from '../crypto.js';
 import { ensureListings, computeOutstandingItems } from '../listing.js';
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
   const body = parseJsonBody(req) || {};
 
   const result = await withDB((db) => {
-    const l = ensureListings(db)[id];
+    const l = getRecord(ensureListings(db), id);
     if (!l) return null;
     if (!l.clientLink) l.clientLink = makeLinkRecord().record;
     const recipient = String(body.email || l.clientEmail || l.clientSubmission?.email || '').trim();
@@ -80,7 +80,7 @@ export default async function handler(req, res) {
 
   if (emailResult.sent) {
     await withDB((db) => {
-      const l = ensureListings(db)[id];
+      const l = getRecord(ensureListings(db), id);
       if (!l) return;
       l.updatedAt = new Date().toISOString();
       logEvent(l, AUDIT_EVENTS.REMINDER, { actor: 'admin', role: 'client', detail: `Outstanding-items reminder sent to ${recipient} (${outstanding.length} items)` });
