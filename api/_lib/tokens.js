@@ -59,3 +59,15 @@ export function findListingByToken(db, token) {
   }
   return null;
 }
+
+// Same idea again for CDA payee links.
+export function findCdaByToken(db, token) {
+  const hash = hashToken(token);
+  for (const cda of Object.values(db.cdas || {})) {
+    const link = cda.clientLink;
+    if (link && link.tokenHash === hash) {
+      return { cda, link };
+    }
+  }
+  return null;
+}

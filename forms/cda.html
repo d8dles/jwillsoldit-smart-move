@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commission Disbursement Authorization | JWillSoldIt</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&family=Libre+Franklin:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/admin.css">
+</head>
+<body>
+<div class="public-form-shell">
+  <a class="public-form-logo jw-logo" href="https://www.jwillsoldit.com/">JWILLSOLDIT</a>
+  <div class="admin-sub" style="margin-bottom:28px;">Christin Rachelle Group · Commission Disbursement Authorization</div>
+
+  <div id="loading-state" class="loading-state">Loading your CDA…</div>
+
+  <div id="error-state" class="error-state" style="display:none;">
+    <h1></h1>
+    <p></p>
+  </div>
+
+  <div id="success-state" class="loading-state" style="display:none;">
+    <h1 style="font-family:var(--display);color:var(--ink);font-size:1.4rem;margin-bottom:10px;">Thank you</h1>
+    <p>Your confirmation is in. Joey will review everything and follow up once disbursement is processed.</p>
+    <div id="success-outstanding" style="text-align:left;margin-top:18px;"></div>
+  </div>
+
+  <div id="form-state" style="display:none;">
+    <span class="progress-pill">Commission Disbursement Authorization</span>
+    <h1 class="admin-h1">Confirm Your Commission Disbursement</h1>
+    <p class="admin-sub" style="margin-bottom:20px;">Please review the transaction details below, confirm your payee information, and provide the two required documents.</p>
+
+    <div class="admin-privacy-notice">
+      <strong>Privacy notice:</strong> the information you submit here is used only to process this commission disbursement and to document the required brokerage paperwork. It is not shared publicly and is not searchable by anyone outside JWillSoldIt / Christin Rachelle Group. This form does not collect bank account or routing numbers — Joey will contact you directly to arrange ACH details or a mailing address for a check.
+    </div>
+
+    <div class="admin-card">
+      <h2 style="margin-bottom:16px;">Transaction Details</h2>
+      <table style="border-collapse:collapse;width:100%;" id="deal-summary"></table>
+    </div>
+
+    <div id="submit-error" class="form-error"></div>
+    <div id="already-note" class="admin-card-note" style="display:none;margin-bottom:16px;">You've already submitted this confirmation — submitting again will update what Joey has on file.</div>
+
+    <form id="cda-form">
+      <div class="admin-card">
+        <h2 style="margin-bottom:16px;">Payee Information</h2>
+        <div class="admin-grid-2">
+          <div class="admin-field"><label>Legal Name *</label><input type="text" id="payeeLegalName" required></div>
+          <div class="admin-field"><label>Company / Brokerage</label><input type="text" id="payeeCompany"></div>
+          <div class="admin-field"><label>TREC License #</label><input type="text" id="trecLicense"></div>
+          <div class="admin-field"><label>Phone *</label><input type="tel" id="phone" required></div>
+          <div class="admin-field"><label>Email *</label><input type="email" id="email" required></div>
+        </div>
+        <div class="admin-field"><label>Mailing Address</label><input type="text" id="mailingAddress"></div>
+        <div class="admin-field">
+          <label>Preferred payment method</label>
+          <select id="paymentMethod">
+            <option value="">Select one</option>
+            <option value="ACH">ACH / Direct deposit</option>
+            <option value="Check">Mailed check</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h2 style="margin-bottom:6px;">Documents</h2>
+        <p class="admin-sub" style="margin-bottom:16px;">Both are required before disbursement can be processed.</p>
+        <div id="doc-slots"></div>
+      </div>
+
+      <div class="admin-checkbox-row">
+        <input type="checkbox" id="ackDisbursement" required>
+        <label for="ackDisbursement">I acknowledge that the transaction and commission details shown above are correct and authorize disbursement accordingly.</label>
+      </div>
+
+      <button type="submit" class="admin-btn primary" id="cda-submit" style="width:100%;">Confirm & Submit</button>
+    </form>
+  </div>
+</div>
+
+<script src="/assets/js/public-form-common.js"></script>
+<script src="/assets/js/public-form-cda.js"></script>
+<script src="/assets/js/brand-footer.js"></script>
+</body>
+</html>
