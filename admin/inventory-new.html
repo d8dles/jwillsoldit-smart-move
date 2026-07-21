@@ -61,13 +61,26 @@
         <div class="admin-field"><label for="bedrooms">Bedrooms</label><input id="bedrooms" type="number" min="0"></div>
         <div class="admin-field"><label for="bathrooms">Bathrooms</label><input id="bathrooms" type="number" min="0" step="0.5"></div>
         <div class="admin-field"><label for="squareFeet">Square Feet</label><input id="squareFeet" type="number" min="0"></div>
+        <div class="admin-field"><label for="lotSquareFeet">Lot Square Feet</label><input id="lotSquareFeet" type="number" min="0"></div>
+        <div class="admin-field"><label for="yearBuilt">Year Built</label><input id="yearBuilt" type="number" min="1800"></div>
+        <div class="admin-field"><label for="stories">Stories</label><input id="stories" type="number" min="1"></div>
+        <div class="admin-field"><label for="garage">Garage</label><input id="garage"></div>
+        <div class="admin-field"><label for="fullBathrooms">Full Bathrooms</label><input id="fullBathrooms" type="number" min="0" step="1"></div>
+        <div class="admin-field"><label for="halfBathrooms">Half Bathrooms</label><input id="halfBathrooms" type="number" min="0" step="1"></div>
       </div>
       <div class="admin-field"><label for="description">Public Description</label><textarea id="description"></textarea></div>
       <div class="admin-field"><label for="features">Features</label><textarea id="features" placeholder="One feature per line"></textarea></div>
       <div class="admin-grid-2">
         <div class="admin-field"><label for="heroImageUrl">Hero Image URL</label><input id="heroImageUrl" type="url"></div>
+        <div class="admin-field"><label for="heroImageAlt">Hero Image Alt Text</label><input id="heroImageAlt"></div>
         <div class="admin-field"><label for="mlsUrl">MLS / Channel URL</label><input id="mlsUrl" type="url"></div>
+        <div class="admin-field"><label for="inquiryUrl">Inquiry URL</label><input id="inquiryUrl" type="url"></div>
       </div>
+    </div>
+
+    <div class="admin-card">
+      <div class="admin-card-head"><div><h2>Photo Gallery</h2><p class="admin-card-note">Add one photo per row. Alt text is required before publishing.</p></div><button class="admin-btn ghost small" type="button" id="add-gallery-photo">+ Add photo</button></div>
+      <div id="gallery-list" data-gallery-list></div>
     </div>
 
     <div class="admin-card" id="stay-card" style="display:none;">
@@ -88,13 +101,13 @@
     <div class="admin-card">
       <div class="admin-field"><label for="internalNotes">Internal Notes</label><textarea id="internalNotes"></textarea></div>
       <label class="admin-checkbox-inline"><input type="checkbox" id="published"> Publish immediately after creation</label>
-      <div style="margin-top:20px;"><button type="submit" class="admin-btn primary" id="inventory-submit">Create Inventory Record</button></div>
+      <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;"><button type="submit" class="admin-btn primary" id="inventory-submit">Create Inventory Record</button><a class="admin-btn ghost" id="view-public" href="#" target="_blank" rel="noopener" aria-disabled="true">Preview public page ↗</a></div>
     </div>
   </form>
 </main>
 
 <script src="/assets/js/admin-shell.js"></script>
-<script src="/assets/js/admin-inventory-new.js"></script>
+<script type="module" src="/assets/js/admin-inventory-new.js"></script>
 <script src="/assets/js/brand-footer.js"></script>
 </body>
 </html>

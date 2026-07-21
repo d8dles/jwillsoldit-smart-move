@@ -1,3 +1,5 @@
+import { readGalleryRows, renderGalleryRows, serializeInventoryForm, setupGalleryEditor } from './admin-inventory-form.js';
+
 (async function () {
   const ok = await AdminShell.requireSession();
   if (!ok) return;
@@ -8,6 +10,8 @@
   const stayCard = document.getElementById('stay-card');
   const slugEl = document.getElementById('slug');
   const pathEl = document.getElementById('publicPath');
+  const galleryEl = document.getElementById('gallery-list');
+  const viewPublicEl = document.getElementById('view-public');
 
   function isStay() {
     return typeEl.value === 'stay' || modeEl.value === 'short_term';
@@ -43,7 +47,9 @@
   }
 
   function payload() {
-    return {
+    const heroImageUrl = document.getElementById('heroImageUrl').value.trim();
+    const heroImageAlt = document.getElementById('heroImageAlt').value.trim();
+    return serializeInventoryForm({
       offeringType: typeEl.value,
       rentalMode: typeEl.value === 'sale' ? null : modeEl.value,
       slug: slugEl.value.trim(),
@@ -62,11 +68,22 @@
       squareFeet: numberOrNull('squareFeet'),
       description: document.getElementById('description').value.trim(),
       features: lines('features'),
-      heroImageUrl: document.getElementById('heroImageUrl').value.trim(),
+      heroImageUrl,
+      heroImage: heroImageUrl ? { src: heroImageUrl, alt: heroImageAlt } : null,
+      gallery: readGalleryRows(galleryEl),
+      propertyDetails: {
+        lotSquareFeet: numberOrNull('lotSquareFeet'),
+        yearBuilt: numberOrNull('yearBuilt'),
+        stories: numberOrNull('stories'),
+        garage: document.getElementById('garage').value.trim(),
+        fullBathrooms: numberOrNull('fullBathrooms'),
+        halfBathrooms: numberOrNull('halfBathrooms'),
+      },
+      inquiryUrl: document.getElementById('inquiryUrl').value.trim(),
       sourceLinks: document.getElementById('mlsUrl').value.trim() ? [{ label: 'MLS / channel', url: document.getElementById('mlsUrl').value.trim() }] : [],
       stayDetails: stayDetails(),
       internalNotes: document.getElementById('internalNotes').value.trim(),
-    };
+    });
   }
 
   typeEl.addEventListener('change', refreshTypeFields);
@@ -79,6 +96,13 @@
     }
   });
   pathEl.addEventListener('input', () => { pathEl.dataset.auto = 'false'; });
+  pathEl.addEventListener('input', () => {
+    const path = pathEl.value.trim();
+    viewPublicEl.href = path || '#';
+    viewPublicEl.setAttribute('aria-disabled', path ? 'false' : 'true');
+  });
+  setupGalleryEditor(galleryEl, document.getElementById('add-gallery-photo'));
+  renderGalleryRows(galleryEl);
   refreshTypeFields();
 
   form.addEventListener('submit', async (event) => {

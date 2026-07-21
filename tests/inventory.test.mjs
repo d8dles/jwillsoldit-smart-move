@@ -8,6 +8,7 @@ import {
   validateInventoryPatch,
 } from '../api/_lib/inventory.js';
 import { filterPublicInventory } from '../api/inventory.js';
+import { serializeInventoryForm } from '../assets/js/admin-inventory-form.js';
 
 const rental = newInventory({
   slug: '4231-tulip-oak-dr',
@@ -54,6 +55,15 @@ assert.equal(validateInventoryPatch({ offeringType: 'sale', rentalMode: 'short_t
 assert.equal(validateInventoryPatch({ slug: '../private' }).ok, false);
 assert.equal(validateInventoryPatch({ gallery: [{ src: '', alt: 'Missing source' }] }).ok, false);
 assert.equal(validateInventoryPatch({ gallery: [{ src: '/photo.jpg', alt: '' }] }).ok, false);
+
+const serialized = serializeInventoryForm({
+  gallery: [{ src: '/one.jpg', alt: 'One' }, { src: '/two.jpg', alt: 'Two' }],
+  heroImage: { src: '/one.jpg', alt: 'One' },
+  propertyDetails: { lotSquareFeet: 5176 },
+});
+assert.equal(serialized.gallery.length, 2);
+assert.equal(serialized.heroImage.src, '/one.jpg');
+assert.equal(serialized.propertyDetails.lotSquareFeet, 5176);
 
 const publicRecords = filterPublicInventory({ inventory: {
   live: newInventory({ slug: 'live', publicStatus: 'available', published: true }),
