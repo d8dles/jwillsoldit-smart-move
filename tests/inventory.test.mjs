@@ -17,6 +17,10 @@ const rental = newInventory({
   published: true,
   internalNotes: 'Private intake note',
   auditLog: [{ type: 'created' }],
+  heroImage: { src: '/hero.jpg', alt: 'Front exterior' },
+  gallery: [{ src: '/hero.jpg', alt: 'Front exterior' }],
+  propertyDetails: { lotSquareFeet: 5176, yearBuilt: 2022 },
+  inquiryUrl: 'https://move.jwillsoldit.com/forms/rental',
 });
 
 assert.equal(isPublicInventory(rental), true);
@@ -24,6 +28,10 @@ const publicRental = toPublicInventory(rental);
 assert.equal(publicRental.slug, '4231-tulip-oak-dr');
 assert.equal('internalNotes' in publicRental, false);
 assert.equal('auditLog' in publicRental, false);
+assert.deepEqual(publicRental.heroImage, { src: '/hero.jpg', alt: 'Front exterior' });
+assert.deepEqual(publicRental.gallery, [{ src: '/hero.jpg', alt: 'Front exterior' }]);
+assert.equal(publicRental.propertyDetails.yearBuilt, 2022);
+assert.equal(publicRental.inquiryUrl, 'https://move.jwillsoldit.com/forms/rental');
 
 archiveInventory(rental, 'admin');
 assert.equal(rental.published, false);
@@ -44,6 +52,8 @@ assert.deepEqual(
 assert.equal(validateInventoryPatch({ publicStatus: 'booked', offeringType: 'stay' }).ok, true);
 assert.equal(validateInventoryPatch({ offeringType: 'sale', rentalMode: 'short_term' }).ok, false);
 assert.equal(validateInventoryPatch({ slug: '../private' }).ok, false);
+assert.equal(validateInventoryPatch({ gallery: [{ src: '', alt: 'Missing source' }] }).ok, false);
+assert.equal(validateInventoryPatch({ gallery: [{ src: '/photo.jpg', alt: '' }] }).ok, false);
 
 const publicRecords = filterPublicInventory({ inventory: {
   live: newInventory({ slug: 'live', publicStatus: 'available', published: true }),

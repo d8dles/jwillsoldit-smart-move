@@ -32,7 +32,8 @@ export const INVENTORY_EDITABLE_FIELDS = Object.freeze([
   'publicStatus', 'published', 'title', 'addressLine', 'city', 'state',
   'zip', 'neighborhood', 'price', 'priceLabel', 'pricePeriod', 'bedrooms',
   'bathrooms', 'squareFeet', 'description', 'features', 'heroImageUrl',
-  'galleryUrls', 'sourceLinks', 'stayDetails', 'internalNotes',
+  'galleryUrls', 'heroImage', 'gallery', 'propertyDetails', 'inquiryUrl',
+  'sourceLinks', 'stayDetails', 'internalNotes',
 ]);
 
 export function ensureInventory(db) {
@@ -54,6 +55,27 @@ function linkArray(value) {
     .filter((link) => link && typeof link === 'object')
     .map((link) => ({ label: valueOrEmpty(link.label), url: valueOrEmpty(link.url) }))
     .filter((link) => link.label && link.url);
+}
+
+function imageArray(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((image) => image && typeof image === 'object')
+    .map((image) => ({
+      src: valueOrEmpty(image.src),
+      alt: valueOrEmpty(image.alt),
+      ...(image.srcSet ? { srcSet: valueOrEmpty(image.srcSet) } : {}),
+    }))
+    .filter((image) => image.src && image.alt);
+}
+
+function imageValue(value) {
+  const images = imageArray(value ? [value] : []);
+  return images[0] || null;
+}
+
+function plainObject(value) {
+  return value && typeof value === 'object' && !Array.isArray(value) ? { ...value } : {};
 }
 
 export function newInventory(fields = {}) {
@@ -92,6 +114,10 @@ export function newInventory(fields = {}) {
     features: stringArray(fields.features),
     heroImageUrl: valueOrEmpty(fields.heroImageUrl),
     galleryUrls: stringArray(fields.galleryUrls),
+    heroImage: imageValue(fields.heroImage),
+    gallery: imageArray(fields.gallery),
+    propertyDetails: plainObject(fields.propertyDetails),
+    inquiryUrl: valueOrEmpty(fields.inquiryUrl),
     sourceLinks: linkArray(fields.sourceLinks),
     stayDetails: fields.stayDetails && typeof fields.stayDetails === 'object'
       ? { ...fields.stayDetails }
@@ -147,6 +173,33 @@ export function validateInventoryPatch(body = {}) {
     return invalid('published must be a boolean');
   }
 
+  if (body.gallery !== undefined) {
+    if (!Array.isArray(body.gallery)) return invalid('gallery must be an array');
+    for (const image of body.gallery) {
+      if (!image || typeof image !== 'object' || Array.isArray(image)) {
+        return invalid('gallery images must be objects');
+      }
+      if (!String(image.src || '').trim() || !String(image.alt || '').trim()) {
+        return invalid('gallery images require src and alt');
+      }
+    }
+  }
+
+  if (body.heroImage !== undefined && body.heroImage !== null) {
+    if (!body.heroImage || typeof body.heroImage !== 'object' || Array.isArray(body.heroImage)) {
+      return invalid('heroImage must be an image object');
+    }
+    if (!String(body.heroImage.src || '').trim() || !String(body.heroImage.alt || '').trim()) {
+      return invalid('heroImage requires src and alt');
+    }
+  }
+
+  if (body.propertyDetails !== undefined && (
+    !body.propertyDetails || typeof body.propertyDetails !== 'object' || Array.isArray(body.propertyDetails)
+  )) {
+    return invalid('propertyDetails must be an object');
+  }
+
   return { ok: true };
 }
 
@@ -162,6 +215,12 @@ export function applyInventoryPatch(record, body) {
     if (!Object.prototype.hasOwnProperty.call(body, key)) continue;
     if (key === 'features' || key === 'galleryUrls') {
       record[key] = stringArray(body[key]);
+    } else if (key === 'gallery') {
+      record[key] = imageArray(body[key]);
+    } else if (key === 'heroImage') {
+      record[key] = imageValue(body[key]);
+    } else if (key === 'propertyDetails') {
+      record[key] = plainObject(body[key]);
     } else if (key === 'sourceLinks') {
       record[key] = linkArray(body[key]);
     } else if (key === 'stayDetails') {
@@ -228,6 +287,10 @@ export function toPublicInventory(record) {
     features: record.features,
     heroImageUrl: record.heroImageUrl,
     galleryUrls: record.galleryUrls,
+    heroImage: record.heroImage,
+    gallery: record.gallery,
+    propertyDetails: record.propertyDetails,
+    inquiryUrl: record.inquiryUrl,
     sourceLinks: record.sourceLinks,
     stayDetails: record.stayDetails,
     updatedAt: record.updatedAt,
