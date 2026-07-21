@@ -280,10 +280,10 @@ async function runHeroMotionChecks(browser) {
       scaleX: Math.hypot(matrix.m11, matrix.m12, matrix.m13),
       headlineTransform: getComputedStyle(headline).transform,
       introTransform: getComputedStyle(intro).transform,
-      dotWidth: parseFloat(dotStyle.width),
-      dotHeight: parseFloat(dotStyle.height),
+      dotText: dot.textContent,
+      dotTextColor: dotStyle.color,
+      dotBackground: dotStyle.backgroundColor,
       dotRadius: parseFloat(dotStyle.borderTopLeftRadius),
-      dotColor: dotStyle.backgroundColor,
     };
   });
 
@@ -292,8 +292,9 @@ async function runHeroMotionChecks(browser) {
   check(motion.scaleX <= 1, `hero wordmark must not grow; computed scale=${motion.scaleX}`);
   check(motion.headlineTransform === 'none' || motion.headlineTransform === 'matrix(1, 0, 0, 1, 0, 0)', `headline moves on scroll: ${motion.headlineTransform}`);
   check(motion.introTransform === 'none' || motion.introTransform === 'matrix(1, 0, 0, 1, 0, 0)', `intro moves on scroll: ${motion.introTransform}`);
-  check(motion.dotWidth > 0 && Math.abs(motion.dotWidth - motion.dotHeight) < 0.1 && motion.dotRadius >= motion.dotWidth / 2, `orange dot is not circular: ${JSON.stringify(motion)}`);
-  check(motion.dotColor !== 'rgba(0, 0, 0, 0)', 'orange dot has no visible background color');
+  check(motion.dotText === '.', `wordmark dot must be a period glyph: ${JSON.stringify(motion)}`);
+  check(motion.dotTextColor === 'rgb(224, 58, 31)', `wordmark period is not canonical red: ${JSON.stringify(motion)}`);
+  check(motion.dotBackground === 'rgba(0, 0, 0, 0)' && motion.dotRadius === 0, `wordmark period must not be a circular badge: ${JSON.stringify(motion)}`);
 
   // The handoff may change sections immediately, but visual progress must finish
   // through the follower instead of being assigned directly to 1.
