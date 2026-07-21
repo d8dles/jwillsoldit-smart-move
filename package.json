@@ -6,7 +6,8 @@
   "description": "Smart Move intake site — verification harness (Playwright).",
   "scripts": {
     "verify": "node tests/verify.mjs",
-    "test:inventory": "node tests/inventory.test.mjs"
+    "test:inventory": "node tests/inventory.test.mjs",
+    "test:wordmark": "node tests/wordmark-contract.test.mjs"
   },
   "dependencies": {
     "pdfkit": "^0.19.1",

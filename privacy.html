@@ -43,19 +43,11 @@
   }
   .jw-logo {
     display: inline-flex;
-    align-items: flex-start;
-    gap: 0.18em;
     line-height: 1;
     white-space: nowrap;
   }
-  .jw-logo::after {
-    content: '';
-    width: 0.38em;
-    height: 0.38em;
-    margin-top: 0.06em;
-    border-radius: 999px;
-    background: var(--red);
-    flex: 0 0 auto;
+  .jw-logo__dot {
+    color: var(--red);
   }
   h1 {
     font-family: 'Instrument Sans', system-ui, sans-serif;
@@ -112,7 +104,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="kicker"><a class="jw-logo" href="https://www.jwillsoldit.com/">JWillSoldIt</a> · Smart Move</div>
+  <div class="kicker"><a class="jw-logo" href="https://www.jwillsoldit.com/">JWILLSOLDIT<span class="jw-logo__dot" aria-hidden="true">.</span></a> · Smart Move</div>
   <h1>Privacy Policy</h1>
   <div class="updated">Last updated: July 2026</div>
 
@@ -155,7 +147,7 @@
 
   <a class="home-link" href="/">Back to Smart Move</a>
 
-  <div class="footer-note"><a class="jw-logo" href="https://www.jwillsoldit.com/">JWillSoldIt</a> · Joey Williams · Equal Housing Opportunity</div>
+  <div class="footer-note"><a class="jw-logo" href="https://www.jwillsoldit.com/">JWILLSOLDIT<span class="jw-logo__dot" aria-hidden="true">.</span></a> · Joey Williams · Equal Housing Opportunity</div>
 </div>
 <script src="/assets/js/brand-footer.js"></script>
 </body>

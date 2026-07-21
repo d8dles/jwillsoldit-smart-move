@@ -101,14 +101,14 @@
 
   .brand-name .brand-dot {
     position: absolute;
-    right: clamp(-0.8rem, -0.9vw, -0.42rem);
-    top: clamp(0.22rem, 1.1vw, 0.9rem);
+    left: 100%;
+    bottom: 0;
     z-index: 3;
-    width: clamp(0.42rem, 1.05vw, 0.95rem);
-    height: clamp(0.42rem, 1.05vw, 0.95rem);
-    border-radius: 999px;
-    background: var(--ember);
-    box-shadow: 0 0 0 3px rgba(250, 247, 242, 0.9);
+    color: var(--red);
+    font-family: var(--display);
+    font-size: clamp(3.4rem, 11vw, 9.25rem);
+    font-weight: 700;
+    line-height: 0.95;
     pointer-events: none;
   }
 
