@@ -387,4 +387,24 @@
     input.value = '';
   }
 
+  function selectHoustonRegion(el) {
+    const selected = [...document.querySelectorAll('.houston-region.selected')];
+    if (!el.classList.contains('selected') && selected.length >= 2) {
+      const tray = document.getElementById('area-selected-tray');
+      if (tray) tray.innerHTML = '<span class="selected-pill">Choose up to two regions.</span>';
+      return;
+    }
+    toggleArea(el);
+    const regions = [...document.querySelectorAll('.houston-region.selected')];
+    const dot = document.querySelector('.houston-map-dot');
+    if (dot) {
+      const rect = el.getBoundingClientRect();
+      const stage = el.closest('.houston-map-stage').getBoundingClientRect();
+      dot.style.left = `${rect.left - stage.left + rect.width / 2}px`;
+      dot.style.top = `${rect.top - stage.top + rect.height / 2}px`;
+      dot.classList.toggle('is-active', regions.length > 0);
+    }
+    if (autoAdvanceTimers.has('area-map')) clearTimeout(autoAdvanceTimers.get('area-map'));
+    if (regions.length) scheduleAutoAdvance('area-map', () => goTo(6), 2000, 5);
+  }
 

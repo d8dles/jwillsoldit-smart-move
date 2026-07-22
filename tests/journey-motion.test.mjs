@@ -25,3 +25,11 @@ test('print output keeps the brief and excludes controls and footer', async () =
   assert.match(css, /\.brief-actions/);
   assert.match(css, /#global-footer/);
 });
+
+test('Houston map exposes nine semantic optional regions', async () => {
+  const html = await read('index.html');
+  assert.match(html, /aria-label="Houston region map"/);
+  assert.equal((html.match(/class="houston-region(?:\s|")/g) || []).length, 9);
+  assert.match(html, /id="custom-area-input"/);
+  assert.match(html, /Skip areas for now/);
+});

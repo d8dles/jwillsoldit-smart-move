@@ -43,6 +43,34 @@
   transform: translateX(-50%);
 }
 
+#section-area { overflow: hidden; }
+.houston-map-stage {
+  position: relative;
+  width: min(92vw, 1320px);
+  height: min(62vh, 680px);
+  margin: 0 auto;
+  overflow: visible;
+}
+.houston-map-lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+.houston-ring,.houston-spoke { fill: none; stroke: rgba(23,59,43,.28); stroke-width: .75; }
+.houston-ring { stroke-width: 1.1; }
+.houston-water { fill: rgba(23,59,43,.05); }
+.houston-region-grid { position: absolute; inset: 7% 5%; display: grid; grid-template-columns: repeat(3,1fr); grid-template-rows: repeat(3,1fr); }
+.houston-region {
+  border: 1px solid rgba(23,59,43,.15);
+  background: rgba(247,244,238,.22);
+  color: #3f4842;
+  font: 700 clamp(10px,1vw,15px)/1.2 var(--mono);
+  cursor: pointer;
+  transition: background .2s,color .2s,border-color .2s;
+}
+.houston-region:hover,.houston-region.selected { background: rgba(23,59,43,.92); color: #fff; border-color: var(--journey-red); }
+.houston-map-dot { position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; border-radius: 50%; background: var(--journey-red); opacity: 0; transform: translate(-50%,-50%); box-shadow: 0 0 0 0 rgba(224,58,31,.45); transition: left .42s cubic-bezier(.2,.8,.2,1),top .42s cubic-bezier(.2,.8,.2,1),opacity .2s; pointer-events: none; }
+.houston-map-dot.is-active { opacity: 1; animation: houstonPulse 1.8s ease-in-out infinite; }
+@keyframes houstonPulse { 50% { box-shadow: 0 0 0 16px rgba(224,58,31,0); } }
+.compact-area-body { max-width: 1180px; margin: 0 auto; }
+@media(max-width:700px){.houston-map-stage{width:108vw;height:52vh;margin-left:-4vw}.houston-region{font-size:8px;padding:4px}.houston-region-grid{inset:8% 4%}.compact-area-body{padding-top:24px!important}}
+
 @media (prefers-reduced-motion: reduce) {
   #story-dot { display: none; }
 }
