@@ -72,11 +72,12 @@
 @media(max-width:700px){.houston-map-stage{width:108vw;height:52vh;margin-left:-4vw}.houston-region{font-size:8px;padding:4px}.houston-region-grid{inset:8% 4%}.compact-area-body{padding-top:24px!important}}
 
 .texas-arrival { position: relative; min-height: 285px; overflow: hidden; }
-.texas-arrival svg { width: min(100%,380px); height: 270px; display: block; margin: 0 auto; overflow: visible; }
-.texas-outline { fill: rgba(255,255,255,.025); stroke: rgba(255,255,255,.42); stroke-width: 2; }
-.texas-grid { fill: none; stroke: rgba(224,58,31,.1); stroke-width: 1; }
-.texas-arrival .houston-ring { fill: none; stroke: rgba(224,58,31,.28); stroke-width: 1; }
-.houston-beacon { fill: var(--journey-red); opacity: .2; filter: drop-shadow(0 0 10px rgba(224,58,31,.8)); }
+.texas-map-frame { position: relative; width: min(100%,380px); height: 270px; margin: 0 auto; }
+.texas-outline { width: 100%; height: 100%; display: block; object-fit: contain; filter: invert(1) opacity(.42); }
+.texas-arrival .houston-ring { position: absolute; left: 68.7%; top: 68.5%; border: 1px solid rgba(224,58,31,.28); border-radius: 50%; transform: translate(-50%,-50%); }
+.houston-ring-inner { width: 40px; height: 40px; }
+.houston-ring-outer { width: 68px; height: 68px; }
+.houston-beacon { position: absolute; left: 68.7%; top: 68.5%; width: 12px; height: 12px; border-radius: 50%; background: var(--journey-red); opacity: .2; filter: drop-shadow(0 0 10px rgba(224,58,31,.8)); transform: translate(-50%,-50%); }
 .houston-beacon.is-landed { opacity: 1; animation: finalBeacon 2s ease-in-out infinite; }
 @keyframes finalBeacon { 50% { filter: drop-shadow(0 0 24px rgba(224,58,31,1)); opacity: .7; } }
 

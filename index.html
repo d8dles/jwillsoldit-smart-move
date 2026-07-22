@@ -633,13 +633,13 @@
           </div>
 
           <div class="brief-map-beacon texas-arrival" aria-label="Texas map with Houston arrival">
-            <svg viewBox="0 0 300 260" role="img" aria-hidden="true">
-              <path class="texas-outline" d="M78 18 L132 18 L132 58 L143 62 L161 66 L180 73 L198 76 L216 74 L243 81 L243 117 L247 133 L248 151 L246 158 L230 168 L220 178 L200 188 L188 197 L183 212 L182 231 L186 240 L166 231 L151 230 L144 207 L135 190 L123 173 L107 159 L92 159 L84 170 L76 176 L60 168 L50 152 L37 139 L23 125 L17 118 L15 113 L78 113 Z"/>
-              <path class="texas-grid" d="M35 45H220 M35 75H235 M35 105H242 M48 135H238 M65 165H225 M90 195H192 M65 20V170 M100 18V185 M135 58V205 M170 69V230 M205 76V185"/>
-              <circle class="houston-ring" cx="204" cy="181" r="20"/>
-              <circle class="houston-ring" cx="204" cy="181" r="34"/>
-              <circle class="houston-beacon" cx="204" cy="181" r="6" data-motion-anchor="houston"/>
-            </svg>
+            <div class="texas-map-frame">
+              <!-- CC0 geographic outline: Wikimedia Commons, Outline of Texas (simplified).svg -->
+              <img class="texas-outline" src="https://upload.wikimedia.org/wikipedia/commons/b/bc/Outline_of_Texas_%28simplified%29.svg" alt="Outline map of Texas">
+              <span class="houston-ring houston-ring-inner" aria-hidden="true"></span>
+              <span class="houston-ring houston-ring-outer" aria-hidden="true"></span>
+              <span class="houston-beacon" data-motion-anchor="houston" aria-hidden="true"></span>
+            </div>
             <div class="map-beacon-label">Move signal locked</div>
             <div class="map-beacon-address">Houston, Texas · route mapped</div>
           </div>
