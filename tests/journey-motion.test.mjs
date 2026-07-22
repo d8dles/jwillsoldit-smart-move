@@ -33,3 +33,13 @@ test('Houston map exposes nine semantic optional regions', async () => {
   assert.match(html, /id="custom-area-input"/);
   assert.match(html, /Skip areas for now/);
 });
+
+test('final brief uses Texas Houston target and only three primary actions', async () => {
+  const html = await read('index.html');
+  assert.match(html, /aria-label="Texas map with Houston arrival"/);
+  assert.match(html, /data-motion-anchor="houston"/);
+  assert.match(html, />Submit</);
+  assert.match(html, />Download Form</);
+  assert.match(html, />Share This Form</);
+  assert.doesNotMatch(html, /class="brief-action" href="tel:/);
+});

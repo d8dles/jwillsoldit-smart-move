@@ -632,20 +632,22 @@
             <p class="brief-next-text" id="brief-next-text">Your brief is ready. I will reach out to confirm the details and talk through the next step.</p>
           </div>
 
-          <div class="brief-map-beacon" aria-label="Animated Houston map route beacon">
-            <div class="map-route-line map-route-a"></div>
-            <div class="map-route-line map-route-b"></div>
-            <div class="map-route-line map-route-c"></div>
-            <div class="map-pulse-pin"></div>
+          <div class="brief-map-beacon texas-arrival" aria-label="Texas map with Houston arrival">
+            <svg viewBox="0 0 300 260" role="img" aria-hidden="true">
+              <path class="texas-outline" d="M78 18 L132 18 L132 58 L143 62 L161 66 L180 73 L198 76 L216 74 L243 81 L243 117 L247 133 L248 151 L246 158 L230 168 L220 178 L200 188 L188 197 L183 212 L182 231 L186 240 L166 231 L151 230 L144 207 L135 190 L123 173 L107 159 L92 159 L84 170 L76 176 L60 168 L50 152 L37 139 L23 125 L17 118 L15 113 L78 113 Z"/>
+              <path class="texas-grid" d="M35 45H220 M35 75H235 M35 105H242 M48 135H238 M65 165H225 M90 195H192 M65 20V170 M100 18V185 M135 58V205 M170 69V230 M205 76V185"/>
+              <circle class="houston-ring" cx="204" cy="181" r="20"/>
+              <circle class="houston-ring" cx="204" cy="181" r="34"/>
+              <circle class="houston-beacon" cx="204" cy="181" r="6" data-motion-anchor="houston"/>
+            </svg>
             <div class="map-beacon-label">Move signal locked</div>
-            <div class="map-beacon-address">Greater Houston · route mapped</div>
+            <div class="map-beacon-address">Houston, Texas · route mapped</div>
           </div>
 
           <div class="brief-actions">
-            <button id="brief-send-link" class="brief-action primary" type="button" onclick="sendSmartMoveBrief(event)">Send My Smart Move Brief</button>
-            <a class="brief-action" href="tel:+15616856566">Call Joey</a>
-            <a class="brief-action" href="sms:+15616856566">Text Joey</a>
-            <a class="brief-action" href="mailto:jwillsoldit@icloud.com">Email Joey</a>
+            <button id="brief-send-link" class="brief-action primary" type="button" onclick="sendSmartMoveBrief(event)">Submit</button>
+            <button class="brief-action" type="button" onclick="downloadVisualBrief()">Download Form</button>
+            <button class="brief-action" type="button" onclick="shareSmartMoveBrief()">Share This Form</button>
           </div>
           <div class="brief-submit-status" id="brief-submit-status" aria-live="polite"></div>
         </div>

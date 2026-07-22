@@ -75,6 +75,29 @@ window.JourneyMotion = (() => {
   return { dot, reduced, anchor, point, cancel, depart, travel };
 })();
 
+function downloadVisualBrief() {
+  window.print();
+}
+
+async function shareSmartMoveBrief() {
+  const path = document.getElementById('brief-path')?.textContent || 'Smart Move';
+  const areas = document.getElementById('brief-areas')?.textContent || 'Houston';
+  const payload = {
+    title: 'My JWILLSOLDIT Smart Move',
+    text: `${path} · ${areas}`,
+    url: 'https://move.jwillsoldit.com/'
+  };
+  if (navigator.share) {
+    try { await navigator.share(payload); } catch (error) {
+      if (error.name !== 'AbortError') console.warn('[SmartMove] Share failed', error);
+    }
+    return;
+  }
+  await navigator.clipboard.writeText(`${payload.text} ${payload.url}`);
+  const status = document.getElementById('brief-submit-status');
+  if (status) status.textContent = 'Share link copied.';
+}
+
 (() => {
   const originalGoTo = window.goTo;
   if (typeof originalGoTo !== 'function') return;
