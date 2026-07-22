@@ -132,6 +132,23 @@ publicStatus: available
 publicPath: /listings/rentals/4231-tulip-oak-dr/
 ```
 
+Complete the public content fields in the same admin record before publishing:
+
+- `title` — the short property headline shown in the detail page overview
+- `description` and `features` — the editable public copy
+- `heroImage` — `{ src, alt, srcSet? }`
+- `gallery` — ordered `{ src, alt, srcSet? }` photo objects
+- `propertyDetails` — current home facts such as `lotSquareFeet`, `yearBuilt`, `stories`, `garage`, `fullBathrooms`, and `halfBathrooms`
+- `sourceLinks` — the current MLS or other source record
+- `inquiryUrl` — the direct Smart Move route for this offering
+
+The hub reads the published record and uses its `publicPath` for cards and the
+detail page. The current 4231 page remains available as a local fallback until
+this record is created and published. Once the backend is configured, an
+unpublished or archived record is removed from public cards and its detail
+route shows the unavailable state. Archive is reversible; it does not delete
+the property content or photos.
+
 The public endpoint is `GET /api/inventory`. It returns only published, non-archived records. MLS/HAR, Airbnb, and Vrbo synchronization are intentionally not enabled yet; channel URLs and short-term stay fields are stored for the later adapter layer.
 
 Invoice emailing reuses the existing Resend integration (`RESEND_API_KEY` /

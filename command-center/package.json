@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "node --experimental-strip-types --test lib/phase2.test.mjs"
   },
   "dependencies": {
     "@fontsource/dm-sans": "^5.2.5",

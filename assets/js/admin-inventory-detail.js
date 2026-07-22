@@ -1,3 +1,5 @@
+import { readGalleryRows, renderGalleryRows, serializeInventoryForm, setupGalleryEditor } from './admin-inventory-form.js';
+
 (async function () {
   const ok = await AdminShell.requireSession();
   if (!ok) return;
@@ -8,6 +10,8 @@
   const modeEl = document.getElementById('rentalMode');
   const statusEl = document.getElementById('publicStatus');
   const stayCard = document.getElementById('stay-card');
+  const galleryEl = document.getElementById('gallery-list');
+  const viewPublicEl = document.getElementById('view-public');
   const labels = { draft: 'Draft', coming_soon: 'Coming Soon', available: 'Available', pending: 'Pending', rented: 'Rented', booked: 'Booked', sold: 'Sold', off_market: 'Off Market' };
   const statusByType = {
     sale: ['draft', 'coming_soon', 'available', 'pending', 'sold', 'off_market'],
@@ -46,7 +50,9 @@
 
   function payload() {
     const mls = value('mlsUrl').trim();
-    return {
+    const heroImageUrl = value('heroImageUrl').trim();
+    const heroImageAlt = value('heroImageAlt').trim();
+    return serializeInventoryForm({
       offeringType: typeEl.value,
       rentalMode: typeEl.value === 'sale' ? null : modeEl.value,
       slug: value('slug').trim(),
@@ -56,11 +62,22 @@
       title: value('title').trim(), addressLine: value('addressLine').trim(), neighborhood: value('neighborhood').trim(),
       city: value('city').trim(), state: value('state').trim(), zip: value('zip').trim(), priceLabel: value('priceLabel').trim(),
       bedrooms: numberOrNull('bedrooms'), bathrooms: numberOrNull('bathrooms'), squareFeet: numberOrNull('squareFeet'),
-      description: value('description').trim(), features: lines('features'), heroImageUrl: value('heroImageUrl').trim(),
+      description: value('description').trim(), features: lines('features'), heroImageUrl,
+      heroImage: heroImageUrl ? { src: heroImageUrl, alt: heroImageAlt } : null,
+      gallery: readGalleryRows(galleryEl),
+      propertyDetails: {
+        lotSquareFeet: numberOrNull('lotSquareFeet'),
+        yearBuilt: numberOrNull('yearBuilt'),
+        stories: numberOrNull('stories'),
+        garage: value('garage').trim(),
+        fullBathrooms: numberOrNull('fullBathrooms'),
+        halfBathrooms: numberOrNull('halfBathrooms'),
+      },
+      inquiryUrl: value('inquiryUrl').trim(),
       sourceLinks: mls ? [{ label: 'MLS / channel', url: mls }] : [],
       stayDetails: isStay() ? { ratePeriod: value('ratePeriod'), minimumStay: numberOrNull('minimumStay'), maxGuests: numberOrNull('maxGuests'), bookingUrl: value('bookingUrl').trim(), availabilityStart: value('availabilityStart'), availabilityEnd: value('availabilityEnd'), amenities: lines('amenities'), houseRules: lines('houseRules') } : null,
       internalNotes: value('internalNotes').trim(),
-    };
+    });
   }
 
   function render() {
@@ -77,13 +94,17 @@
     setValue('title', record.title); setValue('addressLine', record.addressLine); setValue('neighborhood', record.neighborhood);
     setValue('city', record.city); setValue('state', record.state); setValue('zip', record.zip); setValue('bedrooms', record.bedrooms);
     setValue('bathrooms', record.bathrooms); setValue('squareFeet', record.squareFeet); setValue('description', record.description);
-    setValue('features', (record.features || []).join('\n')); setValue('heroImageUrl', record.heroImageUrl); setValue('mlsUrl', record.sourceLinks?.[0]?.url || '');
+    setValue('features', (record.features || []).join('\n')); setValue('heroImageUrl', record.heroImage?.src || record.heroImageUrl); setValue('heroImageAlt', record.heroImage?.alt || ''); setValue('mlsUrl', record.sourceLinks?.[0]?.url || ''); setValue('inquiryUrl', record.inquiryUrl);
+    const details = record.propertyDetails || {};
+    setValue('lotSquareFeet', details.lotSquareFeet); setValue('yearBuilt', details.yearBuilt); setValue('stories', details.stories); setValue('garage', details.garage); setValue('fullBathrooms', details.fullBathrooms); setValue('halfBathrooms', details.halfBathrooms);
+    renderGalleryRows(galleryEl, record.gallery || []);
     setValue('internalNotes', record.internalNotes); document.getElementById('published').checked = !!record.published;
     statusEl.value = record.publicStatus;
     fillStayDetails(record.stayDetails);
     refreshTypeFields();
     statusEl.value = record.publicStatus;
-    document.getElementById('view-public').href = record.publicPath || '#';
+    viewPublicEl.href = record.publicPath || '#';
+    viewPublicEl.setAttribute('aria-disabled', record.publicPath ? 'false' : 'true');
     document.getElementById('archive-inventory').style.display = record.archivedAt ? 'none' : 'inline-flex';
     document.getElementById('restore-inventory').style.display = record.archivedAt ? 'inline-flex' : 'none';
   }
@@ -95,6 +116,12 @@
 
   typeEl.addEventListener('change', refreshTypeFields);
   modeEl.addEventListener('change', refreshTypeFields);
+  setupGalleryEditor(galleryEl, document.getElementById('add-gallery-photo'));
+  document.getElementById('publicPath').addEventListener('input', () => {
+    const path = value('publicPath').trim();
+    viewPublicEl.href = path || '#';
+    viewPublicEl.setAttribute('aria-disabled', path ? 'false' : 'true');
+  });
   document.getElementById('save-inventory').addEventListener('click', async () => {
     const error = document.getElementById('inventory-error'); error.classList.remove('show');
     try { const data = await api('', { method: 'PATCH', body: JSON.stringify(payload()) }); record = data.inventory; render(); AdminShell.toast('Inventory saved'); }

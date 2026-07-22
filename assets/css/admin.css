@@ -257,6 +257,54 @@ body.admin-body {
   gap: 0 20px;
 }
 
+.inventory-gallery-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  gap: 12px;
+  align-items: end;
+  padding: 16px 0;
+  border-top: 1px solid var(--trace);
+}
+
+.inventory-gallery-field {
+  display: block;
+  min-width: 0;
+}
+
+.inventory-gallery-field span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--mid);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.inventory-gallery-field input {
+  width: 100%;
+  min-width: 0;
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--off-white);
+  border: 1px solid var(--trace);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+}
+
+.inventory-gallery-controls {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 820px) {
+  .inventory-gallery-row { grid-template-columns: 1fr 1fr; }
+  .inventory-gallery-controls { grid-column: 1 / -1; justify-content: flex-start; }
+}
+
 @media (max-width: 640px) {
   .admin-grid-2 { grid-template-columns: 1fr; }
 }
