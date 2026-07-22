@@ -122,6 +122,7 @@
 <link rel="stylesheet" href="assets/css/hero.css">
 <link rel="stylesheet" href="assets/css/form.css">
 <link rel="stylesheet" href="assets/css/responsive.css">
+<link rel="stylesheet" href="assets/css/journey-motion.css">
 </head>
 <body class="auto-flow hero-idle">
 
@@ -160,6 +161,7 @@
     <div class="step-label">Brief</div>
   </div>
 </nav>
+<div id="story-dot" aria-hidden="true"></div>
 
 <!-- ── SECTION 1: OPENING ────────────────────────────────── -->
 <section class="section visible" id="section-open">
@@ -407,7 +409,7 @@
 <section class="section" id="section-budget">
   <div class="section-header">
     <div class="section-label">Plot Line — Step 5</div>
-    <h2 class="section-title" id="budget-title">What is your<br>budget?</h2>
+    <h2 class="section-title" id="budget-title" data-motion-anchor="budget">What is your<br>budget?</h2>
   </div>
   <div class="budget-bands" id="budget-bands">
     <div class="budget-band" data-budget="0-1000" onclick="selectBudget(this)">
@@ -535,7 +537,7 @@
 <section class="section" id="section-details">
   <div class="section-header">
     <div class="section-label">Plot Line — Step 7</div>
-    <h2 class="section-title">Now let’s collect<br>the real details.</h2>
+    <h2 class="section-title" id="details-title">Now let’s collect<br>the real details<span data-motion-anchor="route-punctuation">.</span></h2>
   </div>
   <div class="route-detail-body">
     <div class="route-detail-intro">
@@ -684,6 +686,7 @@
 <script src="assets/js/validation.js"></script>
 <script src="assets/js/submit.js"></script>
 <script src="assets/js/app.js"></script>
+<script src="assets/js/journey-motion.js"></script>
 <script src="/assets/js/brand-footer.js"></script>
 </body>
 </html>
