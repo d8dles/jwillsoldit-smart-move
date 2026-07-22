@@ -3,6 +3,10 @@ window.JourneyMotion = (() => {
   const dot = document.getElementById('story-dot');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let activeAnimation = null;
+  let pointer = { x: window.innerWidth * 0.5 - 9, y: window.innerHeight * 0.42 };
+  document.addEventListener('pointermove', (event) => {
+    pointer = { x: event.clientX - 9, y: event.clientY - 9 };
+  }, { passive: true });
 
   function anchor(name) {
     return document.querySelector(`[data-motion-anchor="${name}"]`);
@@ -43,8 +47,19 @@ window.JourneyMotion = (() => {
     ], { duration, easing: 'cubic-bezier(.25,.02,.18,1)' });
   }
 
-  async function travel({ to, dramatic = false } = {}) {
+  async function depart(from = pointer) {
+    await animate([
+      { transform: `translate(${from.x}px,${from.y}px) scale(1)`, opacity: 1 },
+      { transform: `translate(${from.x}px,${from.y - 14}px) scale(.9,1.12)`, offset: .2 },
+      { transform: `translate(${from.x}px,${window.innerHeight + 32}px) scale(.72,1.34)` }
+    ], { duration: 500, easing: 'cubic-bezier(.46,0,.7,.42)' });
+  }
+
+  async function travel({ from, to, navigate, dramatic = false } = {}) {
     if (reduced) return;
+    await depart(from ? point(from) : pointer);
+    if (typeof navigate === 'function') navigate();
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     const targetElement = typeof to === 'string' ? anchor(to) : to;
     const target = point(targetElement);
     await fallIn(target, dramatic);
@@ -57,16 +72,19 @@ window.JourneyMotion = (() => {
     document.dispatchEvent(new CustomEvent('journey:arrived', { detail: { to } }));
   }
 
-  return { dot, reduced, anchor, point, cancel, travel };
+  return { dot, reduced, anchor, point, cancel, depart, travel };
 })();
 
 (() => {
   const originalGoTo = window.goTo;
   if (typeof originalGoTo !== 'function') return;
   window.goTo = function journeyGoTo(step, options = {}) {
-    originalGoTo(step, options);
-    if (step === 4) setTimeout(() => JourneyMotion.travel({ to: 'budget' }), 120);
-    if (step === 6) setTimeout(() => JourneyMotion.travel({ to: 'route-punctuation' }), 120);
-    if (step === 7) setTimeout(() => JourneyMotion.travel({ to: 'houston', dramatic: true }), 120);
+    const target = step === 4 ? 'budget' : step === 6 ? 'route-punctuation' : step === 7 ? 'houston' : null;
+    if (!target || JourneyMotion.reduced) return originalGoTo(step, options);
+    JourneyMotion.travel({
+      to: target,
+      dramatic: step === 7,
+      navigate: () => originalGoTo(step, { ...options, behavior: 'auto' })
+    });
   };
 })();
