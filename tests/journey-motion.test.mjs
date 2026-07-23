@@ -4,19 +4,45 @@ import { readFile } from 'node:fs/promises';
 
 const read = (file) => readFile(new URL(`../${file}`, import.meta.url), 'utf8');
 
-test('journey motion assets and single story dot are mounted', async () => {
+test('cinematic journey mounts one protagonist and the approved scene architecture', async () => {
   const html = await read('index.html');
   assert.match(html, /assets\/css\/journey-motion\.css/);
   assert.match(html, /assets\/js\/journey-motion\.js/);
   assert.equal((html.match(/id="story-dot"/g) || []).length, 1);
+  assert.match(html, /id="hero-handoff"/);
+  assert.match(html, /id="ribbon-journey"/);
+  assert.match(html, /id="journey-path"/);
+  assert.match(html, /id="journey-dot"/);
+  assert.match(html, /id="start-over"/);
 });
 
-test('motion controller exposes one public travel contract', async () => {
+test('motion controller owns hero fall, ribbon travel, and distinct scene transitions', async () => {
   const js = await read('assets/js/journey-motion.js');
   assert.match(js, /window\.JourneyMotion/);
-  assert.match(js, /travel/);
+  assert.match(js, /playHeroHandoff/);
+  assert.match(js, /drawRibbonJourney/);
+  assert.match(js, /scene-zoom-enter/);
+  assert.match(js, /scene-origami-enter/);
+  assert.match(js, /scene-page-turn-enter/);
   assert.match(js, /prefers-reduced-motion/);
   assert.match(js, /activeAnimation/);
+});
+
+test('the red protagonist is visible and active on the opening scene', async () => {
+  const html = await read('index.html');
+  const css = await read('assets/css/journey-motion.css');
+  assert.match(html, /id="hero-dot-target"/);
+  assert.match(html, /data-motion-anchor="hero-period"/);
+  assert.match(css, /#story-dot\.is-hero-active/);
+  assert.match(css, /#section-open[\s\S]*hero/);
+});
+
+test('approved editorial transitions are structural scenes, not four navigation anchors', async () => {
+  const html = await read('index.html');
+  assert.match(html, /class="[^"]*journey-scene[^"]*scene-zoom/);
+  assert.match(html, /class="[^"]*journey-scene[^"]*scene-origami/);
+  assert.match(html, /class="[^"]*journey-scene[^"]*scene-page-turn/);
+  assert.match(html, /class="[^"]*handoff-ribbon/);
 });
 
 test('print output keeps the brief and excludes controls and footer', async () => {
