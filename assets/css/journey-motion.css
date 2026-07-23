@@ -95,3 +95,205 @@
   #section-brief .brief-footer-strip,
   #global-footer { display: none !important; }
 }
+
+/* Step 1: Hero-active dot state and hero-handoff stage styling */
+#story-dot.is-hero-active { opacity: 1; }
+
+#section-open { position: relative; }
+
+#section-open #hero-handoff {
+  position: fixed;
+  inset: 0;
+  z-index: 850;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease-out;
+}
+#section-open #hero-handoff.is-active { opacity: 1; }
+#section-open #hero-handoff .handoff-ribbon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+#section-open #hero-handoff .handoff-ribbon path {
+  fill: none;
+  stroke: var(--red);
+  stroke-width: 3;
+  stroke-linecap: round;
+  filter: drop-shadow(0 3px 6px rgba(224, 58, 31, 0.28));
+}
+
+[data-motion-anchor="route-landing"] {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 1px;
+  height: 1px;
+}
+#section-path { position: relative; }
+
+/* Step 2: Budget-ribbon scaffold styling */
+#ribbon-journey {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+.journey-ribbon { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.journey-ribbon-ghost { fill: none; stroke: rgba(250, 247, 242, 0.08); stroke-width: 2; }
+.journey-ribbon-live {
+  fill: none;
+  stroke: var(--red);
+  stroke-width: 4;
+  stroke-linecap: round;
+  filter: drop-shadow(0 4px 7px rgba(224, 58, 31, 0.28));
+}
+.journey-ribbon-marker { fill: var(--red); filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.25)); }
+#section-budget { position: relative; }
+#section-budget > *:not(#ribbon-journey) { position: relative; z-index: 1; }
+
+/* Step 3: Map-locator cursor */
+.map-cursor {
+  position: fixed;
+  z-index: 1300;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--red);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 2px 8px rgba(224, 58, 31, 0.42);
+  will-change: left, top, transform;
+  transition: opacity 0.18s;
+}
+.map-cursor::before,
+.map-cursor::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.map-cursor::before {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(224, 58, 31, 0.42);
+  background: rgba(224, 58, 31, 0.035);
+  transition: width 0.24s, height 0.24s, border-color 0.24s;
+}
+.map-cursor::after {
+  width: 50px;
+  height: 50px;
+  border: 1px solid rgba(224, 58, 31, 0.14);
+  animation: cursorLocator 2.1s ease-out infinite;
+}
+.map-cursor.visible { opacity: 1; }
+.map-cursor.over::before { width: 44px; height: 44px; border-color: rgba(224, 58, 31, 0.72); }
+.map-cursor.down { transform: translate(-50%, -50%) scale(0.68); }
+@keyframes cursorLocator {
+  0% { transform: translate(-50%, -50%) scale(0.45); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
+}
+
+/* Native cursor is hidden only once JS confirms a fine pointer is tracked and
+   the replacement dot is already visible — never before, so the cursor can
+   never appear to vanish. See journey-motion.js's pointermove handler. */
+body.map-cursor-on,
+body.map-cursor-on button,
+body.map-cursor-on a,
+body.map-cursor-on input,
+body.map-cursor-on .path-band,
+body.map-cursor-on .budget-band,
+body.map-cursor-on .houston-region {
+  cursor: none;
+}
+
+@media (pointer: coarse) {
+  .map-cursor { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .map-cursor::after { animation: none; display: none; }
+}
+
+/* Step 4: Start Over styling */
+.start-over {
+  position: fixed;
+  z-index: 950;
+  top: 20px;
+  right: 24px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ember);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.start-over:hover { color: var(--red); }
+.start-over:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+@media (max-width: 480px) {
+  .start-over { top: 12px; right: 12px; font-size: 10px; }
+}
+
+/* Step 5: Scene-transition variants */
+.journey-scene { position: relative; }
+
+.scene-zoom-enter {
+  transform-origin: 50% 50%;
+  animation: sceneZoomIn 0.72s cubic-bezier(0.18, 0.82, 0.2, 1) both;
+}
+.scene-origami-enter {
+  transform-origin: 50% 0;
+  animation: sceneOrigamiIn 0.76s cubic-bezier(0.18, 0.78, 0.2, 1) both;
+}
+.scene-page-turn-enter {
+  transform-origin: 100% 50%;
+  animation: scenePageTurn 1.05s cubic-bezier(0.16, 0.84, 0.2, 1) both;
+}
+.scene-page-turn-enter::after {
+  content: "";
+  position: absolute;
+  z-index: 8;
+  inset: -15%;
+  pointer-events: none;
+  background: linear-gradient(108deg, transparent 47.8%, rgba(224, 58, 31, 0.94) 48.1% 48.45%, rgba(255, 255, 255, 0.78) 48.7%, transparent 50%);
+  animation: pageTurnCrease 1.05s cubic-bezier(0.16, 0.84, 0.2, 1) both;
+}
+@keyframes sceneZoomIn {
+  from { opacity: 0; transform: scale(0.968); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes sceneOrigamiIn {
+  0% { opacity: 0.2; clip-path: inset(0 0 96% 0); transform: perspective(1600px) rotateX(-3deg); }
+  100% { opacity: 1; clip-path: inset(0); transform: none; }
+}
+@keyframes scenePageTurn {
+  0% { opacity: 0.35; clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); transform: perspective(1800px) rotateY(-7deg) scale(1.025); }
+  55% { opacity: 1; clip-path: polygon(18% 0, 100% 0, 100% 100%, 7% 100%); }
+  100% { opacity: 1; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); transform: none; }
+}
+@keyframes pageTurnCrease {
+  0% { transform: translateX(64%); opacity: 0; }
+  16% { opacity: 1; }
+  82% { opacity: 0.8; }
+  100% { transform: translateX(-68%); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-zoom-enter,
+  .scene-origami-enter,
+  .scene-page-turn-enter { animation: none !important; opacity: 1 !important; clip-path: none !important; transform: none !important; }
+  .scene-page-turn-enter::after { animation: none !important; content: none; }
+}
