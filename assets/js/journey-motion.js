@@ -10,6 +10,8 @@ window.JourneyMotion = (() => {
 
   const mix = (a, b, t) => a + (b - a) * t;
   let heroPlayed = false;
+  let heroAbortToken = 0;
+  let activeLift = null;
 
   function rectAnchor(name, fallback) {
     const el = anchor(name);
@@ -28,8 +30,10 @@ window.JourneyMotion = (() => {
   }
 
   function cancel() {
+    heroAbortToken++;
     if (activeAnimation) activeAnimation.cancel();
     activeAnimation = null;
+    if (activeLift) { activeLift.cancel(); activeLift = null; }
     heroPlayed = false;
     dot.classList.remove('is-traveling', 'is-hero-active');
     document.body.classList.remove('journey-traveling');
@@ -94,6 +98,7 @@ window.JourneyMotion = (() => {
       if (typeof navigate === 'function') navigate();
       return;
     }
+    const myToken = ++heroAbortToken;
     heroPlayed = true;
     document.body.classList.add('journey-traveling');
     heroStage?.classList.add('is-active');
@@ -125,8 +130,10 @@ window.JourneyMotion = (() => {
       { transform: 'translate3d(0,-6vh,0)', filter: 'brightness(1)', offset: 0.35 },
       { transform: 'translate3d(0,-108vh,0)', filter: 'brightness(.94)' }
     ], { duration: 1300, easing: 'cubic-bezier(.22,.78,.2,1)', fill: 'forwards' });
+    activeLift = lift;
 
     try { await fall.finished; } catch (_) { /* cancelled */ }
+    if (myToken !== heroAbortToken) return; // aborted mid-flight — cancel() already reset state
     dot.animate([
       { boxShadow: '0 0 0 0 rgba(224,58,31,.55)' },
       { boxShadow: '0 0 0 30px rgba(224,58,31,0)' }
@@ -134,6 +141,7 @@ window.JourneyMotion = (() => {
     document.querySelector('[data-motion-anchor="route-landing"]')?.classList.add('is-landed');
 
     try { await Promise.all([lift.finished, ribbonPromise]); } catch (_) { /* cancelled */ }
+    if (myToken !== heroAbortToken) return; // aborted mid-flight — cancel() already reset state
 
     if (typeof navigate === 'function') navigate();
 
@@ -141,6 +149,7 @@ window.JourneyMotion = (() => {
     lift.cancel();
     fall.cancel();
     activeAnimation = null;
+    activeLift = null;
     heroStage?.classList.remove('is-active');
     dot.classList.remove('is-traveling');
     document.body.classList.remove('journey-traveling');
