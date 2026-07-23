@@ -54,7 +54,11 @@
         targetBlueprint = 1;
         runHeroProgress();
       }
-      goTo(1, { behavior: 'smooth' });
+      if (window.JourneyMotion && typeof JourneyMotion.playHeroHandoff === 'function') {
+        JourneyMotion.playHeroHandoff({ navigate: () => goTo(1, { behavior: 'auto' }) });
+      } else {
+        goTo(1, { behavior: 'smooth' });
+      }
       setTimeout(() => { autoAdvanced = false; }, 700);
     }
 
