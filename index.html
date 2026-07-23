@@ -162,6 +162,8 @@
   </div>
 </nav>
 <div id="story-dot" aria-hidden="true"></div>
+<div class="map-cursor" id="map-cursor" aria-hidden="true"></div>
+<a href="#" class="start-over" id="start-over" onclick="return handleStartOver(event)">Start over</a>
 
 <!-- ── SECTION 1: OPENING ────────────────────────────────── -->
 <section class="section visible" id="section-open">
@@ -217,7 +219,7 @@
   </div>
   <div class="open-inner">
     <div class="brand-lockup">
-      <a class="brand-name" href="https://www.jwillsoldit.com/" aria-label="JWILLSOLDIT home" data-text="JWillSoldIt">JWillSoldIt<span class="brand-dot" aria-hidden="true"></span></a>
+      <a class="brand-name" href="https://www.jwillsoldit.com/" aria-label="JWILLSOLDIT home" data-text="JWillSoldIt">JWillSoldIt<span class="brand-dot" id="hero-dot-target" data-motion-anchor="hero-period" aria-hidden="true"></span></a>
     </div>
     <h1 class="open-headline">Your Smart Move<br><em>Starts Here</em></h1>
     <p class="open-intro">Tell me what you are trying to do, where you need to be, and when you need to move. I will use those answers to point you toward the Houston rental, purchase, or sale that fits your real life.</p>
@@ -229,6 +231,11 @@
     <span style="margin-left:auto;">Houston, TX</span>
     <span class="open-crg-text">Christin Rachelle Group</span>
   </div>
+  <div id="hero-handoff" class="hero-handoff-stage" aria-hidden="true">
+    <svg class="handoff-ribbon" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+      <path id="handoff-ribbon-path" d="M1180 140 C980 300 860 90 700 280 S360 460 110 620"/>
+    </svg>
+  </div>
 </section>
 
 <!-- ── SECTION 2: PATH SELECTOR ─────────────────────────── -->
@@ -238,6 +245,7 @@
     <div class="section-label">Plot Line — Step 2</div>
     <h2 class="section-title">What kind of move<br>are you making?</h2>
   </div>
+  <div class="route-landing" data-motion-anchor="route-landing" aria-hidden="true"></div>
   <div class="path-bands">
     <div class="path-band" data-path="rent" onclick="selectPath(this)">
       <span class="path-band-index">01</span>
@@ -407,6 +415,13 @@
 
 <!-- ── SECTION 5: BUDGET ─────────────────────────────────── -->
 <section class="section" id="section-budget">
+  <div id="ribbon-journey" class="ribbon-journey-stage" aria-hidden="true">
+    <svg class="journey-ribbon" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+      <path class="journey-ribbon-ghost" d="M60 700 C300 560 420 760 660 640 S980 480 1380 560"/>
+      <path class="journey-ribbon-live" id="journey-path" d="M60 700 C300 560 420 760 660 640 S980 480 1380 560"/>
+      <circle id="journey-dot" class="journey-ribbon-marker" r="7" cx="60" cy="700"/>
+    </svg>
+  </div>
   <div class="section-header">
     <div class="section-label">Plot Line — Step 5</div>
     <h2 class="section-title" id="budget-title" data-motion-anchor="budget">What is your<br>budget?</h2>
@@ -567,6 +582,12 @@
     </div>
     <div id="route-detail-fields"></div>
   </div>
+  <!-- Reserved for Phase 6 (route-specific question motion variety). Populated and
+       wired by a later phase once every route's field schema has been categorized
+       into property / preferences / qualifying groups. Inert until then. -->
+  <div class="journey-scene scene-zoom-enter" id="detail-scene-zoom" data-detail-slot="property" hidden></div>
+  <div class="journey-scene scene-origami-enter" id="detail-scene-origami" data-detail-slot="preferences" hidden></div>
+  <div class="journey-scene scene-page-turn-enter" id="detail-scene-page-turn" data-detail-slot="qualifying" hidden></div>
   <div class="detail-continue">
     <div class="detail-error" id="detail-error"></div>
     <button class="btn-continue" onclick="submitRouteDetails()">Build My Smart Move Brief</button>
