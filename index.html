@@ -581,13 +581,13 @@
       Answer what applies so Joey can route your move correctly.
     </div>
     <div id="route-detail-fields"></div>
+    <!-- Reserved for Phase 6 (route-specific question motion variety). Populated and
+         wired by a later phase once every route's field schema has been categorized
+         into property / preferences / qualifying groups. Inert until then. -->
+    <div class="journey-scene scene-zoom-enter" id="detail-scene-zoom" data-detail-slot="property" hidden></div>
+    <div class="journey-scene scene-origami-enter" id="detail-scene-origami" data-detail-slot="preferences" hidden></div>
+    <div class="journey-scene scene-page-turn-enter" id="detail-scene-page-turn" data-detail-slot="qualifying" hidden></div>
   </div>
-  <!-- Reserved for Phase 6 (route-specific question motion variety). Populated and
-       wired by a later phase once every route's field schema has been categorized
-       into property / preferences / qualifying groups. Inert until then. -->
-  <div class="journey-scene scene-zoom-enter" id="detail-scene-zoom" data-detail-slot="property" hidden></div>
-  <div class="journey-scene scene-origami-enter" id="detail-scene-origami" data-detail-slot="preferences" hidden></div>
-  <div class="journey-scene scene-page-turn-enter" id="detail-scene-page-turn" data-detail-slot="qualifying" hidden></div>
   <div class="detail-continue">
     <div class="detail-error" id="detail-error"></div>
     <button class="btn-continue" onclick="submitRouteDetails()">Build My Smart Move Brief</button>
