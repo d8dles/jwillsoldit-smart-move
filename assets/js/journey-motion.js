@@ -29,6 +29,12 @@ window.JourneyMotion = (() => {
     return { x: rect.left + rect.width / 2 - 9, y: rect.top + rect.height / 2 - 9 };
   }
 
+  function resetHeroStage() {
+    const heroSection = document.getElementById('section-open');
+    if (heroSection) heroSection.style.transform = '';
+    document.getElementById('hero-handoff')?.classList.remove('is-active');
+  }
+
   function cancel() {
     heroAbortToken++;
     if (activeAnimation) activeAnimation.cancel();
@@ -37,10 +43,8 @@ window.JourneyMotion = (() => {
     heroPlayed = false;
     dot.classList.remove('is-traveling', 'is-hero-active');
     document.body.classList.remove('journey-traveling');
-    document.getElementById('hero-handoff')?.classList.remove('is-active');
+    resetHeroStage();
     document.querySelectorAll('.is-landed').forEach((el) => el.classList.remove('is-landed'));
-    const heroSection = document.getElementById('section-open');
-    if (heroSection) heroSection.style.transform = '';
   }
 
   async function animate(frames, options) {
@@ -257,7 +261,7 @@ window.JourneyMotion = (() => {
     });
   })();
 
-  return { dot, reduced, anchor, point, cancel, depart, travel, playHeroHandoff, drawRibbonJourney, applySceneEnter };
+  return { dot, reduced, anchor, point, cancel, resetHeroStage, depart, travel, playHeroHandoff, drawRibbonJourney, applySceneEnter };
 })();
 
 function downloadVisualBrief() {

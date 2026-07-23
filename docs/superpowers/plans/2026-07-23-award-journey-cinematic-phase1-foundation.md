@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- Preserve `FormLogic`, `SECTIONS`, `goTo`, `PATH_MAP`, all six route keys, partial-lead capture (`sendPartialLead`), final submission (`sendSmartMoveBrief`/`buildSmartMovePayload`), and every existing payload shape. Do not modify `assets/js/state.js`, `assets/js/steps.js` (except the one additive hook in Task 4), `assets/js/validation.js`, or `assets/js/submit.js` in this phase.
+- Preserve `FormLogic`, `SECTIONS`, `goTo`, `PATH_MAP`, all six route keys, partial-lead capture (`sendPartialLead`), final submission (`sendSmartMoveBrief`/`buildSmartMovePayload`), and every existing payload shape. Do not modify `assets/js/state.js`, `assets/js/steps.js`, `assets/js/validation.js`, or `assets/js/submit.js` in this phase (except the one additive hook in Task 4, which lands in `assets/js/app.js`).
 - Keep classic global scripts, existing `<script>` load order, no bundler/framework/module conversion.
 - Exactly one animated protagonist: `#story-dot`. Any other SVG circle or dot element added in this phase must be either a static path marker (no independent `requestAnimationFrame`/`.animate()` loop of its own) or fully inert/hidden until a later phase wires it.
 - Respect `prefers-reduced-motion: reduce` everywhere: every new animation must no-op (or reduce to an instant, accessible state) when `matchMedia('(prefers-reduced-motion: reduce)').matches` is true.

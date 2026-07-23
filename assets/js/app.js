@@ -313,6 +313,9 @@
   }
 
   function resetSmartMoveState({ keepBrief = false } = {}) {
+    if (window.JourneyMotion && typeof JourneyMotion.resetHeroStage === 'function') {
+      JourneyMotion.resetHeroStage();
+    }
     autoAdvanceTimers.forEach(timer => clearTimeout(timer));
     autoAdvanceTimers.clear();
     partialLeadSent = false;
