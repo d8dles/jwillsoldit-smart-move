@@ -159,19 +159,25 @@ window.JourneyMotion = (() => {
     document.body.classList.remove('journey-traveling');
   }
 
-  async function drawRibbonJourney(pathId, { duration = 1100, delay = 0, stagger = true } = {}) {
+  async function drawRibbonJourney(pathId, { duration = 1100, delay = 0, stagger = true, staggerSelector = '.path-band', markerId = null } = {}) {
     const path = document.getElementById(pathId);
     if (!path) return;
     const length = path.getTotalLength();
     path.style.strokeDasharray = String(length);
+    const marker = markerId ? document.getElementById(markerId) : null;
     if (reduced) {
       path.style.strokeDashoffset = '0';
-      if (stagger) document.querySelectorAll('.path-band').forEach((band) => { band.style.opacity = '1'; band.style.transform = 'none'; });
+      if (stagger) document.querySelectorAll(staggerSelector).forEach((band) => { band.style.opacity = '1'; band.style.transform = 'none'; });
+      if (marker) {
+        const end = path.getPointAtLength(length);
+        marker.setAttribute('cx', end.x);
+        marker.setAttribute('cy', end.y);
+      }
       return;
     }
     path.style.strokeDashoffset = String(length);
 
-    const bands = stagger ? [...document.querySelectorAll('.path-band')] : [];
+    const bands = stagger ? [...document.querySelectorAll(staggerSelector)] : [];
     bands.forEach((band) => {
       band.style.opacity = '0';
       band.style.transform = 'translateY(12px)';
@@ -186,6 +192,11 @@ window.JourneyMotion = (() => {
         const raw = Math.min(1, (now - start) / duration);
         const eased = 1 - Math.pow(1 - raw, 3);
         path.style.strokeDashoffset = String(length * (1 - eased));
+        if (marker) {
+          const point = path.getPointAtLength(length * eased);
+          marker.setAttribute('cx', point.x);
+          marker.setAttribute('cy', point.y);
+        }
         bands.forEach((band, i) => {
           const reveal = Math.min(1, Math.max(0, (eased - i * 0.11) / 0.4));
           band.style.opacity = String(reveal);
