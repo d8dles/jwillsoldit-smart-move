@@ -10,6 +10,7 @@
     "test:wordmark": "node tests/wordmark-contract.test.mjs"
   },
   "dependencies": {
+    "@vercel/functions": "^3.7.5",
     "pdfkit": "^0.19.1",
     "playwright": "^1.56.1"
   }
