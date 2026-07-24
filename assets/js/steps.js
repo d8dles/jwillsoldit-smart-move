@@ -424,6 +424,35 @@
       dot.classList.toggle('is-active', regions.length > 0);
     }
     if (autoAdvanceTimers.has('area-map')) clearTimeout(autoAdvanceTimers.get('area-map'));
-    if (regions.length) scheduleAutoAdvance('area-map', () => goTo(6), 2000, 5);
+    if (regions.length) scheduleAutoAdvance('area-map', () => announceAreaRefinement(regions), 2000, 5);
+  }
+
+  function skipHoustonMap() {
+    if (autoAdvanceTimers.has('area-map')) clearTimeout(autoAdvanceTimers.get('area-map'));
+    announceAreaRefinement([]);
+  }
+
+  let areaRefinementAnnounced = false;
+
+  function announceAreaRefinement(regions) {
+    if (areaRefinementAnnounced) return;
+    areaRefinementAnnounced = true;
+    const panel = document.getElementById('area-refine-panel');
+    const label = regions.length ? regions.join(' + ') : 'Flexible — open search';
+    const nameEl = document.getElementById('area-refine-region-name');
+
+    const announce = () => {
+      if (nameEl) nameEl.textContent = label;
+      if (panel && window.JourneyMotion && typeof JourneyMotion.applySceneEnter === 'function') {
+        JourneyMotion.applySceneEnter(document.querySelector('.area-refine-heading'), 'zoom');
+      }
+    };
+
+    if (window.JourneyMotion && typeof JourneyMotion.travel === 'function' && !JourneyMotion.reduced) {
+      const fromEl = document.querySelector('.houston-map-dot.is-active') || document.querySelector('.houston-region.selected') || null;
+      JourneyMotion.travel({ from: fromEl, to: 'area-refine-punctuation', navigate: announce });
+    } else {
+      announce();
+    }
   }
 
