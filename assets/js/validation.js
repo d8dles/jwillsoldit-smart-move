@@ -86,6 +86,14 @@
       </div>
     `).join('');
     document.getElementById('budget-btn').disabled = true;
+    if (window.JourneyMotion && typeof JourneyMotion.drawRibbonJourney === 'function') {
+      JourneyMotion.drawRibbonJourney('journey-path', {
+        duration: 900,
+        delay: 150,
+        staggerSelector: '.budget-band',
+        markerId: 'journey-dot'
+      });
+    }
   }
 
   function setStoredValue(storage, value) {
