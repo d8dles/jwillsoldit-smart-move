@@ -13,6 +13,25 @@ function configuredOrigins() {
   return [...new Set([primary, ...extras])];
 }
 
+function requestBaseOrigin(req) {
+  const forwardedHost = req.headers?.['x-forwarded-host'];
+  const host = String(forwardedHost || req.headers?.host || '').split(',')[0].trim();
+  if (!host) return null;
+
+  const forwardedProto = req.headers?.['x-forwarded-proto'];
+  const proto = String(forwardedProto || (process.env.NODE_ENV === 'production' ? 'https' : 'http'))
+    .split(',')[0]
+    .trim();
+
+  if (proto !== 'https' && proto !== 'http') return null;
+  return `${proto}://${host}`;
+}
+
+function trustedOrigins(req) {
+  const sameOrigin = requestBaseOrigin(req);
+  return [...new Set([...configuredOrigins(), ...(sameOrigin ? [sameOrigin] : [])])];
+}
+
 function parseCookies(req) {
   const header = req.headers?.cookie;
   const out = {};
@@ -36,15 +55,16 @@ function safeEqual(a, b) {
 }
 
 export function applyCors(req, res) {
-  const origins = configuredOrigins();
+  const origins = trustedOrigins(req);
   const requestOrigin = req.headers?.origin;
 
-  // Only echo an origin that is explicitly allow-listed. For same-origin
-  // requests without an Origin header, use the primary production origin.
+  // Echo only an explicitly configured origin or the request's own origin.
+  // This keeps production locked down while allowing Vercel preview hosts to
+  // make same-origin admin requests without adding every generated URL to env.
   if (requestOrigin && origins.includes(requestOrigin)) {
     res.setHeader('Access-Control-Allow-Origin', requestOrigin);
   } else if (!requestOrigin) {
-    res.setHeader('Access-Control-Allow-Origin', origins[0]);
+    res.setHeader('Access-Control-Allow-Origin', requestBaseOrigin(req) || origins[0]);
   }
 
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -66,12 +86,12 @@ export function handlePreflight(req, res) {
 }
 
 export function isTrustedOrigin(req) {
-  const origins = configuredOrigins();
+  const origins = trustedOrigins(req);
   const origin = req.headers?.origin;
   if (origin) return origins.includes(origin);
 
-  // Some navigation/form clients omit Origin. Accept only an allow-listed
-  // Referer in that case; requests with neither header fail closed.
+  // Some navigation/form clients omit Origin. Accept only an allow-listed or
+  // same-origin Referer in that case; requests with neither header fail closed.
   const referer = req.headers?.referer;
   if (!referer) return false;
   try {
