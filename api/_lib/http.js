@@ -1,22 +1,58 @@
-// http.js — shared CORS/method plumbing for the verification module's API
-// routes. Mirrors the pattern already used in api/smart-move.js.
+// http.js — shared CORS, origin, CSRF, and request parsing helpers.
 
-export function applyCors(req, res) {
-  const fallbackOrigin = process.env.ALLOWED_ORIGIN || 'https://move.jwillsoldit.com';
-  const publicOrigins = String(process.env.PUBLIC_ALLOWED_ORIGINS || '')
+import crypto from 'crypto';
+
+export const ADMIN_CSRF_COOKIE = 'smadmin_csrf';
+
+function configuredOrigins() {
+  const primary = process.env.ALLOWED_ORIGIN || 'https://move.jwillsoldit.com';
+  const extras = String(process.env.PUBLIC_ALLOWED_ORIGINS || '')
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
+  return [...new Set([primary, ...extras])];
+}
+
+function parseCookies(req) {
+  const header = req.headers?.cookie;
+  const out = {};
+  if (!header) return out;
+  header.split(';').forEach((part) => {
+    const idx = part.indexOf('=');
+    if (idx === -1) return;
+    const key = part.slice(0, idx).trim();
+    const value = part.slice(idx + 1).trim();
+    if (!key) return;
+    try { out[key] = decodeURIComponent(value); } catch { out[key] = value; }
+  });
+  return out;
+}
+
+function safeEqual(a, b) {
+  const left = Buffer.from(String(a || ''), 'utf8');
+  const right = Buffer.from(String(b || ''), 'utf8');
+  if (!left.length || left.length !== right.length) return false;
+  return crypto.timingSafeEqual(left, right);
+}
+
+export function applyCors(req, res) {
+  const origins = configuredOrigins();
   const requestOrigin = req.headers?.origin;
-  const allowedOrigin = requestOrigin && [fallbackOrigin, ...publicOrigins].includes(requestOrigin)
-    ? requestOrigin
-    : fallbackOrigin;
-  res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+
+  // Only echo an origin that is explicitly allow-listed. For same-origin
+  // requests without an Origin header, use the primary production origin.
+  if (requestOrigin && origins.includes(requestOrigin)) {
+    res.setHeader('Access-Control-Allow-Origin', requestOrigin);
+  } else if (!requestOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', origins[0]);
+  }
+
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-CSRF-Token');
   res.setHeader('Vary', 'Origin');
   res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Cache-Control', 'private, no-store, max-age=0');
 }
 
 // Returns true if the request was fully handled (OPTIONS preflight) and the
@@ -26,6 +62,42 @@ export function handlePreflight(req, res) {
     res.status(204).end();
     return true;
   }
+  return false;
+}
+
+export function isTrustedOrigin(req) {
+  const origins = configuredOrigins();
+  const origin = req.headers?.origin;
+  if (origin) return origins.includes(origin);
+
+  // Some navigation/form clients omit Origin. Accept only an allow-listed
+  // Referer in that case; requests with neither header fail closed.
+  const referer = req.headers?.referer;
+  if (!referer) return false;
+  try {
+    return origins.includes(new URL(referer).origin);
+  } catch {
+    return false;
+  }
+}
+
+export function requireTrustedOrigin(req, res) {
+  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return true;
+  if (isTrustedOrigin(req)) return true;
+  res.status(403).json({ success: false, error: 'Request origin is not allowed' });
+  return false;
+}
+
+export function requireAdminCsrf(req, res) {
+  if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return true;
+  if (!requireTrustedOrigin(req, res)) return false;
+
+  const cookies = parseCookies(req);
+  const cookieToken = cookies[ADMIN_CSRF_COOKIE];
+  const headerToken = req.headers?.['x-csrf-token'];
+  if (safeEqual(cookieToken, headerToken)) return true;
+
+  res.status(403).json({ success: false, error: 'Security token is missing or invalid. Please sign in again.' });
   return false;
 }
 
