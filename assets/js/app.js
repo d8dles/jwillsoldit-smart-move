@@ -210,8 +210,8 @@
       return FormLogic.validateField('name', name).valid &&
              FormLogic.validateField('email', email).valid &&
              FormLogic.validateField('phone', phone).valid &&
-             !!FormLogic.formData.contact_method &&
-             !!FormLogic.formData.best_time;
+             FormLogic.formData.contact.methods.length > 0 &&
+             FormLogic.formData.contact.bestTimes.length > 0;
     }
     if (step === 3) {
       return !!FormLogic.formData.trunk.Q2_timeline &&

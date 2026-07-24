@@ -314,21 +314,21 @@
       <div class="contact-error" id="err-phone"></div>
     </div>
     <div class="contact-row">
-      <label class="contact-label">Preferred Contact</label>
+      <label class="contact-label">Preferred Contact &middot; choose any</label>
       <div class="contact-inline-opts" id="pref-contact">
-        <button class="inline-opt" data-val="call" onclick="selectInline(this,'pref-contact','contact_method')">Call</button>
-        <button class="inline-opt" data-val="text" onclick="selectInline(this,'pref-contact','contact_method')">Text</button>
-        <button class="inline-opt" data-val="email" onclick="selectInline(this,'pref-contact','contact_method')">Email</button>
+        <button class="inline-opt" data-val="call" onclick="toggleInline(this,'pref-contact','methods')">Call</button>
+        <button class="inline-opt" data-val="text" onclick="toggleInline(this,'pref-contact','methods')">Text</button>
+        <button class="inline-opt" data-val="email" onclick="toggleInline(this,'pref-contact','methods')">Email</button>
       </div>
       <div class="contact-error" id="err-pref"></div>
     </div>
     <div class="contact-row">
-      <label class="contact-label">Best Time to Reach You</label>
+      <label class="contact-label">Best Time to Reach You &middot; choose any</label>
       <div class="contact-inline-opts" id="best-time">
-        <button class="inline-opt" data-val="morning" onclick="selectInline(this,'best-time','best_time')">Morning</button>
-        <button class="inline-opt" data-val="afternoon" onclick="selectInline(this,'best-time','best_time')">Afternoon</button>
-        <button class="inline-opt" data-val="evening" onclick="selectInline(this,'best-time','best_time')">Evening</button>
-        <button class="inline-opt" data-val="anytime" onclick="selectInline(this,'best-time','best_time')">Anytime</button>
+        <button class="inline-opt" data-val="morning" onclick="toggleInline(this,'best-time','bestTimes')">Morning</button>
+        <button class="inline-opt" data-val="afternoon" onclick="toggleInline(this,'best-time','bestTimes')">Afternoon</button>
+        <button class="inline-opt" data-val="evening" onclick="toggleInline(this,'best-time','bestTimes')">Evening</button>
+        <button class="inline-opt" data-val="anytime" onclick="toggleInline(this,'best-time','bestTimes')">Anytime</button>
       </div>
       <div class="contact-error" id="err-time"></div>
     </div>

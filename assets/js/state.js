@@ -30,7 +30,9 @@ const FormLogic = {
     contact: {
       name: null,
       email: null,
-      phone: null
+      phone: null,
+      methods: [],   // ["call","text","email"] — multi-select, choose any
+      bestTimes: []  // ["morning","afternoon","evening","anytime"] — multi-select, choose any
     },
 
     // Shared trunk (Q2-Q7)
@@ -174,7 +176,9 @@ const FormLogic = {
       contact: {
         name: null,
         email: null,
-        phone: null
+        phone: null,
+        methods: [],   // ["call","text","email"] — multi-select, choose any
+        bestTimes: []  // ["morning","afternoon","evening","anytime"] — multi-select, choose any
       },
       trunk: {
         Q2_timeline: null,
@@ -290,7 +294,9 @@ const FormLogic = {
       contact: {
         name: this.formData.contact.name,
         email: this.formData.contact.email,
-        phone: this.formData.contact.phone
+        phone: this.formData.contact.phone,
+        methods: this.formData.contact.methods,
+        bestTimes: this.formData.contact.bestTimes
       },
 
       // Shared trunk

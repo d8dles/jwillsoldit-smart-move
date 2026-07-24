@@ -163,10 +163,12 @@
   }
 
   // ── INLINE OPTION BUTTONS (contact method / best time) ──
-  function selectInline(el, groupId, field) {
-    document.querySelectorAll(`#${groupId} .inline-opt`).forEach(b => b.classList.remove('selected'));
-    el.classList.add('selected');
-    FormLogic.formData[field] = el.dataset.val;
+  // Both are multi-select: choose any combination.
+  function toggleInline(el, groupId, field) {
+    el.classList.toggle('selected');
+    const wrap = document.getElementById(groupId);
+    const values = [...wrap.querySelectorAll('.inline-opt.selected')].map(b => b.dataset.val);
+    FormLogic.formData.contact[field] = values;
     maybeAutoContact();
   }
 
@@ -175,12 +177,12 @@
     const name  = document.getElementById('c-name')?.value.trim() || '';
     const email = document.getElementById('c-email')?.value.trim() || '';
     const phone = document.getElementById('c-phone')?.value.trim() || '';
-    const method = FormLogic.formData['contact_method'] || null;
-    const time   = FormLogic.formData['best_time'] || null;
+    const methods   = FormLogic.formData.contact.methods;
+    const bestTimes = FormLogic.formData.contact.bestTimes;
     const ready = FormLogic.validateField('name', name).valid &&
                   FormLogic.validateField('email', email).valid &&
                   FormLogic.validateField('phone', phone).valid &&
-                  method && time;
+                  methods.length > 0 && bestTimes.length > 0;
     if (ready) scheduleAutoAdvance('contact', submitContact, 550);
   }
 
@@ -193,8 +195,8 @@
     const name  = document.getElementById('c-name').value.trim();
     const email = document.getElementById('c-email').value.trim();
     const phone = document.getElementById('c-phone').value.trim();
-    const method = FormLogic.formData['contact_method'] || null;
-    const time   = FormLogic.formData['best_time'] || null;
+    const methods   = FormLogic.formData.contact.methods;
+    const bestTimes = FormLogic.formData.contact.bestTimes;
 
     let valid = true;
 
@@ -216,8 +218,8 @@
     vPhone.valid ? clrErr('err-phone') : setErr('err-phone', vPhone.error);
     document.getElementById('c-phone').classList.toggle('invalid', !vPhone.valid);
 
-    method ? clrErr('err-pref') : setErr('err-pref', 'Select a preferred contact method');
-    time   ? clrErr('err-time') : setErr('err-time', 'Select the best time to reach you');
+    methods.length   ? clrErr('err-pref') : setErr('err-pref', 'Select at least one preferred contact method');
+    bestTimes.length ? clrErr('err-time') : setErr('err-time', 'Select at least one good time to reach you');
 
     if (!valid) return;
 
