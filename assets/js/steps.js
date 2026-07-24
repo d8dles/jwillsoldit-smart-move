@@ -275,7 +275,15 @@
     document.querySelectorAll('#trunk-agent .budget-band').forEach(b => b.classList.remove('selected'));
     el.classList.add('selected');
     FormLogic.formData.trunk.existing_agent_status = el.dataset.val;
-    document.getElementById('agent-yes-notice').style.display = el.dataset.val === 'yes' ? 'block' : 'none';
+    if (el.dataset.val === 'yes') {
+      document.getElementById('representation-modal').showModal();
+    } else {
+      maybeAutoTrunk();
+    }
+  }
+
+  function acknowledgeRepresentation() {
+    document.getElementById('representation-modal').close();
     maybeAutoTrunk();
   }
 

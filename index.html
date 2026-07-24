@@ -171,6 +171,16 @@
     <iframe id="disclosure-modal-frame" title="Texas disclosure document"></iframe>
   </div>
 </dialog>
+<dialog class="disclosure-modal" id="representation-modal">
+  <div class="disclosure-modal-inner representation-modal-inner">
+    <div class="disclosure-modal-head">
+      <span>Existing representation</span>
+      <button type="button" onclick="document.getElementById('representation-modal').close()">Close</button>
+    </div>
+    <p class="representation-copy">Thanks for letting me know. If you're already represented by another agent, I may not be able to assist with the same move until that relationship is resolved. Please review any buyer, tenant, or representation agreement you may have and confirm whether it needs to be ended before moving forward with our brokerage. I'm happy to help once you're clear to proceed.</p>
+    <button type="button" class="btn-continue" id="representation-understand" onclick="acknowledgeRepresentation()">I understand</button>
+  </div>
+</dialog>
 <div class="map-cursor" id="map-cursor" aria-hidden="true"></div>
 <a href="#" class="start-over" id="start-over" onclick="return handleStartOver(event)">Start over</a>
 
@@ -394,9 +404,6 @@
       </div>
     </div>
     <div class="trunk-err" id="err-agent"></div>
-    <div class="agent-yes-notice" id="agent-yes-notice" style="display:none;">
-      <p>Thanks for letting me know. If you're already represented by another agent, I may not be able to assist with the same move until that relationship is resolved. Please review any buyer, tenant, or representation agreement you may have and confirm whether it needs to be ended before moving forward with our brokerage. I'm happy to help once you're clear to proceed.</p>
-    </div>
   </div>
 
   <div class="trunk-block trunk-acks">

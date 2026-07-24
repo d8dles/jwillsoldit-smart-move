@@ -1269,21 +1269,6 @@
     .disclosure-row { padding: 16px 24px; }
   }
 
-  .agent-yes-notice {
-    margin-top: 14px;
-    padding: 16px 20px;
-    border-left: 3px solid var(--forest);
-    background: #F1EEE6;
-  }
-  .agent-yes-notice p {
-    font-family: var(--body);
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--ink);
-    line-height: 1.7;
-    margin: 0;
-  }
-
   /* ── CONTACT SCREEN ───────────────────────────────────── */
   .contact-fields {
     flex: 1;
