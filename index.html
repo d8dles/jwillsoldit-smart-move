@@ -162,6 +162,15 @@
   </div>
 </nav>
 <div id="story-dot" aria-hidden="true"></div>
+<dialog class="disclosure-modal" id="disclosure-modal">
+  <div class="disclosure-modal-inner">
+    <div class="disclosure-modal-head">
+      <span id="disclosure-modal-title">Texas disclosure</span>
+      <button type="button" onclick="document.getElementById('disclosure-modal').close()">Close</button>
+    </div>
+    <iframe id="disclosure-modal-frame" title="Texas disclosure document"></iframe>
+  </div>
+</dialog>
 <div class="map-cursor" id="map-cursor" aria-hidden="true"></div>
 <a href="#" class="start-over" id="start-over" onclick="return handleStartOver(event)">Start over</a>
 
@@ -392,18 +401,16 @@
 
   <div class="trunk-block trunk-acks">
     <div class="trunk-q-label">Texas Disclosures</div>
-    <div class="ack-band" id="ack-iabs" onclick="toggleAck(this,'compliance_iabs_acknowledged','ack-iabs','err-iabs')">
-      <div class="ack-box"></div>
-      <div class="ack-content">
-        <div class="ack-text">I acknowledge that I have been provided access to the Texas Real Estate Commission <a href="assets/docs/iabs.pdf" target="_blank" rel="noopener" class="ack-link">Information About Brokerage Services</a> notice.</div>
-      </div>
+    <div class="disclosure-row">
+      <button type="button" class="disclosure-view" onclick="viewDisclosure('iabs','Information About Brokerage Services')">Information About Brokerage Services</button>
+      <a class="disclosure-download" href="assets/docs/iabs.pdf" download>Download</a>
+      <button type="button" class="ack-choice" id="ack-iabs" onclick="toggleAck(this,'compliance_iabs_acknowledged','ack-iabs','err-iabs')">Acknowledge</button>
     </div>
     <div class="trunk-err" id="err-iabs"></div>
-    <div class="ack-band" id="ack-cpn" onclick="toggleAck(this,'compliance_cpn_acknowledged','ack-cpn','err-cpn')">
-      <div class="ack-box"></div>
-      <div class="ack-content">
-        <div class="ack-text">I acknowledge that I have been provided access to the Texas Real Estate Commission <a href="assets/docs/cpn.pdf" target="_blank" rel="noopener" class="ack-link">Consumer Protection Notice</a>.</div>
-      </div>
+    <div class="disclosure-row">
+      <button type="button" class="disclosure-view" onclick="viewDisclosure('cpn','Consumer Protection Notice')">Consumer Protection Notice</button>
+      <a class="disclosure-download" href="assets/docs/cpn.pdf" download>Download</a>
+      <button type="button" class="ack-choice" id="ack-cpn" onclick="toggleAck(this,'compliance_cpn_acknowledged','ack-cpn','err-cpn')">Acknowledge</button>
     </div>
     <div class="trunk-err" id="err-cpn"></div>
   </div>

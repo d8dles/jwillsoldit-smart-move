@@ -286,6 +286,15 @@
     maybeAutoTrunk();
   }
 
+  // ── DISCLOSURE MODAL (view inline; acknowledgment is a separate control) ──
+  function viewDisclosure(key, title) {
+    const src = key === 'iabs' ? 'assets/docs/iabs.pdf' : key === 'cpn' ? 'assets/docs/cpn.pdf' : null;
+    if (!src) return;
+    document.getElementById('disclosure-modal-title').textContent = title;
+    document.getElementById('disclosure-modal-frame').src = src;
+    document.getElementById('disclosure-modal').showModal();
+  }
+
   function maybeAutoTrunk() {
     const ready = FormLogic.formData.trunk.Q2_timeline &&
                   FormLogic.formData.trunk.existing_agent_status &&

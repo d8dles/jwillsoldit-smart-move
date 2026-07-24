@@ -1158,60 +1158,116 @@
     padding-bottom: 0;
   }
 
-  .ack-band {
+  .disclosure-row {
     display: flex;
-    align-items: flex-start;
-    gap: 16px;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
     padding: 16px 80px;
     border-top: 1px solid var(--trace);
-    cursor: pointer;
-    background: var(--pure);
-    transition: background 0.12s;
-  }
-
-  .ack-band:hover { background: #F4EFE7; }
-
-  .ack-box {
-    width: 18px;
-    height: 18px;
-    border: 1px solid var(--trace);
-    flex-shrink: 0;
-    margin-top: 1px;
-    position: relative;
-    transition: all 0.12s;
-  }
-
-  .ack-band.checked .ack-box {
-    background: var(--forest);
-    border-color: var(--forest);
-  }
-
-  .ack-band.checked .ack-box::after {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 8px; height: 8px;
     background: var(--pure);
   }
 
-  .ack-text {
+  .disclosure-view {
+    flex: 1 1 240px;
+    text-align: left;
+    border: 0;
+    background: transparent;
+    padding: 10px 0;
     font-family: var(--body);
     font-size: 13px;
-    font-weight: 300;
-    color: var(--mid);
-    line-height: 1.6;
-  }
-
-  .ack-band.checked .ack-text { color: var(--ink); }
-
-  .ack-link {
+    font-weight: 500;
     color: var(--forest);
     text-decoration: underline;
     text-underline-offset: 2px;
-    font-weight: 500;
+    cursor: pointer;
   }
-  .ack-link:hover { color: var(--ink); }
+  .disclosure-view:hover { color: var(--ink); }
+
+  .disclosure-download {
+    border: 1px solid var(--trace);
+    background: transparent;
+    padding: 9px 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mid);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.12s, border-color 0.12s;
+  }
+  .disclosure-download:hover { color: var(--ink); border-color: var(--ink); }
+
+  .ack-choice {
+    border: 1px solid var(--trace);
+    background: var(--pure);
+    padding: 9px 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mid);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .ack-choice.checked {
+    background: var(--forest);
+    border-color: var(--forest);
+    color: var(--pure);
+  }
+
+  .disclosure-modal {
+    border: 0;
+    padding: 0;
+    width: min(920px, 94vw);
+    height: min(760px, 92vh);
+    background: var(--off-white);
+    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.35);
+  }
+  .disclosure-modal::backdrop {
+    background: rgba(13, 13, 13, 0.72);
+  }
+  .disclosure-modal-inner {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+  }
+  .disclosure-modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 18px;
+    border-bottom: 1px solid var(--trace);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .disclosure-modal-head button {
+    border: 0;
+    background: transparent;
+    color: var(--red);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .disclosure-modal iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  @media (max-width: 760px) {
+    .disclosure-row { padding: 16px 24px; }
+  }
 
   .agent-yes-notice {
     margin-top: 14px;
