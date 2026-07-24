@@ -46,8 +46,8 @@
 #section-area { overflow: hidden; }
 .houston-map-stage {
   position: relative;
-  width: min(92vw, 1320px);
-  height: min(62vh, 680px);
+  width: min(94vw, 1400px);
+  height: min(84vh, 880px);
   margin: 0 auto;
   overflow: visible;
 }
@@ -68,8 +68,38 @@
 .houston-map-dot { position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; border-radius: 50%; background: var(--journey-red); opacity: 0; transform: translate(-50%,-50%); box-shadow: 0 0 0 0 rgba(224,58,31,.45); transition: left .42s cubic-bezier(.2,.8,.2,1),top .42s cubic-bezier(.2,.8,.2,1),opacity .2s; pointer-events: none; }
 .houston-map-dot.is-active { opacity: 1; animation: houstonPulse 1.8s ease-in-out infinite; }
 @keyframes houstonPulse { 50% { box-shadow: 0 0 0 16px rgba(224,58,31,0); } }
+.area-refine-heading { margin-bottom: 4px; }
+.area-refine-title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 20px;
+}
+.area-refine-period {
+  position: relative;
+  display: inline-block;
+  width: 0.2em;
+  color: var(--mid);
+}
+.area-refine-period.is-landed { color: transparent; }
+.area-refine-period.is-landed::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0.08em;
+  width: 0.14em;
+  height: 0.14em;
+  min-width: 10px;
+  min-height: 10px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 18px rgba(224, 58, 31, 0.65);
+  transform: translateX(-50%);
+}
 .compact-area-body { max-width: 1180px; margin: 0 auto; }
-@media(max-width:700px){.houston-map-stage{width:108vw;height:52vh;margin-left:-4vw}.houston-region{font-size:8px;padding:4px}.houston-region-grid{inset:8% 4%}.compact-area-body{padding-top:24px!important}}
+@media(max-width:700px){.houston-map-stage{width:108vw;height:64vh;margin-left:-4vw}.houston-region{font-size:8px;padding:4px}.houston-region-grid{inset:8% 4%}.compact-area-body{padding-top:24px!important}}
 
 .texas-arrival { position: relative; min-height: 285px; overflow: hidden; }
 .texas-map-frame { position: relative; width: min(100%,380px); height: 270px; margin: 0 auto; }
