@@ -1,7 +1,8 @@
 import crypto from 'crypto';
 import { newToken, newId, hashToken } from './ids.js';
-import { readDB, writeDB } from './store.js';
+import { readDB, withDB } from './store.js';
 import { checkRateLimit, clearRateLimit } from './rate-limit.js';
+import { ADMIN_CSRF_COOKIE } from './http.js';
 
 const COOKIE_NAME = 'smadmin_session';
 const SESSION_TTL_HOURS = 12;
@@ -38,7 +39,8 @@ function parseCookies(req) {
     if (idx === -1) return;
     const key = part.slice(0, idx).trim();
     const val = part.slice(idx + 1).trim();
-    if (key) out[key] = decodeURIComponent(val);
+    if (!key) return;
+    try { out[key] = decodeURIComponent(val); } catch { out[key] = val; }
   });
   return out;
 }
@@ -50,35 +52,48 @@ function isSecureRequest(req) {
   return proto ? proto === 'https' : process.env.NODE_ENV === 'production';
 }
 
-export function setSessionCookie(req, res, rawToken) {
-  const secure = isSecureRequest(req) ? '; Secure' : '';
-  const maxAge = SESSION_TTL_HOURS * 60 * 60;
-  res.setHeader(
-    'Set-Cookie',
-    `${COOKIE_NAME}=${encodeURIComponent(rawToken)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure}`
-  );
+function cookieSecurity(req) {
+  return isSecureRequest(req) ? '; Secure' : '';
 }
 
-export function clearSessionCookie(req, res) {
-  const secure = isSecureRequest(req) ? '; Secure' : '';
-  res.setHeader('Set-Cookie', `${COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`);
+export function setSessionCookies(req, res, rawSessionToken, rawCsrfToken) {
+  const secure = cookieSecurity(req);
+  const maxAge = SESSION_TTL_HOURS * 60 * 60;
+  res.setHeader('Set-Cookie', [
+    `${COOKIE_NAME}=${encodeURIComponent(rawSessionToken)}; Path=/; HttpOnly; SameSite=Strict; Priority=High; Max-Age=${maxAge}${secure}`,
+    `${ADMIN_CSRF_COOKIE}=${encodeURIComponent(rawCsrfToken)}; Path=/; SameSite=Strict; Priority=High; Max-Age=${maxAge}${secure}`,
+  ]);
+}
+
+export function clearSessionCookies(req, res) {
+  const secure = cookieSecurity(req);
+  res.setHeader('Set-Cookie', [
+    `${COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Strict; Priority=High; Max-Age=0${secure}`,
+    `${ADMIN_CSRF_COOKIE}=; Path=/; SameSite=Strict; Priority=High; Max-Age=0${secure}`,
+  ]);
 }
 
 export async function createAdminSession(req, res) {
-  const raw = newToken();
-  const hash = hashToken(raw);
+  const rawSession = newToken();
+  const rawCsrf = newToken();
+  const sessionHash = hashToken(rawSession);
   const now = new Date();
   const expiresAt = new Date(now.getTime() + SESSION_TTL_HOURS * 60 * 60 * 1000).toISOString();
 
-  const db = await readDB();
-  // Opportunistically drop expired sessions so this object doesn't grow forever.
-  for (const [key, session] of Object.entries(db.adminSessions)) {
-    if (new Date(session.expiresAt).getTime() < Date.now()) delete db.adminSessions[key];
-  }
-  db.adminSessions[hash] = { createdAt: now.toISOString(), expiresAt };
-  await writeDB(db);
+  await withDB((db) => {
+    if (!db.adminSessions) db.adminSessions = {};
+    // Opportunistically drop expired sessions so this object doesn't grow forever.
+    for (const [key, session] of Object.entries(db.adminSessions)) {
+      if (new Date(session.expiresAt).getTime() < Date.now()) delete db.adminSessions[key];
+    }
+    db.adminSessions[sessionHash] = {
+      createdAt: now.toISOString(),
+      expiresAt,
+      csrfHash: hashToken(rawCsrf),
+    };
+  });
 
-  setSessionCookie(req, res, raw);
+  setSessionCookies(req, res, rawSession, rawCsrf);
 }
 
 export async function destroyAdminSession(req, res) {
@@ -86,22 +101,25 @@ export async function destroyAdminSession(req, res) {
   const raw = cookies[COOKIE_NAME];
   if (raw) {
     const hash = hashToken(raw);
-    const db = await readDB();
-    delete db.adminSessions[hash];
-    await writeDB(db);
+    await withDB((db) => {
+      if (db.adminSessions) delete db.adminSessions[hash];
+    });
   }
-  clearSessionCookie(req, res);
+  clearSessionCookies(req, res);
 }
 
 export async function isAdminAuthenticated(req) {
   const cookies = parseCookies(req);
-  const raw = cookies[COOKIE_NAME];
-  if (!raw) return false;
-  const hash = hashToken(raw);
+  const rawSession = cookies[COOKIE_NAME];
+  const rawCsrf = cookies[ADMIN_CSRF_COOKIE];
+  if (!rawSession || !rawCsrf) return false;
+
+  const sessionHash = hashToken(rawSession);
   const db = await readDB();
-  const session = db.adminSessions[hash];
+  const session = db.adminSessions?.[sessionHash];
   if (!session) return false;
   if (new Date(session.expiresAt).getTime() < Date.now()) return false;
+  if (!session.csrfHash || !timingSafeEqualHex(hashToken(rawCsrf), session.csrfHash)) return false;
   return true;
 }
 
@@ -169,7 +187,7 @@ export function is2faEnabled() {
 
 export function createLoginChallenge(db) {
   if (!db.loginChallenges) db.loginChallenges = {};
-  // Drop expired challenges so the object doesn't grow forever.
+  // Drop expired challenges so this object doesn't grow forever.
   for (const [key, challenge] of Object.entries(db.loginChallenges)) {
     if (new Date(challenge.expiresAt).getTime() < Date.now()) delete db.loginChallenges[key];
   }
