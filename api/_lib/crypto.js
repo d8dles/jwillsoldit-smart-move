@@ -6,17 +6,27 @@
 // ("copy link") a token it already issued, without regenerating it (which
 // would invalidate a link already texted/emailed to a tenant or PM).
 //
-// The key is derived from TOKEN_ENCRYPTION_KEY if set, otherwise from
-// ADMIN_PASSWORD — either way it lives only in env vars, never in the DB,
-// so a DB dump alone doesn't yield usable links.
+// TOKEN_ENCRYPTION_KEY is preferred. ADMIN_PASSWORD remains a compatibility
+// fallback so existing links do not break during rollout, but there is no
+// public/default key: production must have at least one server-side secret.
 
 import crypto from 'crypto';
 
+let warnedPasswordFallback = false;
+
 function getKey() {
-  const secret =
-    process.env.TOKEN_ENCRYPTION_KEY ||
-    process.env.ADMIN_PASSWORD ||
-    'smart-move-verification-fallback-key-set-TOKEN_ENCRYPTION_KEY';
+  const dedicated = process.env.TOKEN_ENCRYPTION_KEY;
+  const fallback = process.env.ADMIN_PASSWORD;
+  const secret = dedicated || fallback;
+
+  if (!secret) {
+    throw new Error('TOKEN_ENCRYPTION_KEY or ADMIN_PASSWORD must be configured');
+  }
+  if (!dedicated && !warnedPasswordFallback) {
+    warnedPasswordFallback = true;
+    console.warn('[crypto] TOKEN_ENCRYPTION_KEY is not set; using ADMIN_PASSWORD for compatibility. Configure a dedicated key before rotating the admin password.');
+  }
+
   return crypto.scryptSync(secret, 'smart-move-verification-salt-v1', 32);
 }
 
