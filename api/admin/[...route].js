@@ -44,6 +44,7 @@ import cdaApproveHandler from '../_lib/handlers/cda-approve.js';
 import cdaReminderHandler from '../_lib/handlers/cda-reminder.js';
 import inventoryListHandler from '../_lib/handlers/inventory-list.js';
 import inventoryDetailHandler from '../_lib/handlers/inventory-detail.js';
+import { requireAdminCsrf, requireTrustedOrigin } from '../_lib/http.js';
 
 function notFound(res) {
   return res.status(404).json({ success: false, error: 'Unknown admin route' });
@@ -81,6 +82,18 @@ export default async function handler(req, res) {
   const { seg, query } = parseRequest(req);
   req.query = query;
   const [a, b, c] = seg;
+
+  // Login endpoints have no session/CSRF cookie yet, but still must originate
+  // from the real Smart Move site. Every other state-changing admin request
+  // must pass both the origin check and the double-submit CSRF check.
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+    const isLoginStep = seg.length === 1 && (a === 'login' || a === 'verify-2fa');
+    if (isLoginStep) {
+      if (!requireTrustedOrigin(req, res)) return;
+    } else if (!requireAdminCsrf(req, res)) {
+      return;
+    }
+  }
 
   // Flat endpoints
   if (seg.length === 1) {
