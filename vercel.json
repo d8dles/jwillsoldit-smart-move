@@ -1,5 +1,15 @@
 {
   "rewrites": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "command.jwillsoldit.com"
+        }
+      ],
+      "destination": "/admin"
+    },
     { "source": "/api/admin/:path*", "destination": "/api/admin/[...route]" },
     { "source": "/admin", "destination": "/admin/verifications-list.html" },
     { "source": "/admin/verifications", "destination": "/admin/verifications-list.html" },
