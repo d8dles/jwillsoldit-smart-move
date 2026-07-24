@@ -414,7 +414,7 @@
       return;
     }
     toggleArea(el);
-    const regions = [...document.querySelectorAll('.houston-region.selected')];
+    const regions = [...document.querySelectorAll('.houston-region.selected')].map(r => r.dataset.area);
     const dot = document.querySelector('.houston-map-dot');
     if (dot) {
       const rect = el.getBoundingClientRect();
