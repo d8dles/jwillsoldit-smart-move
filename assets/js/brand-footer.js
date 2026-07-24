@@ -22,7 +22,7 @@
           <span class="jwbf-id">Joey Williams &middot; REALTOR&reg; &middot; Christin Rachelle Group &middot; Houston, TX</span>
         </div>
         <nav class="jwbf-links" aria-label="Compliance and legal">
-          <a href="https://www.jwillsoldit.com/assets/iabs.pdf">IABS</a>
+          <a href="https://www.jwillsoldit.com/assets/iabs.pdf">Information About Brokerage Services</a>
           <a href="https://www.jwillsoldit.com/assets/cpn.pdf">Consumer Protection Notice</a>
           <a href="https://www.jwillsoldit.com/privacy.html">Privacy</a>
           <a href="https://www.jwillsoldit.com/houston">Houston Guides</a>
