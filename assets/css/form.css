@@ -301,6 +301,118 @@
     color: var(--red);
   }
 
+  .area-intro-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .area-helper {
+    font-family: var(--body);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--mid);
+    max-width: 640px;
+    margin: 0;
+  }
+
+  .area-selected-tray {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+    min-height: 26px;
+  }
+
+  .selected-pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--forest);
+    background: var(--paper-2);
+    border: 1px solid var(--trace);
+    padding: 6px 12px;
+    border-radius: 999px;
+  }
+
+  .area-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px 40px;
+  }
+
+  .area-panel-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mid);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--trace);
+    margin-bottom: 14px;
+  }
+
+  .area-chip-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .area-chip {
+    border: 1px solid var(--trace);
+    background: var(--pure);
+    padding: 9px 14px;
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .area-chip:hover { border-color: var(--ink); }
+  .area-chip.selected {
+    background: var(--forest);
+    border-color: var(--forest);
+    color: var(--pure);
+  }
+
+  .area-custom {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .area-custom input {
+    flex: 1;
+    border: 1px solid var(--trace);
+    background: var(--pure);
+    padding: 10px 14px;
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .area-custom input:focus { border-color: var(--forest); outline: none; }
+  .area-custom button {
+    border: 1px solid var(--forest);
+    background: var(--forest);
+    color: var(--pure);
+    padding: 10px 18px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  @media (max-width: 760px) {
+    .area-grid { grid-template-columns: 1fr; gap: 24px; }
+  }
+
   .ring-group {
     margin-bottom: 40px;
   }
