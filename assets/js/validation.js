@@ -281,6 +281,75 @@
       when:{field:'pathData.target_date_precision', notEmpty:true} }
   ];
 
+  // Every question field is categorized into one of the brief's three named
+  // motion types by its `store` path (unique per field across the whole
+  // schema, unlike `group`, which several fields of different motion types
+  // can share — e.g. the renter path's "Rental needs" group spans property
+  // type (zoom), amenities (origami), and lease term (page-turn)). Fields
+  // with no entry here fall back to the plain scroll-reveal container,
+  // which is itself one of the brief's four listed motion types.
+  const FIELD_MOTION = {
+    // Housing / property type
+    'trunk.Q3_propertyTypes': 'zoom',
+    'pathData.renter_property_type': 'zoom',
+    'pathData.Q9_bedroomsBathrooms': 'zoom',
+    'pathData.Q12_newResale': 'zoom',
+    'pathData.Q13_bedsBaths': 'zoom',
+    'pathData.seller_property_type': 'zoom',
+    'pathData.Q8_commercialType': 'zoom',
+    'pathData.Q9_squareFootage': 'zoom',
+
+    // Amenities and lifestyle preferences
+    'pathData.non_negotiables': 'origami',
+    'pathData.location_anchors': 'origami',
+    'pathData.school_zoning_factor': 'origami',
+    'pathData.school_district_preference': 'origami',
+    'pathData.school_anchor_distance': 'origami',
+    'pathData.commute_time_preference': 'origami',
+    'pathData.Q10_rentalAmenities': 'origami',
+    'pathData.Q14_mustHaves': 'origami',
+    // The Schools & Commute disclaimer (a plain notice, store:'') reads as
+    // part of that same group visually, so it travels with its siblings
+    // rather than falling back to the plain-scroll container on its own.
+    '': 'origami',
+
+    // Required route-specific qualifying information
+    'pathData.Q12_leaseTerm': 'pageturn',
+    'pathData.Q14_employment': 'pageturn',
+    'pathData.renter_background_eviction_consent': 'pageturn',
+    'pathData.renter_credit_report_consent': 'pageturn',
+    'pathData.renter_history_note': 'pageturn',
+    'trunk.Q7_pets': 'pageturn',
+    'trunk.Q7_petTypes': 'pageturn',
+    'pathData.renter_pet_breed': 'pageturn',
+    'pathData.renter_pet_weight': 'pageturn',
+    'trunk.Q7_petOther': 'pageturn',
+    'pathData.target_date_precision': 'pageturn',
+    'pathData.target_date_input': 'pageturn',
+    'pathData.Q8_preApproval': 'pageturn',
+    'pathData.Q8_approvalAmount': 'pageturn',
+    'pathData.Q9_lenderLinkClicked': 'pageturn',
+    'pathData.Q15_buyerAgreed': 'pageturn',
+    'pathData.seller_property_address': 'pageturn',
+    'pathData.Q8_propertyCondition': 'pageturn',
+    'pathData.seller_mortgage_status': 'pageturn',
+    'pathData.seller_mortgage_balance': 'pageturn',
+    'pathData.Q10_sellReason': 'pageturn',
+    'pathData.Q9_motivatedTimeline': 'pageturn',
+    'pathData.Q11_listingHistory': 'pageturn',
+    'pathData.Q12_openHouseWilling': 'pageturn',
+    'pathData.Q13_virtualTourWilling': 'pageturn',
+    'pathData.Q14_agentPreference': 'pageturn',
+    'pathData.Q10_leasePurchase': 'pageturn',
+    'pathData.Q12_businessType': 'pageturn',
+    'pathData.Q13_ownershipStructure': 'pageturn',
+    'pathData.Q14_financialQualification': 'pageturn',
+    'pathData.sellbuy_using_sale_proceeds': 'pageturn',
+    'pathData.Q8_questionCategory': 'pageturn',
+    'pathData.Q9_questionDetails': 'pageturn',
+    'pathData.Q10_callback': 'pageturn'
+  };
+
   function renderField(field, idx) {
     if (!detailVisible(field)) return '';
     const current = getStoredValue(field.store);
@@ -369,19 +438,46 @@
     const wrap = document.getElementById('route-detail-fields');
     if (!wrap) return;
 
-    let html = '';
-    let lastGroup = '';
+    function ensureContainer(id, className) {
+      let el = document.getElementById(id);
+      if (!el || el.parentNode !== wrap) {
+        el = document.createElement('div');
+        el.id = id;
+        if (className) el.className = className;
+        el.hidden = true;
+        wrap.appendChild(el);
+      }
+      return el;
+    }
+
+    const containers = {
+      zoom: ensureContainer('detail-scene-zoom', 'journey-scene scene-zoom-enter'),
+      origami: ensureContainer('detail-scene-origami', 'journey-scene scene-origami-enter'),
+      pageturn: ensureContainer('detail-scene-page-turn', 'journey-scene scene-page-turn-enter'),
+      scroll: ensureContainer('detail-scene-scroll', '')
+    };
+
+    const html = { zoom: '', origami: '', pageturn: '', scroll: '' };
+    const lastGroup = { zoom: '', origami: '', pageturn: '', scroll: '' };
+
     fields.forEach((field, idx) => {
       if (!detailVisible(field)) return;
-      if (field.group !== lastGroup) {
-        if (lastGroup) html += '</div>';
-        html += `<div class="detail-group"><div class="detail-group-title">${field.group}</div>`;
-        lastGroup = field.group;
+      const bucket = Object.prototype.hasOwnProperty.call(FIELD_MOTION, field.store) ? FIELD_MOTION[field.store] : 'scroll';
+      if (field.group !== lastGroup[bucket]) {
+        if (lastGroup[bucket]) html[bucket] += '</div>';
+        html[bucket] += `<div class="detail-group"><div class="detail-group-title">${field.group}</div>`;
+        lastGroup[bucket] = field.group;
       }
-      html += renderField(field, idx);
+      html[bucket] += renderField(field, idx);
     });
-    if (lastGroup) html += '</div>';
-    wrap.innerHTML = html;
+
+    Object.keys(html).forEach((bucket) => {
+      if (lastGroup[bucket]) html[bucket] += '</div>';
+      const el = containers[bucket];
+      el.innerHTML = html[bucket];
+      el.hidden = !html[bucket];
+    });
+
     document.getElementById('detail-error').textContent = '';
   }
 

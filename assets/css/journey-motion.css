@@ -278,7 +278,7 @@ body.map-cursor-on .houston-region {
 }
 
 /* Step 5: Scene-transition variants */
-.journey-scene { position: relative; }
+.journey-scene { position: relative; overflow: hidden; }
 
 .scene-zoom-enter {
   transform-origin: 50% 50%;
