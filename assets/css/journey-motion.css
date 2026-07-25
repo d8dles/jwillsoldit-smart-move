@@ -278,7 +278,13 @@ body.map-cursor-on .houston-region {
 }
 
 /* Step 5: Scene-transition variants */
-.journey-scene { position: relative; overflow: hidden; }
+/* Not overflow:hidden: .detail-option:hover (form.css) deliberately bleeds
+   -80px past .route-detail-body's padding to reach the section's true
+   edge on hover, at >=768px — clipping this container would silently
+   swallow that effect on every question row in every route. The
+   page-turn crease below is narrowed instead, so it no longer needs to
+   bleed far enough to cause real horizontal overflow. */
+.journey-scene { position: relative; }
 
 .scene-zoom-enter {
   transform-origin: 50% 50%;
@@ -296,7 +302,7 @@ body.map-cursor-on .houston-region {
   content: "";
   position: absolute;
   z-index: 8;
-  inset: -15%;
+  inset: -2%;
   pointer-events: none;
   background: linear-gradient(108deg, transparent 47.8%, rgba(224, 58, 31, 0.94) 48.1% 48.45%, rgba(255, 255, 255, 0.78) 48.7%, transparent 50%);
   animation: pageTurnCrease 1.05s cubic-bezier(0.16, 0.84, 0.2, 1) both;
