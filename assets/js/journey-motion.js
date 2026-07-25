@@ -42,6 +42,13 @@ window.JourneyMotion = (() => {
     if (activeLift) { activeLift.cancel(); activeLift = null; }
     heroPlayed = false;
     dot.classList.remove('is-traveling', 'is-hero-active');
+    // playHeroHandoff() sets this inline, which outranks any class-based
+    // opacity rule regardless of which classes are removed above — if
+    // cancel() fires (e.g. Start Over) while a handoff is mid-flight, its
+    // own abort guards return before ever reaching that function's own
+    // cleanup, so this has to be reset here too or the dot is stranded
+    // permanently visible.
+    dot.style.opacity = '0';
     document.body.classList.remove('journey-traveling');
     resetHeroStage();
     document.querySelectorAll('.is-landed').forEach((el) => el.classList.remove('is-landed'));
