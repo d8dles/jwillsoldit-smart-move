@@ -23,6 +23,24 @@
       hero.style.setProperty('--blueprint-alpha', displayBlueprint.toFixed(3));
     }
 
+    // Start Over (resetSmartMoveState()) already resets JourneyMotion's own
+    // hero stage (transform / hero-handoff class) but has no way to reach
+    // this IIFE's own closure-scoped scroll-progress state -- so
+    // --intro-progress/--blueprint-alpha stayed stuck at whatever the user
+    // had last scrolled to, rendering the reset-to-top hero with its
+    // decorative lines still in their fully-revealed position, overlapping
+    // the wordmark/headline, until the user scrolled again. Exposed here so
+    // resetSmartMoveState() can call it directly.
+    window.resetHeroScrollProgress = function resetHeroScrollProgress() {
+      clearTimeout(heroSnapTimer);
+      autoAdvanced = false;
+      heroRunning = false;
+      displayP = targetP = 0;
+      displayBlueprint = targetBlueprint = 0;
+      applyHeroProgress();
+      document.body.classList.remove('hero-ready-to-snap');
+    };
+
     function tickHeroProgress() {
       displayP += (targetP - displayP) * 0.14;
       displayBlueprint += (targetBlueprint - displayBlueprint) * 0.14;
@@ -321,6 +339,9 @@
   function resetSmartMoveState({ keepBrief = false } = {}) {
     if (window.JourneyMotion && typeof JourneyMotion.resetHeroStage === 'function') {
       JourneyMotion.resetHeroStage();
+    }
+    if (typeof resetHeroScrollProgress === 'function') {
+      resetHeroScrollProgress();
     }
     autoAdvanceTimers.forEach(timer => clearTimeout(timer));
     autoAdvanceTimers.clear();
