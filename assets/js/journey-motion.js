@@ -85,11 +85,36 @@ window.JourneyMotion = (() => {
     ], { duration: 500, easing: 'cubic-bezier(.46,0,.7,.42)' });
   }
 
+  // goTo() (steps.js) sets `programmaticScroll = true` synchronously, then
+  // defers the actual `scrollIntoView()` call by 40ms (`setTimeout(...,40)`
+  // inside goTo()) before scrollToSection() runs and eventually clears the
+  // flag again. travel() used to wait only 2 requestAnimationFrame ticks
+  // (~16-33ms) after calling navigate() before reading the target anchor's
+  // getBoundingClientRect() -- less time than the 40ms scroll is delayed by,
+  // so it read the anchor's PRE-scroll position and baked that stale
+  // coordinate into the dot's fall animation. The dot then fell to, and
+  // stopped at, a point roughly matching how far the page still had left
+  // to scroll -- measured live at 830px off for the budget travel, 579px
+  // for route-punctuation, and 987px for the Houston arrival specifically.
+  // Waiting for `programmaticScroll` to clear ties this wait to the real
+  // signal instead of a second guessed timing constant.
+  function waitForScrollSettle(maxWaitMs = 600) {
+    return new Promise((resolve) => {
+      const deadline = performance.now() + maxWaitMs;
+      function poll() {
+        if (typeof programmaticScroll === 'undefined' || !programmaticScroll) return resolve();
+        if (performance.now() >= deadline) return resolve();
+        requestAnimationFrame(poll);
+      }
+      requestAnimationFrame(poll);
+    });
+  }
+
   async function travel({ from, to, navigate, dramatic = false } = {}) {
     if (reduced) return;
     await depart(from ? point(from) : pointer);
     if (typeof navigate === 'function') navigate();
-    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await waitForScrollSettle();
     const targetElement = typeof to === 'string' ? anchor(to) : to;
     const target = point(targetElement);
     await fallIn(target, dramatic);
