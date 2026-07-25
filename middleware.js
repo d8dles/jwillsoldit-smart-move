@@ -2,12 +2,18 @@ import { next } from '@vercel/functions';
 
 export const config = {
   runtime: 'nodejs',
-  matcher: ['/admin', '/admin/:path*'],
+  matcher: ['/', '/admin', '/admin/:path*'],
 };
 
 export default async function middleware(request) {
   const requestedUrl = new URL(request.url);
   const { pathname, search } = requestedUrl;
+  const host = request.headers.get('host') || '';
+
+  // Command Center subdomain: send the bare root straight to /admin.
+  if (pathname === '/' && host === 'command.jwillsoldit.com') {
+    return Response.redirect(new URL('/admin', request.url), 307);
+  }
 
   // The login page must remain public or the redirect would loop.
   if (pathname === '/admin/login.html' || pathname === '/admin/login') {
