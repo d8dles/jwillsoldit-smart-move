@@ -15,6 +15,11 @@ export default async function middleware(request) {
     return Response.redirect(new URL('/admin', request.url), 307);
   }
 
+  // Root path on any other host is not admin-gated; let it through untouched.
+  if (pathname === '/') {
+    return next();
+  }
+
   // The login page must remain public or the redirect would loop.
   if (pathname === '/admin/login.html' || pathname === '/admin/login') {
     return next();
