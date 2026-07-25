@@ -5,17 +5,43 @@
 // module never touches that code or its globals.
 
 const AdminShell = (() => {
+  function readCookie(name) {
+    const prefix = `${name}=`;
+    for (const part of document.cookie.split(';')) {
+      const value = part.trim();
+      if (!value.startsWith(prefix)) continue;
+      try { return decodeURIComponent(value.slice(prefix.length)); } catch { return value.slice(prefix.length); }
+    }
+    return '';
+  }
+
   async function api(path, options = {}) {
+    const method = String(options.method || 'GET').toUpperCase();
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(options.headers || {}),
+    };
+
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+      const csrf = readCookie('smadmin_csrf');
+      if (csrf) headers['X-CSRF-Token'] = csrf;
+    }
+
     const res = await fetch(path, {
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
       ...options,
+      method,
+      credentials: 'same-origin',
+      headers,
     });
     let data = null;
     try { data = await res.json(); } catch { /* no body */ }
     if (res.status === 401) {
-      window.location.href = '/admin/login.html?next=' + encodeURIComponent(window.location.pathname);
+      window.location.href = '/admin/login.html?next=' + encodeURIComponent(window.location.pathname + window.location.search);
       throw new Error('Not authenticated');
+    }
+    if (res.status === 403 && data?.error?.toLowerCase().includes('security token')) {
+      window.location.href = '/admin/login.html?next=' + encodeURIComponent(window.location.pathname + window.location.search);
+      throw new Error('Your session security token expired. Please sign in again.');
     }
     if (!res.ok) {
       const message = (data && data.error) || `Request failed (${res.status})`;
@@ -28,7 +54,7 @@ const AdminShell = (() => {
     try {
       const data = await api('/api/admin/session');
       if (!data.authenticated) {
-        window.location.href = '/admin/login.html?next=' + encodeURIComponent(window.location.pathname);
+        window.location.href = '/admin/login.html?next=' + encodeURIComponent(window.location.pathname + window.location.search);
         return false;
       }
       return true;
@@ -86,7 +112,7 @@ const AdminShell = (() => {
     const logoutBtn = document.getElementById('admin-logout');
     if (logoutBtn) {
       logoutBtn.addEventListener('click', async () => {
-        try { await api('/api/admin/logout', { method: 'POST' }); } catch { /* ignore */ }
+        try { await api('/api/admin/logout', { method: 'POST', body: '{}' }); } catch { /* ignore */ }
         window.location.href = '/admin/login.html';
       });
     }
