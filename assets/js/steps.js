@@ -28,13 +28,34 @@
     const target = document.getElementById(SECTIONS[step]);
     if (!target) return;
     programmaticScroll = true;
+    // A fixed 720ms timeout undercounted long smooth-scrolls (e.g. Start
+    // Over resetting back to the top from deep in the funnel), letting the
+    // native scroll animation keep running after programmaticScroll had
+    // already reset to false — which let the hero's own scroll-progress
+    // listener misread the tail end of that scroll as manual user scrolling
+    // and re-trigger the hero handoff. Clear on the browser's own
+    // `scrollend` signal when available, with a generous fallback timeout
+    // for behavior:'smooth' in case it never fires.
+    const clearFlag = () => { programmaticScroll = false; };
+    const fallback = setTimeout(clearFlag, behavior === 'auto' ? 120 : 1500);
+    if (behavior === 'smooth') {
+      window.addEventListener('scrollend', () => { clearTimeout(fallback); clearFlag(); }, { once: true });
+    }
     target.scrollIntoView({ behavior, block: 'start' });
-    setTimeout(() => { programmaticScroll = false; }, behavior === 'auto' ? 120 : 720);
   }
 
   function goTo(step, options = {}) {
     const shouldScroll = options.scroll !== false;
     const reset = options.reset === true;
+    // Set this synchronously, before the section-visibility toggle below.
+    // Hiding most sections (display:none, per .section's base CSS) can
+    // collapse the document's scrollable height enough that the browser
+    // clamps the current scroll position immediately and synchronously —
+    // before scrollToSection() (called via a 40ms setTimeout further down)
+    // would have set this flag itself. That unflagged clamp's scroll event
+    // was slipping past the hero's scroll-progress guard and re-triggering
+    // the hero handoff mid-reset. scrollToSection() still owns clearing it.
+    if (shouldScroll) programmaticScroll = true;
     if (reset) unlockedStep = step;
     else unlockedStep = Math.max(unlockedStep, step);
 

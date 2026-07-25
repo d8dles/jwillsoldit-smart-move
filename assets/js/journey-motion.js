@@ -155,8 +155,17 @@ window.JourneyMotion = (() => {
     activeAnimation = null;
     activeLift = null;
     heroStage?.classList.remove('is-active');
-    dot.classList.remove('is-traveling');
     document.body.classList.remove('journey-traveling');
+    // Fade the protagonist out after it settles, matching travel()'s own
+    // cleanup. Removing the classes alone isn't enough: the inline
+    // `dot.style.opacity = '1'` set above outranks the base CSS rule
+    // (#story-dot{opacity:0}) regardless of which classes are present, so
+    // without resetting it directly the dot stays permanently visible at
+    // its last landed position for the rest of the session.
+    setTimeout(() => {
+      dot.classList.remove('is-traveling', 'is-hero-active');
+      dot.style.opacity = '0';
+    }, 220);
   }
 
   async function drawRibbonJourney(pathId, { duration = 1100, delay = 0, stagger = true, staggerSelector = '.path-band', markerId = null } = {}) {

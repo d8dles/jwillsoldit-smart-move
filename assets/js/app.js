@@ -63,7 +63,13 @@
     }
 
     function updateHeroProgress() {
-      if (!hero.classList.contains('visible') || currentStep !== 0) return;
+      // programmaticScroll guards against a scrollIntoView()/scrollTo() call
+      // (e.g. resetSmartMoveState()'s smooth scroll back to the top) passing
+      // through scroll positions that this function would otherwise
+      // misread as the user manually scrolling through the hero — which
+      // replayed the whole hero-fall handoff and dumped the user back on
+      // the route selector instead of the actual start screen.
+      if (!hero.classList.contains('visible') || currentStep !== 0 || programmaticScroll) return;
 
       if (reduceMotion) {
         displayP = targetP = 0;
