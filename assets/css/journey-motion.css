@@ -254,11 +254,20 @@ body.map-cursor-on .houston-region {
 }
 
 /* Step 4: Start Over styling */
+/* A flex child of .plotline-bar (itself position:fixed) rather than an
+   independent position:fixed overlay -- this was overlapping the bar's
+   last ("Brief") step-number box by a full 22px x 11px at every mobile
+   width measured (320/390/430px), because a fixed-position element laid
+   on top of a flex row doesn't participate in that row's own layout math.
+   As an ordinary flex item after the 8 flex:1 .plotline-step children,
+   the browser's own flex algorithm gives every step slightly less space
+   to make room for this item's content width, which prevents the overlap
+   by construction at any viewport width instead of by a hand-tuned
+   padding number that would need re-deriving per breakpoint. */
 .start-over {
-  position: fixed;
-  z-index: 950;
-  top: 20px;
-  right: 24px;
+  flex: 0 0 auto;
+  margin-left: 14px;
+  white-space: nowrap;
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 700;
@@ -274,7 +283,7 @@ body.map-cursor-on .houston-region {
 .start-over:hover { color: var(--red); }
 .start-over:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 @media (max-width: 480px) {
-  .start-over { top: 12px; right: 12px; font-size: 10px; }
+  .start-over { font-size: 10px; margin-left: 8px; }
 }
 
 /* Step 5: Scene-transition variants */
