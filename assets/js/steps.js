@@ -398,7 +398,7 @@
     if (exists) {
       FormLogic.formData.trunk.Q5_areas = current.filter(a => a !== area);
     } else {
-      if (current.length >= 5 && area !== 'Flexible') {
+      if (current.length >= 7 && area !== 'Flexible') {
         const tray = document.getElementById('area-selected-tray');
         if (tray) tray.innerHTML = `<span class="selected-pill">Keep it tight: remove one area before adding more.</span>`;
         return;
