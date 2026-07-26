@@ -1,0 +1,66 @@
+---
+name: "Katy"
+slug: "katy"
+regionSlug: "west-houston-energy-corridor"
+counties: ["Harris", "Fort Bend", "Waller"]
+jurisdiction: "City of Katy (small incorporated municipality) plus surrounding unincorporated Harris, Fort Bend and Waller County area commonly marketed as Katy and served by Katy ISD"
+areaType: "city"
+housingTypes: ["Older homes near Historic Downtown Katy", "Single-family homes in large master-planned communities", "Newer suburban subdivisions"]
+typicalEra: "Early twentieth-century townsite homes near Historic Downtown Katy alongside master-planned-community construction from the 1980s to present"
+lotCharacter: "Lot sizes vary widely, from traditional in-town lots near Historic Downtown Katy to larger, more uniform lots within planned subdivisions"
+hoaPrevalence: "common"
+connections:
+  - destination: "Downtown Houston"
+    note: "Approximately 30 miles west of Downtown Houston via Interstate 10 (the Katy Freeway), travel time varies widely with traffic"
+  - destination: "Energy Corridor"
+    note: "The Energy Corridor employment district sits closer to central Houston along the same Interstate 10 corridor, travel time varies widely with traffic"
+schoolDistricts:
+  - name: "Katy ISD"
+    officialUrl: "https://www.katyisd.org"
+thingsNearby:
+  - category: "Shopping"
+    items: ["Katy Mills"]
+  - category: "Recreation"
+    items: ["Typhoon Texas Waterpark"]
+thingsToUnderstand:
+  - "The incorporated City of Katy covers about 15 square miles at the junction of Harris, Fort Bend and Waller counties; most addresses commonly marketed as Katy are outside those city limits, in unincorporated county area served by Katy ISD rather than by the city's own government."
+  - "Outside the city limits, water and sewer service is often provided by a Municipal Utility District, which carries its own separate tax rate; a MUD applies to a specific development, not the whole area."
+  - "Because the area spans three counties, the appraisal district, tax rate and some permitting depend on which county a specific address falls in."
+sources:
+  - label: "City of Katy - About"
+    url: "https://www.cityofkaty.com/about"
+    accessed: "2026-07-18"
+  - label: "City of Katy - Demographics"
+    url: "https://www.cityofkaty.com/residents/demographics"
+    accessed: "2026-07-18"
+  - label: "City of Katy - Find My M.U.D. District"
+    url: "https://www.cityofkaty.com/residents/utilities-services/find-my-m-u-d-district"
+    accessed: "2026-07-18"
+  - label: "City of Katy - Parks & Facilities"
+    url: "https://www.cityofkaty.com/visitors/parks-and-recreation"
+    accessed: "2026-07-18"
+  - label: "Katy ISD - Fast Facts"
+    url: "http://www.katyisd.org/sites/bonds/Pages/Katy-ISD-Fast-Facts.aspx"
+    accessed: "2026-07-18"
+  - label: "Katy ISD - Cinco Ranch"
+    url: "https://www.katyisd.org/domain/1396"
+    accessed: "2026-07-18"
+  - label: "Texas Commission on Environmental Quality - Municipal Utility Districts"
+    url: "https://www.tceq.texas.gov/agency/subjects-of-interest/utilities/municipal-utility-districts"
+    accessed: "2026-07-18"
+  - label: "TxDOT - SH 99 Grand Parkway Project"
+    url: "https://www.txdot.gov/projects/projects-studies/houston/sh99-grand-parkway.html"
+    accessed: "2026-07-18"
+  - label: "The Energy Corridor District - Largest Employers"
+    url: "https://energycorridor.org/energy-corridor-largest-employers/"
+    accessed: "2026-07-18"
+  - label: "Katy Mills - Simon Property Group"
+    url: "https://www.simon.com/mall/katy-mills/about"
+    accessed: "2026-07-18"
+  - label: "Typhoon Texas Houston"
+    url: "https://typhoontexas.com/houston/"
+    accessed: "2026-07-18"
+updatedAt: "2026-07-18"
+status: "draft"
+---
+Katy is an area at the junction of Harris, Fort Bend and Waller counties, about 30 miles west of Downtown Houston along Interstate 10, known locally as the Katy Freeway. The incorporated City of Katy is a small municipality; most addresses commonly marketed as Katy lie outside those city limits, in unincorporated county area served by Katy ISD. The Grand Parkway, State Highway 99, crosses the area near its interchange with I-10. Housing ranges from older homes near Historic Downtown Katy to large master-planned communities such as Cinco Ranch, plus a range of newer subdivisions. Many newer sections are served by a Municipal Utility District rather than city water and sewer utilities. The area sits along the same Interstate 10 corridor as the Energy Corridor employment district closer to central Houston. Nearby destinations include Katy Mills, an outlet shopping center, and the Typhoon Texas water park.
