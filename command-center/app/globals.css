@@ -131,6 +131,73 @@ body {
   padding: 2px 0;
 }
 
+.brief-headline {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 2px 0 12px;
+}
+
+.brief-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.brief-list {
+  list-style: none;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.brief-list li {
+  padding: 4px 0 4px 12px;
+  position: relative;
+}
+
+.brief-list li::before {
+  content: '·';
+  color: var(--signal);
+  position: absolute;
+  left: 0;
+}
+
+.brief-next {
+  border-top: 1px solid var(--line);
+  color: var(--text);
+  font-size: 14px;
+  margin-top: 12px;
+  padding-top: 10px;
+}
+
+.brief-next .mono {
+  color: var(--signal);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  margin-right: 7px;
+}
+
+.phase2-error {
+  align-items: center;
+  color: var(--signal);
+  display: flex;
+  font-size: 13px;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.ai-suggestion {
+  background: var(--signal-tint);
+  border-left: 2px solid var(--signal);
+  font-size: 13px;
+  margin-top: 10px;
+  padding: 9px 10px;
+}
+
+.ai-suggestion .btn-chip {
+  margin-top: 8px;
+}
+
 /* ---------- Controls ---------- */
 
 button {

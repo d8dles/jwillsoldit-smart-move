@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { getSupabase } from '@/lib/supabase';
 import { addDaysStr } from '@/lib/dates';
+import type { TriageSuggestion } from '@/lib/phase2';
 import type { InboxItem } from '@/lib/types';
+import { postPhase2 } from './phase2-api';
 
 type Target = 'task' | 'money_item' | 'deadline' | 'idea';
 
@@ -15,6 +17,42 @@ interface Props {
 
 export default function InboxSection({ items, userId, onChange }: Props) {
   const [busyId, setBusyId] = useState('');
+  const [aiBusyId, setAiBusyId] = useState('');
+  const [suggestions, setSuggestions] = useState<Record<string, TriageSuggestion | null>>({});
+  const [aiError, setAiError] = useState<Record<string, string>>({});
+
+  async function suggest(item: InboxItem) {
+    setAiBusyId(item.id);
+    setAiError((current) => ({ ...current, [item.id]: '' }));
+    try {
+      const result = await postPhase2<{ suggestions: TriageSuggestion[] }>('/api/triage', { inboxId: item.id });
+      setSuggestions((current) => ({ ...current, [item.id]: result.suggestions[0] ?? null }));
+    } catch (err) {
+      setAiError((current) => ({
+        ...current,
+        [item.id]: err instanceof Error ? err.message : 'AI sorting failed.',
+      }));
+    } finally {
+      setAiBusyId('');
+    }
+  }
+
+  async function applySuggestion(item: InboxItem, suggestion: TriageSuggestion) {
+    setAiBusyId(item.id);
+    setAiError((current) => ({ ...current, [item.id]: '' }));
+    try {
+      await postPhase2('/api/triage', { apply: true, suggestion });
+      setSuggestions((current) => ({ ...current, [item.id]: null }));
+      onChange();
+    } catch (err) {
+      setAiError((current) => ({
+        ...current,
+        [item.id]: err instanceof Error ? err.message : 'The suggestion could not be applied.',
+      }));
+    } finally {
+      setAiBusyId('');
+    }
+  }
 
   async function fileAs(item: InboxItem, target: Target) {
     setBusyId(item.id);
@@ -101,10 +139,23 @@ export default function InboxSection({ items, userId, onChange }: Props) {
                 <button className="btn-chip" disabled={busyId === item.id} onClick={() => fileAs(item, 'idea')}>
                   Idea
                 </button>
+                <button className="btn-chip" disabled={aiBusyId === item.id} onClick={() => suggest(item)}>
+                  {aiBusyId === item.id ? 'Sorting…' : 'AI sort'}
+                </button>
                 <button className="btn-ghost" disabled={busyId === item.id} onClick={() => dismiss(item)}>
                   Dismiss
                 </button>
               </div>
+              {suggestions[item.id] ? (
+                <div className="ai-suggestion">
+                  <div><span className="mono">{suggestions[item.id]?.kind.replace('_', ' ')}</span> · {suggestions[item.id]?.title}</div>
+                  <div className="meta">{suggestions[item.id]?.rationale}</div>
+                  <button className="btn-chip" disabled={aiBusyId === item.id} onClick={() => applySuggestion(item, suggestions[item.id] as TriageSuggestion)}>
+                    Apply suggestion
+                  </button>
+                </div>
+              ) : null}
+              {aiError[item.id] ? <div className="phase2-error">{aiError[item.id]}</div> : null}
             </div>
           </div>
         ))

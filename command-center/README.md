@@ -4,9 +4,10 @@ Personal command center for Joey Williams. One screen, opened at 8 AM daily.
 Ventures in tiers, the Daily Three, client check-in cadence, deadlines, a money
 snapshot, and a zero-friction capture inbox. Single user by design.
 
-Built per the spec in this folder's originating CLAUDE.md build doc. Phase 1 is
-implemented (auth, schema, one screen, capture endpoint). Phases 2 and 3
-(/api/brief, /api/triage, /api/friday, trends) come later.
+Built per the spec in this folder's originating CLAUDE.md build doc. Phases 1
+and 2 are implemented (auth, schema, one screen, capture endpoint, daily
+brief, inbox triage suggestions, and Friday money review). Phase 3 (trends)
+comes later.
 
 ## Stack
 
@@ -38,7 +39,8 @@ WGU / CompTIA A+. Backlog: Bunz LLC, Grove Terminal, Content as a Business).
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase > Project Settings > API > service_role (server-only, used by /api/capture) |
 | `CAPTURE_TOKEN` | Generate: `openssl rand -hex 32`. The iPhone Shortcut sends this. |
 | `CAPTURE_USER_ID` | Optional. Only needed if a second account ever exists. |
-| `ANTHROPIC_API_KEY` | Phase 2. Create at console.anthropic.com when we build the brief. |
+| `ANTHROPIC_API_KEY` | Phase 2. Server-only key from console.anthropic.com. |
+| `ANTHROPIC_MODEL` | Optional Phase 2 model override. Defaults to `claude-sonnet-4-20250514`. |
 
 ### 3. Install on the iPhone
 
@@ -93,7 +95,9 @@ stamps `completed_at` and bumps the matching active client's `last_contact`.
 
 - **Phase 1 (this):** auth, schema + RLS + seed, the one screen with manual
   entry everywhere, quick-add inbox, `/api/capture` + Shortcut docs.
-- **Phase 2:** `/api/brief`, `/api/triage`, `/api/friday`; brief auto-runs on
-  first open of the day.
+- **Phase 2 (this):** `/api/brief`, `/api/triage`, `/api/friday`; the brief
+  auto-runs on first open of the day and caches in `check_ins`. Inbox triage
+  previews one suggested destination at a time and only writes after an
+  explicit Apply. Friday review is manually started and cached for the day.
 - **Phase 3 (only after 2 weeks of daily use):** completion trends, monthly
   review. Nothing else. Mid-build ideas go to `PARKING-LOT.md`, not into code.
