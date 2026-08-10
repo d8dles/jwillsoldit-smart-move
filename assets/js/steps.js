@@ -245,7 +245,7 @@
         ...FormLogic.buildSubmissionObject(),
         routeLabel: PATH_LABELS[path] || path || 'Route pending',
         readinessLabel: 'Partial lead — contact captured, form in progress',
-        contactLinks: { callText: '561-685-6566', email: 'jwillsoldit@icloud.com' }
+        contactLinks: { callText: '561-685-6566', email: 'joey@jwillsoldit.com' }
       });
       payload.metadata.submissionType = 'partial_contact';
       const res = await fetch(SMART_MOVE_ENDPOINT, {

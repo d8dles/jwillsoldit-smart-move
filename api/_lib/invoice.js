@@ -65,7 +65,7 @@ export function buildInvoiceDraft(verification, invoiceNumber) {
     balanceDue,
     paymentInstructions:
       'Payment via ACH or check, payable to Christin Rachelle Group. ' +
-      'Contact jwillsoldit@icloud.com to arrange ACH details or a mailing address for checks.',
+      'Contact joey@jwillsoldit.com to arrange ACH details or a mailing address for checks.',
     brokerW9Note: 'A completed IRS Form W-9 for the broker (Christin Rachelle Group) is available upon request.',
   };
 }

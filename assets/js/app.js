@@ -303,7 +303,7 @@
       selectedDetails: selections,
       contactLinks: {
         callText: '561-685-6566',
-        email: 'jwillsoldit@icloud.com'
+        email: 'joey@jwillsoldit.com'
       }
     });
   }
