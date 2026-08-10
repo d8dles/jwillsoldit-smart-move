@@ -37,7 +37,7 @@ The form posts to `/api/smart-move`, which requires the Vercel runtime. Vercel s
    | Key | Value |
    |-----|-------|
    | `RESEND_API_KEY` | Your Resend API key |
-   | `LEAD_ALERT_TO` | Email to notify on each new Smart Move submission. Use your current working email first (e.g. `jwillsoldit@icloud.com`), then switch to `leads@jwillsoldit.com` once Cloudflare Email Routing is verified. |
+   | `LEAD_ALERT_TO` | Email to notify on each new Smart Move submission. Use your current working email first (e.g. `joey@jwillsoldit.com`), then switch to `leads@jwillsoldit.com` once Cloudflare Email Routing is verified. |
    | `LEAD_ALERT_FROM` | `Smart Move Leads <onboarding@resend.dev>` for initial testing. Switch to `Smart Move Leads <leads@jwillsoldit.com>` once your sending domain is verified in Resend. |
 
    All three vars must be set for alerts to send. If any are missing, alerts are silently skipped and a warning is logged. HubSpot sync is unaffected by alert failures.
