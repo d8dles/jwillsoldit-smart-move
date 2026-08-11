@@ -30,6 +30,10 @@ const CUSTOM_PROPERTIES = [
   { name: 'smart_move_referral_phone', label: 'Smart Move Referral Phone', fieldType: 'phonenumber', type: 'string' },
   { name: 'smart_move_preferred_contact', label: 'Smart Move Preferred Contact', fieldType: 'text', type: 'string' },
   { name: 'smart_move_best_contact_time', label: 'Smart Move Best Contact Time', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_contact_consent', label: 'Smart Move Contact Consent', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_marketing_consent', label: 'Smart Move Marketing Consent', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_consent_version', label: 'Smart Move Consent Version', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_consent_at', label: 'Smart Move Consent At', fieldType: 'text', type: 'string' },
 ];
 
 function buildBriefText(payload) {
@@ -46,6 +50,10 @@ function buildBriefText(payload) {
     `Referral Phone: ${p.contact?.referralPhone || '—'}`,
     `Preferred Contact: ${p.contact?.preferredContact || '—'}`,
     `Best Contact Time: ${p.contact?.bestContactTime || '—'}`,
+    `Contact Consent: ${p.contact?.contactConsent ? 'Yes' : 'No'}`,
+    `Marketing Consent: ${p.contact?.marketingConsent ? 'Yes' : 'No'}`,
+    `Consent Version: ${p.contact?.consentVersion || '—'}`,
+    `Consent At: ${p.contact?.consentAt || '—'}`,
     '',
     `Route: ${p.routeLabel || '—'}`,
     `Timeline: ${p.timelineLabel || '—'}`,
@@ -143,6 +151,10 @@ async function upsertContact(token, payload) {
     smart_move_referral_phone: payload.contact?.referralPhone || '',
     smart_move_preferred_contact: payload.contact?.preferredContact || '',
     smart_move_best_contact_time: payload.contact?.bestContactTime || '',
+    smart_move_contact_consent: payload.contact?.contactConsent ? 'Yes' : 'No',
+    smart_move_marketing_consent: payload.contact?.marketingConsent ? 'Yes' : 'No',
+    smart_move_consent_version: payload.contact?.consentVersion || '',
+    smart_move_consent_at: payload.contact?.consentAt || '',
   };
 
   if (name) {
@@ -353,6 +365,9 @@ export default async function handler(req, res) {
 
   if (!email || !name) {
     return res.status(400).json({ success: false, error: 'name and email are required' });
+  }
+  if (payload?.contact?.contactConsent !== true) {
+    return res.status(400).json({ success: false, error: 'contact consent is required' });
   }
 
   try {

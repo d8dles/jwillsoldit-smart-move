@@ -33,6 +33,10 @@ const FormLogic = {
       phone: null,
       preferredContact: null,
       bestContactTime: null,
+      contactConsent: false,
+      marketingConsent: false,
+      consentVersion: null,
+      consentAt: null,
       referralName: null,
       referralPhone: null
     },
@@ -181,6 +185,10 @@ const FormLogic = {
         phone: null,
         preferredContact: null,
         bestContactTime: null,
+        contactConsent: false,
+        marketingConsent: false,
+        consentVersion: null,
+        consentAt: null,
         referralName: null,
         referralPhone: null
       },
@@ -301,6 +309,10 @@ const FormLogic = {
         phone: this.formData.contact.phone,
         preferredContact: this.formData.contact.preferredContact,
         bestContactTime: this.formData.contact.bestContactTime,
+        contactConsent: this.formData.contact.contactConsent,
+        marketingConsent: this.formData.contact.marketingConsent,
+        consentVersion: this.formData.contact.consentVersion,
+        consentAt: this.formData.contact.consentAt,
         referralName: this.formData.contact.referralName,
         referralPhone: this.formData.contact.referralPhone
       },

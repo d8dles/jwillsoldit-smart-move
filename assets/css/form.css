@@ -1309,6 +1309,37 @@
 
   .referral-fields[hidden] { display: none; }
 
+  .consent-option {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 10px;
+    align-items: start;
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 13px;
+    line-height: 1.55;
+    cursor: pointer;
+  }
+
+  .consent-option input {
+    width: 18px;
+    height: 18px;
+    margin: 2px 0 0;
+    accent-color: var(--forest);
+  }
+
+  .consent-option a { color: var(--forest); }
+  .consent-option-marketing { margin-top: 4px; }
+
+  .consent-privacy-note {
+    margin: 2px 0 0 30px;
+    color: var(--mid);
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+  }
+
   .contact-error {
     font-family: var(--mono);
     font-size: 10px;
