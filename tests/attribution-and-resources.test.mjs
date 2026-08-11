@@ -23,3 +23,13 @@ test('renter brief offers the renter checklist and next steps after the lease', 
   assert.match(source, /Next steps after the lease/);
   assert.match(source, /first-time-homebuyer/);
 });
+
+test('guide recommendations unlock only after the brief is saved', () => {
+  const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  const app = readFileSync(new URL('../assets/js/app.js', import.meta.url), 'utf8');
+  assert.match(html, /id="brief-resources"[^>]*hidden/);
+  assert.match(html, /id="brief-send-dialog"/);
+  assert.match(app, /IntersectionObserver/);
+  assert.match(app, /resources\.removeAttribute\('hidden'\)/);
+  assert.match(app, /Saved\. Joey has your Smart Move Brief/);
+});

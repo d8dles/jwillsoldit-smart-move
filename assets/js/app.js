@@ -312,6 +312,14 @@
     autoAdvanceTimers.forEach(timer => clearTimeout(timer));
     autoAdvanceTimers.clear();
     partialLeadSent = false;
+    if (!keepBrief) {
+      briefSent = false;
+      briefPromptShown = false;
+      briefPromptObserver?.disconnect();
+      briefPromptObserver = null;
+      document.getElementById('brief-resources')?.setAttribute('hidden', '');
+      closeBriefSendPrompt();
+    }
     FormLogic.init();
 
     document.querySelectorAll('.selected, .checked, .invalid').forEach(el => el.classList.remove('selected', 'checked', 'invalid'));
@@ -347,9 +355,40 @@
     updateRouteCue();
   }
 
+  let briefSent = false;
+  let briefPromptShown = false;
+  let briefPromptObserver = null;
+
+  function closeBriefSendPrompt() {
+    const dialog = document.getElementById('brief-send-dialog');
+    if (dialog?.open) dialog.close();
+  }
+
+  function showBriefSendPrompt() {
+    if (briefSent || briefPromptShown) return;
+    const dialog = document.getElementById('brief-send-dialog');
+    if (!dialog?.showModal) return;
+    briefPromptShown = true;
+    dialog.showModal();
+  }
+
+  function armBriefSendPrompt() {
+    briefPromptObserver?.disconnect();
+    const sendButton = document.getElementById('brief-send-link');
+    if (!sendButton || briefSent || briefPromptShown) return;
+    briefPromptObserver = new IntersectionObserver((entries) => {
+      if (entries.some(entry => entry.isIntersecting)) {
+        briefPromptObserver?.disconnect();
+        setTimeout(showBriefSendPrompt, 450);
+      }
+    }, { threshold: 0.7 });
+    briefPromptObserver.observe(sendButton);
+  }
+
   async function sendSmartMoveBrief(event) {
     if (event) event.preventDefault();
     const btn = document.getElementById('brief-send-link');
+    const dialogBtn = document.getElementById('brief-dialog-send');
     const status = document.getElementById('brief-submit-status');
     const payload = buildSmartMovePayload();
     console.log('[SmartMove] Submission payload:', payload);
@@ -374,6 +413,10 @@
       btn.disabled = true;
       btn.textContent = 'Sending…';
     }
+    if (dialogBtn) {
+      dialogBtn.disabled = true;
+      dialogBtn.textContent = 'Sending…';
+    }
 
     try {
       const res = await fetch(SMART_MOVE_ENDPOINT, {
@@ -384,6 +427,14 @@
       if (!res.ok) throw new Error(`Endpoint responded ${res.status}`);
       if (status) status.textContent = 'Saved. Joey has your Smart Move Brief in the CRM.';
       if (btn) btn.textContent = 'Brief sent';
+      if (dialogBtn) dialogBtn.textContent = 'Brief sent';
+      briefSent = true;
+      closeBriefSendPrompt();
+      const resources = document.getElementById('brief-resources');
+      if (resources) {
+        resources.removeAttribute('hidden');
+        setTimeout(() => resources.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
+      }
       resetSmartMoveState({ keepBrief: true });
     } catch (err) {
       console.error('[SmartMove] Send failed:', err);
@@ -394,6 +445,10 @@
       if (btn) {
         btn.disabled = false;
         btn.textContent = originalText || 'Send My Smart Move Brief';
+      }
+      if (dialogBtn) {
+        dialogBtn.disabled = false;
+        dialogBtn.textContent = 'Send my brief';
       }
     }
   }
@@ -486,6 +541,10 @@
       sendLink.textContent = 'Send My Smart Move Brief';
       sendLink.setAttribute('aria-label', 'Send Smart Move Brief to Joey');
     }
+    document.getElementById('brief-resources')?.setAttribute('hidden', '');
+    briefSent = false;
+    briefPromptShown = false;
+    setTimeout(armBriefSendPrompt, 300);
   }
 
   // Keep the selected-area tray in sync on first render.

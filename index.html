@@ -636,7 +636,7 @@
             <p class="brief-next-text" id="brief-next-text">Your brief is ready. I will reach out to confirm the details and talk through the next step.</p>
           </div>
 
-          <div class="brief-resources" aria-labelledby="brief-resource-title">
+          <div class="brief-resources" id="brief-resources" aria-labelledby="brief-resource-title" hidden>
             <p class="brief-next-label">Chosen for your route</p>
             <h3 id="brief-resource-title">Keep planning</h3>
             <p id="brief-resource-text">Use these Houston guides while I review your brief.</p>
@@ -687,6 +687,18 @@
     </div>
   </div>
 </section>
+
+<dialog class="brief-send-dialog" id="brief-send-dialog" aria-labelledby="brief-send-dialog-title">
+  <div class="brief-send-dialog-inner">
+    <p class="brief-next-label">One last step</p>
+    <h2 id="brief-send-dialog-title">Save your Smart Move Brief.</h2>
+    <p>You have done the work. Send the brief so Joey receives your answers and can follow up without making you start over. Your recommended guides will unlock right after it is saved.</p>
+    <div class="brief-send-dialog-actions">
+      <button class="brief-action primary" id="brief-dialog-send" type="button" onclick="sendSmartMoveBrief(event)">Send my brief</button>
+      <button class="brief-action" type="button" onclick="closeBriefSendPrompt()">Keep reviewing</button>
+    </div>
+  </div>
+</dialog>
 
 <div id="global-footer">
   <div class="gf-left">
