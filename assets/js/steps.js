@@ -299,10 +299,9 @@
     goTo(3); // → trunk
   }
 
-  // ── PARTIAL LEAD CAPTURE ────────────────────────────────
-  // Once contact info is valid, send it to the CRM immediately so an
-  // abandoned form is still a lead. Never blocks or surfaces errors to
-  // the user; the final submission upserts the same contact by email.
+  // ── CONTACT SAVE ────────────────────────────────────────
+  // Save contact details in the background once they are complete. This
+  // never interrupts the form; the completed brief updates the same email.
   let partialLeadSent = false;
 
   async function sendPartialLead() {
@@ -322,11 +321,9 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      if (!res.ok) throw new Error(`Endpoint responded ${res.status}`);
-      console.log('[SmartMove] Partial lead captured');
-    } catch (err) {
+      if (!res.ok) throw new Error('Request failed');
+    } catch {
       partialLeadSent = false; // allow a retry if the user edits contact info
-      console.warn('[SmartMove] Partial lead send failed (non-blocking):', err);
     }
   }
 

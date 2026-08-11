@@ -10,7 +10,8 @@
     "test:attribution": "node --test tests/attribution-and-resources.test.mjs",
     "test:inventory": "node tests/inventory.test.mjs",
     "test:wordmark": "node tests/wordmark-contract.test.mjs",
-    "test:copy": "node --test tests/plain-language-copy.test.mjs"
+    "test:copy": "node --test tests/plain-language-copy.test.mjs",
+    "test:reliability": "node --test tests/smart-move-reliability.test.mjs"
   },
   "dependencies": {
     "@vercel/functions": "^3.7.5",

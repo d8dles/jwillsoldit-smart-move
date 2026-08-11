@@ -1,4 +1,10 @@
+import { getClientIp } from './_lib/http.js';
+import { checkRateLimit } from './_lib/rate-limit.js';
+import { withDB } from './_lib/store.js';
+
 const HUBSPOT_API = 'https://api.hubapi.com';
+export const SMART_MOVE_RATE_LIMIT = { max: 8, windowMs: 10 * 60 * 1000, lockoutMs: 15 * 60 * 1000 };
+export const MAX_SMART_MOVE_BODY_BYTES = 100_000;
 
 // Escape user-controlled values before interpolating into the alert email's HTML
 // body. Covers the five HTML-significant characters so injected markup renders as
@@ -462,6 +468,11 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' });
 
+  const declaredLength = Number(req.headers['content-length']);
+  if (Number.isFinite(declaredLength) && declaredLength > MAX_SMART_MOVE_BODY_BYTES) {
+    return res.status(413).json({ success: false, error: 'Request is too large' });
+  }
+
   const token = process.env.HUBSPOT_ACCESS_TOKEN;
   if (!token) {
     console.error('[smart-move] HUBSPOT_ACCESS_TOKEN is not set');
@@ -495,6 +506,23 @@ export default async function handler(req, res) {
   }
   if (payload?.contact?.contactConsent !== true) {
     return res.status(400).json({ success: false, error: 'contact consent is required' });
+  }
+  if (Buffer.byteLength(JSON.stringify(payload), 'utf8') > MAX_SMART_MOVE_BODY_BYTES) {
+    return res.status(413).json({ success: false, error: 'Request is too large' });
+  }
+
+  let rateLimit;
+  try {
+    rateLimit = await withDB((db) =>
+      checkRateLimit(db, `smart-move:${getClientIp(req)}`, SMART_MOVE_RATE_LIMIT)
+    );
+  } catch (err) {
+    console.error('[smart-move] Rate-limit check failed:', err.message);
+    return res.status(503).json({ success: false, error: 'We could not save your answers. Please try again.' });
+  }
+  if (!rateLimit.allowed) {
+    res.setHeader('Retry-After', String(rateLimit.retryAfterSeconds));
+    return res.status(429).json({ success: false, error: 'Please wait a few minutes before trying again.' });
   }
 
   try {

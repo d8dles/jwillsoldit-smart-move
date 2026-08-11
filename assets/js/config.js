@@ -1,4 +1,4 @@
-// config.js — constants (PATH_MAP/labels/endpoint), ad-attribution capture, SECTIONS list, module-level runtime vars, FormLogic.init(). Extracted (src 4442-4518). Load 2/6.
+// Smart Move client state and form setup.
   // ── PATH KEY MAP: display → FormLogic internal ──────────
   const PATH_MAP = {
     'rent': 'renter',
@@ -43,8 +43,6 @@
     'notsure': 'Not sure yet'
   };
 
-  // Paste your Zapier Catch Hook or backend endpoint here once connected.
-  // Keep blank while testing locally; the button will not open email.
   const SMART_MOVE_ENDPOINT = '/api/smart-move';
 
   // Ad-attribution params captured on load so every submission (partial and
@@ -75,4 +73,3 @@
   let programmaticScroll = false;
   let lastScrollY = window.scrollY || 0;
   let lastUpScrollAt = 0;
-

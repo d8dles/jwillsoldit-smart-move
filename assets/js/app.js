@@ -428,7 +428,6 @@
     const dialogBtn = document.getElementById('brief-dialog-send');
     const status = document.getElementById('brief-submit-status');
     const payload = buildSmartMovePayload();
-    console.log('[SmartMove] Submission payload:', payload);
 
     if (status) {
       status.classList.remove('error');
@@ -460,7 +459,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      if (!res.ok) throw new Error(`Endpoint responded ${res.status}`);
+      if (!res.ok) throw new Error('Request failed');
       const result = await res.json();
       if (status) status.textContent = 'Sent. I have your answers and will follow up soon.';
       if (btn) btn.textContent = 'Answers sent';
@@ -478,8 +477,7 @@
       const beaconAddress = document.getElementById('brief-beacon-address');
       if (beaconAddress) beaconAddress.textContent = 'I’ll follow up soon';
       resetSmartMoveState({ keepBrief: true });
-    } catch (err) {
-      console.error('[SmartMove] Send failed:', err);
+    } catch {
       if (status) {
         status.classList.add('error');
         status.textContent = 'I couldn’t send this right now. Your answers are still here—please try again, or call or text me.';

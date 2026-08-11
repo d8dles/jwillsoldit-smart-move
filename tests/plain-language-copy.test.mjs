@@ -7,7 +7,11 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8');
 test('public Smart Move copy does not expose implementation language', () => {
   const publicCopy = [
     read('../index.html'),
+    read('../assets/js/config.js'),
     read('../assets/js/app.js'),
+    read('../assets/js/steps.js'),
+    read('../assets/js/submit.js'),
+    read('../assets/js/state.js'),
     read('../assets/js/validation.js'),
     read('../assets/js/public-form-pm.js'),
   ].join('\n');
@@ -17,12 +21,17 @@ test('public Smart Move copy does not expose implementation language', () => {
     'Places API key',
     'Check the endpoint connection',
     'in the CRM',
+    'Zapier Catch Hook',
+    'backend endpoint',
+    'testing locally',
     'Mark lender intro needed / clicked',
     'Plot Line Active',
     'Complete the required route details',
   ]) {
     assert.doesNotMatch(publicCopy, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'));
   }
+
+  assert.doesNotMatch(publicCopy, /console\.(?:log|warn|error)\s*\(/);
 });
 
 test('summary and send states speak directly to the client', () => {
