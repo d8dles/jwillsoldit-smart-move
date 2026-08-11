@@ -1272,6 +1272,43 @@
   .contact-input::placeholder { color: var(--trace); }
   .contact-input.invalid { border-color: var(--red); }
 
+  .referral-toggle {
+    align-self: flex-start;
+    border: 1px solid var(--forest);
+    background: transparent;
+    color: var(--forest);
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .referral-toggle:hover,
+  .referral-toggle:focus-visible {
+    background: var(--forest);
+    color: var(--pure);
+  }
+
+  .referral-help {
+    margin: 0;
+    color: var(--mid);
+    font-family: var(--body);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .referral-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    padding-top: 8px;
+  }
+
+  .referral-fields[hidden] { display: none; }
+
   .contact-error {
     font-family: var(--mono);
     font-size: 10px;
@@ -1645,4 +1682,3 @@
   @media (prefers-reduced-motion: reduce) {
     .trail-layer, .route-canvas, .blueprint-overlay { display: none !important; }
   }
-

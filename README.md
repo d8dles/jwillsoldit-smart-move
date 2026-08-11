@@ -90,6 +90,17 @@ private tools for Joey to verify rental placements and prepare locator
 commission invoices. It does not touch the Smart Move flow, its payloads, or
 its HubSpot fields.
 
+### Smart Move contact fields in HubSpot
+
+Each submission upserts a HubSpot contact by email. Standard contact properties are
+`firstname`, `lastname`, `email`, and `phone`. The intake also maintains these custom
+contact properties: `smart_move_brief`, `smart_move_route`, `smart_move_timeline`,
+`smart_move_budget`, `smart_move_readiness`, `smart_move_areas`,
+`smart_move_criteria`, `smart_move_submission_id`, `smart_move_submitted_at`,
+`smart_move_referral_name`, and `smart_move_referral_phone`. Referral information is
+optional and is stored on the lead's contact record; it does not create a second
+HubSpot contact.
+
 - **`/admin/verifications`** — list every verification file
 - **`/admin/verifications/new`** — start a new file
 - **`/admin/verifications/:id`** — file detail: generate/copy client + PM

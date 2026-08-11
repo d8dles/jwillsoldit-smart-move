@@ -26,6 +26,8 @@ const CUSTOM_PROPERTIES = [
   { name: 'smart_move_criteria',      label: 'Smart Move Criteria',      fieldType: 'textarea',  type: 'string' },
   { name: 'smart_move_submission_id', label: 'Smart Move Submission ID', fieldType: 'text',      type: 'string' },
   { name: 'smart_move_submitted_at',  label: 'Smart Move Submitted At',  fieldType: 'text',      type: 'string' },
+  { name: 'smart_move_referral_name', label: 'Smart Move Referral Name', fieldType: 'text',      type: 'string' },
+  { name: 'smart_move_referral_phone', label: 'Smart Move Referral Phone', fieldType: 'phonenumber', type: 'string' },
 ];
 
 function buildBriefText(payload) {
@@ -38,6 +40,8 @@ function buildBriefText(payload) {
     `Name: ${p.contact?.name || '—'}`,
     `Email: ${p.contact?.email || '—'}`,
     `Phone: ${p.contact?.phone || '—'}`,
+    `Referral Name: ${p.contact?.referralName || '—'}`,
+    `Referral Phone: ${p.contact?.referralPhone || '—'}`,
     '',
     `Route: ${p.routeLabel || '—'}`,
     `Timeline: ${p.timelineLabel || '—'}`,
@@ -131,6 +135,8 @@ async function upsertContact(token, payload) {
     smart_move_criteria:      payload.criteriaLabel || '',
     smart_move_submission_id: payload.metadata?.submissionId || '',
     smart_move_submitted_at:  payload.metadata?.submittedAt || new Date().toISOString(),
+    smart_move_referral_name: payload.contact?.referralName || '',
+    smart_move_referral_phone: payload.contact?.referralPhone || '',
   };
 
   if (name) {
@@ -196,7 +202,7 @@ async function sendLeadAlert(payload, contactId) {
     return;
   }
 
-  const { name, email, phone } = payload.contact || {};
+  const { name, email, phone, referralName, referralPhone } = payload.contact || {};
   const route        = payload.routeLabel    || payload.path || '—';
   const timeline     = payload.timelineLabel || '—';
   const budget       = payload.budgetLabel   || '—';
@@ -224,6 +230,8 @@ async function sendLeadAlert(payload, contactId) {
   <tr><td style="font-weight:bold;padding-right:16px;">Name</td><td>${escapeHtml(name) || '—'}</td></tr>
   <tr><td style="font-weight:bold;padding-right:16px;">Email</td><td><a href="mailto:${escapeHtml(email)}">${escapeHtml(email) || '—'}</a></td></tr>
   <tr><td style="font-weight:bold;padding-right:16px;">Phone</td><td>${escapeHtml(phone) || '—'}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Referral Name</td><td>${escapeHtml(referralName) || '—'}</td></tr>
+  <tr><td style="font-weight:bold;padding-right:16px;">Referral Phone</td><td>${escapeHtml(referralPhone) || '—'}</td></tr>
   <tr><td style="font-weight:bold;padding-right:16px;">Route</td><td>${escapeHtml(route)}</td></tr>
   <tr><td style="font-weight:bold;padding-right:16px;">Timeline</td><td>${escapeHtml(timeline)}</td></tr>
   <tr><td style="font-weight:bold;padding-right:16px;">Budget</td><td>${escapeHtml(budget)}</td></tr>
@@ -245,6 +253,8 @@ async function sendLeadAlert(payload, contactId) {
     `Name:          ${name || '—'}`,
     `Email:         ${email || '—'}`,
     `Phone:         ${phone || '—'}`,
+    `Referral Name: ${referralName || '—'}`,
+    `Referral Phone: ${referralPhone || '—'}`,
     `Route:         ${route}`,
     `Timeline:      ${timeline}`,
     `Budget:        ${budget}`,

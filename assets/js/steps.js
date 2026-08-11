@@ -177,22 +177,60 @@
     const phone = document.getElementById('c-phone')?.value.trim() || '';
     const method = FormLogic.formData['contact_method'] || null;
     const time   = FormLogic.formData['best_time'] || null;
+    const referralOpen = !document.getElementById('referral-fields')?.hidden;
+    const referralName = document.getElementById('c-referral-name')?.value.trim() || '';
+    const referralPhone = document.getElementById('c-referral-phone')?.value.trim() || '';
+    const referralReady = !referralOpen || (
+      FormLogic.validateField('name', referralName).valid &&
+      FormLogic.validateField('phone', referralPhone).valid
+    );
     const ready = FormLogic.validateField('name', name).valid &&
                   FormLogic.validateField('email', email).valid &&
                   FormLogic.validateField('phone', phone).valid &&
-                  method && time;
+                  method && time && referralReady;
     if (ready) scheduleAutoAdvance('contact', submitContact, 550);
   }
 
-  ['c-name','c-email','c-phone'].forEach(id => {
+  ['c-name','c-email','c-phone','c-referral-name','c-referral-phone'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', maybeAutoContact);
   });
+
+  function toggleReferralFields() {
+    const fields = document.getElementById('referral-fields');
+    const button = document.getElementById('referral-toggle');
+    if (!fields || !button) return;
+    const opening = fields.hidden;
+    fields.hidden = !opening;
+    button.setAttribute('aria-expanded', String(opening));
+    button.textContent = opening ? '− Remove referral' : '+ Add a referral';
+    if (opening) {
+      document.getElementById('c-referral-name')?.focus();
+    } else {
+      ['c-referral-name', 'c-referral-phone'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+          input.value = '';
+          input.classList.remove('invalid');
+        }
+      });
+      ['err-referral-name', 'err-referral-phone'].forEach(id => {
+        const error = document.getElementById(id);
+        if (error) error.textContent = '';
+      });
+      FormLogic.updateContactField('referralName', null);
+      FormLogic.updateContactField('referralPhone', null);
+      maybeAutoContact();
+    }
+  }
 
   function submitContact() {
     const name  = document.getElementById('c-name').value.trim();
     const email = document.getElementById('c-email').value.trim();
     const phone = document.getElementById('c-phone').value.trim();
+    const referralOpen = !document.getElementById('referral-fields')?.hidden;
+    const referralName = document.getElementById('c-referral-name')?.value.trim() || '';
+    const referralPhone = document.getElementById('c-referral-phone')?.value.trim() || '';
     const method = FormLogic.formData['contact_method'] || null;
     const time   = FormLogic.formData['best_time'] || null;
 
@@ -216,6 +254,16 @@
     vPhone.valid ? clrErr('err-phone') : setErr('err-phone', vPhone.error);
     document.getElementById('c-phone').classList.toggle('invalid', !vPhone.valid);
 
+    if (referralOpen) {
+      const vReferralName = FormLogic.validateField('name', referralName);
+      vReferralName.valid ? clrErr('err-referral-name') : setErr('err-referral-name', vReferralName.error);
+      document.getElementById('c-referral-name').classList.toggle('invalid', !vReferralName.valid);
+
+      const vReferralPhone = FormLogic.validateField('phone', referralPhone);
+      vReferralPhone.valid ? clrErr('err-referral-phone') : setErr('err-referral-phone', vReferralPhone.error);
+      document.getElementById('c-referral-phone').classList.toggle('invalid', !vReferralPhone.valid);
+    }
+
     method ? clrErr('err-pref') : setErr('err-pref', 'Select a preferred contact method');
     time   ? clrErr('err-time') : setErr('err-time', 'Select the best time to reach you');
 
@@ -224,6 +272,8 @@
     FormLogic.updateContactField('name',  name);
     FormLogic.updateContactField('email', email);
     FormLogic.updateContactField('phone', phone);
+    FormLogic.updateContactField('referralName', referralOpen ? referralName : null);
+    FormLogic.updateContactField('referralPhone', referralOpen ? referralPhone : null);
 
     sendPartialLead(); // fire-and-forget: capture the lead even if they never finish
 
@@ -386,5 +436,4 @@
     toggleArea(faux);
     input.value = '';
   }
-
 

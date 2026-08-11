@@ -23,6 +23,7 @@
       padding-left: 24px;
       padding-right: 24px;
     }
+    .referral-fields { grid-template-columns: 1fr; }
     .area-body,
     .area-continue {
       padding-left: 24px;
