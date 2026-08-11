@@ -31,6 +31,8 @@ const FormLogic = {
       name: null,
       email: null,
       phone: null,
+      preferredContact: null,
+      bestContactTime: null,
       referralName: null,
       referralPhone: null
     },
@@ -177,6 +179,8 @@ const FormLogic = {
         name: null,
         email: null,
         phone: null,
+        preferredContact: null,
+        bestContactTime: null,
         referralName: null,
         referralPhone: null
       },
@@ -295,6 +299,8 @@ const FormLogic = {
         name: this.formData.contact.name,
         email: this.formData.contact.email,
         phone: this.formData.contact.phone,
+        preferredContact: this.formData.contact.preferredContact,
+        bestContactTime: this.formData.contact.bestContactTime,
         referralName: this.formData.contact.referralName,
         referralPhone: this.formData.contact.referralPhone
       },
