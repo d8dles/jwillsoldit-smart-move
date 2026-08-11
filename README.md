@@ -98,7 +98,9 @@ contact properties: `smart_move_brief`, `smart_move_route`, `smart_move_timeline
 `smart_move_budget`, `smart_move_readiness`, `smart_move_areas`,
 `smart_move_criteria`, `smart_move_submission_id`, `smart_move_submitted_at`,
 `smart_move_referral_name`, `smart_move_referral_phone`,
-`smart_move_preferred_contact`, and `smart_move_best_contact_time`. Referral information is
+`smart_move_preferred_contact`, `smart_move_best_contact_time`,
+`smart_move_contact_consent`, `smart_move_marketing_consent`,
+`smart_move_consent_version`, and `smart_move_consent_at`. Referral information is
 optional and is stored on the lead's contact record; it does not create a second
 HubSpot contact.
 

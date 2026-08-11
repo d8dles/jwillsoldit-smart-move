@@ -105,6 +105,8 @@ async function fillContact(page, { addReferral = false } = {}) {
   }
   await page.locator('#pref-contact .inline-opt[data-val="call"]').click();
   await page.locator('#best-time .inline-opt[data-val="morning"]').click();
+  await page.locator('#c-contact-consent').check();
+  if (addReferral) await page.locator('#c-marketing-consent').check();
 }
 
 async function fillTrunk(page) {
@@ -427,6 +429,9 @@ async function main() {
       all.every((s) => s.payload?.contact?.bestContactTime === 'morning'),
       'best contact time did not reach every submitted payload',
     );
+    check(all.every((s) => s.payload?.contact?.contactConsent === true), 'contact consent missing from submissions');
+    check(all.every((s) => s.payload?.contact?.consentVersion === '2026-08-11-v1'), 'consent version missing from submissions');
+    check(all.every((s) => Boolean(s.payload?.contact?.consentAt)), 'consent timestamp missing from submissions');
 
     // Honeypot: every real submission must carry the field, present and empty
     // (a legitimate human never fills the off-screen input).

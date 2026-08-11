@@ -177,6 +177,7 @@
     const phone = document.getElementById('c-phone')?.value.trim() || '';
     const method = FormLogic.formData['contact_method'] || null;
     const time   = FormLogic.formData['best_time'] || null;
+    const contactConsent = document.getElementById('c-contact-consent')?.checked || false;
     const referralOpen = !document.getElementById('referral-fields')?.hidden;
     const referralName = document.getElementById('c-referral-name')?.value.trim() || '';
     const referralPhone = document.getElementById('c-referral-phone')?.value.trim() || '';
@@ -187,13 +188,17 @@
     const ready = FormLogic.validateField('name', name).valid &&
                   FormLogic.validateField('email', email).valid &&
                   FormLogic.validateField('phone', phone).valid &&
-                  method && time && referralReady;
+                  method && time && referralReady && contactConsent;
     if (ready) scheduleAutoAdvance('contact', submitContact, 550);
   }
 
   ['c-name','c-email','c-phone','c-referral-name','c-referral-phone'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', maybeAutoContact);
+  });
+  ['c-contact-consent','c-marketing-consent'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', maybeAutoContact);
   });
 
   function toggleReferralFields() {
@@ -233,6 +238,8 @@
     const referralPhone = document.getElementById('c-referral-phone')?.value.trim() || '';
     const method = FormLogic.formData['contact_method'] || null;
     const time   = FormLogic.formData['best_time'] || null;
+    const contactConsent = document.getElementById('c-contact-consent')?.checked || false;
+    const marketingConsent = document.getElementById('c-marketing-consent')?.checked || false;
 
     let valid = true;
 
@@ -266,6 +273,7 @@
 
     method ? clrErr('err-pref') : setErr('err-pref', 'Select a preferred contact method');
     time   ? clrErr('err-time') : setErr('err-time', 'Select the best time to reach you');
+    contactConsent ? clrErr('err-contact-consent') : setErr('err-contact-consent', 'Confirm permission to contact you about this request');
 
     if (!valid) return;
 
@@ -274,6 +282,10 @@
     FormLogic.updateContactField('phone', phone);
     FormLogic.updateContactField('preferredContact', method);
     FormLogic.updateContactField('bestContactTime', time);
+    FormLogic.updateContactField('contactConsent', contactConsent);
+    FormLogic.updateContactField('marketingConsent', marketingConsent);
+    FormLogic.updateContactField('consentVersion', '2026-08-11-v1');
+    FormLogic.updateContactField('consentAt', new Date().toISOString());
     FormLogic.updateContactField('referralName', referralOpen ? referralName : null);
     FormLogic.updateContactField('referralPhone', referralOpen ? referralPhone : null);
 
