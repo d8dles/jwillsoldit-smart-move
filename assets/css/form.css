@@ -1538,6 +1538,55 @@
     max-width: 540px;
   }
 
+  .brief-resources {
+    margin-bottom: 38px;
+    padding: 22px;
+    border: 1px solid rgba(250,250,250,0.12);
+    background: rgba(250,250,250,0.04);
+  }
+
+  .brief-resources h3 {
+    margin: 0 0 8px;
+    color: var(--pure);
+    font-family: var(--display);
+    font-size: 1.35rem;
+    font-weight: 500;
+  }
+
+  .brief-resources > p:not(.brief-next-label) {
+    margin: 0;
+    color: rgba(250,250,250,0.68);
+    font-family: var(--body);
+    font-size: 0.94rem;
+    line-height: 1.6;
+  }
+
+  .brief-resource-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .brief-resource-link {
+    padding: 12px 14px;
+    border: 1px solid rgba(250,250,250,0.2);
+    color: var(--pure);
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    line-height: 1.35;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .brief-resource-link.primary {
+    border-color: var(--orange);
+    background: var(--orange);
+    color: var(--pure);
+  }
+
   /* ── BRIEF FOOTER (brand) ──────────────────────────────── */
   .brief-footer-strip {
     border-top: 1px solid rgba(250,250,250,0.08);

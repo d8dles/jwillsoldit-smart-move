@@ -7,6 +7,7 @@
   "scripts": {
     "verify": "node tests/verify.mjs",
     "test:confirmation": "node --test tests/client-confirmation.test.mjs",
+    "test:attribution": "node --test tests/attribution-and-resources.test.mjs",
     "test:inventory": "node tests/inventory.test.mjs",
     "test:wordmark": "node tests/wordmark-contract.test.mjs"
   },

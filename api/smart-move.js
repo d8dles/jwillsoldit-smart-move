@@ -13,7 +13,7 @@ function escapeHtml(value) {
 }
 
 // Cached across warm invocations: once the HubSpot custom properties have been
-// ensured successfully, skip the 9-schema fetch/create round-trips entirely.
+// ensured successfully, skip repeated schema fetch/create round-trips entirely.
 let customPropertiesEnsured = false;
 
 const CUSTOM_PROPERTIES = [
@@ -34,7 +34,25 @@ const CUSTOM_PROPERTIES = [
   { name: 'smart_move_marketing_consent', label: 'Smart Move Marketing Consent', fieldType: 'text', type: 'string' },
   { name: 'smart_move_consent_version', label: 'Smart Move Consent Version', fieldType: 'text', type: 'string' },
   { name: 'smart_move_consent_at', label: 'Smart Move Consent At', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_utm_source', label: 'Smart Move UTM Source', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_utm_medium', label: 'Smart Move UTM Medium', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_utm_campaign', label: 'Smart Move UTM Campaign', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_utm_content', label: 'Smart Move UTM Content', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_utm_term', label: 'Smart Move UTM Term', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_fbclid', label: 'Smart Move Facebook Click ID', fieldType: 'text', type: 'string' },
 ];
+
+export function buildTrackingProperties(payload) {
+  const tracking = payload?.metadata?.tracking || {};
+  return {
+    smart_move_utm_source: tracking.utm_source || '',
+    smart_move_utm_medium: tracking.utm_medium || '',
+    smart_move_utm_campaign: tracking.utm_campaign || '',
+    smart_move_utm_content: tracking.utm_content || '',
+    smart_move_utm_term: tracking.utm_term || '',
+    smart_move_fbclid: tracking.fbclid || '',
+  };
+}
 
 function buildBriefText(payload) {
   const p = payload;
@@ -88,7 +106,19 @@ function buildBriefText(payload) {
     });
   }
 
-  lines.push('', `Device: ${p.metadata?.deviceType || '—'}`);
+  const tracking = p.metadata?.tracking || {};
+  lines.push(
+    '',
+    'Attribution:',
+    `  UTM Source: ${tracking.utm_source || '—'}`,
+    `  UTM Medium: ${tracking.utm_medium || '—'}`,
+    `  UTM Campaign: ${tracking.utm_campaign || '—'}`,
+    `  UTM Content: ${tracking.utm_content || '—'}`,
+    `  UTM Term: ${tracking.utm_term || '—'}`,
+    `  Facebook Click ID: ${tracking.fbclid || '—'}`,
+    '',
+    `Device: ${p.metadata?.deviceType || '—'}`,
+  );
   return lines.join('\n');
 }
 
@@ -155,6 +185,7 @@ async function upsertContact(token, payload) {
     smart_move_marketing_consent: payload.contact?.marketingConsent ? 'Yes' : 'No',
     smart_move_consent_version: payload.contact?.consentVersion || '',
     smart_move_consent_at: payload.contact?.consentAt || '',
+    ...buildTrackingProperties(payload),
   };
 
   if (name) {
