@@ -125,7 +125,4 @@
       resourceSecondary.href = resource.secondary[1];
     }
 
-    // Build and log submission object
-    const submission = buildEnhancedSubmission(FormLogic.buildSubmissionObject());
-    console.log('[SmartMove] Submission JSON:', JSON.stringify(submission, null, 2));
   }

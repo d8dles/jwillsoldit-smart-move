@@ -169,7 +169,6 @@ const FormLogic = {
   // ============================================================================
 
   init() {
-    console.log("[FormLogic] Initializing form...");
     this.formData = this.getInitialState();
     return this.formData;
   },
@@ -249,12 +248,10 @@ const FormLogic = {
 
   setPath(selectedPath) {
     if (!this.paths[selectedPath]) {
-      console.error(`[FormLogic] Invalid path: ${selectedPath}`);
       return false;
     }
 
     this.formData.path = selectedPath;
-    console.log(`[FormLogic] Path set to: ${selectedPath} (${this.getTotalQuestions()} total questions)`);
 
     return true;
   },
@@ -510,30 +507,24 @@ const FormLogic = {
   updateTrunkField(fieldName, value) {
     if (this.formData.trunk.hasOwnProperty(fieldName)) {
       this.formData.trunk[fieldName] = value;
-      console.log(`[FormLogic] Updated trunk.${fieldName} =`, value);
       return true;
     }
-    console.warn(`[FormLogic] Unknown trunk field: ${fieldName}`);
     return false;
   },
 
   updatePathField(fieldName, value) {
     if (this.formData.pathData.hasOwnProperty(fieldName)) {
       this.formData.pathData[fieldName] = value;
-      console.log(`[FormLogic] Updated pathData.${fieldName} =`, value);
       return true;
     }
-    console.warn(`[FormLogic] Unknown path field: ${fieldName}`);
     return false;
   },
 
   updateContactField(fieldName, value) {
     if (this.formData.contact.hasOwnProperty(fieldName)) {
       this.formData.contact[fieldName] = value;
-      console.log(`[FormLogic] Updated contact.${fieldName} =`, value);
       return true;
     }
-    console.warn(`[FormLogic] Unknown contact field: ${fieldName}`);
     return false;
   },
 };

@@ -24,7 +24,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const VIEWPORT_HEIGHT = 844;
 const OVERFLOW_TOLERANCE = 1; // px; sub-pixel rounding is benign, real blowouts are large
-const SAVED_TEXT = 'Saved. Joey has your Smart Move Brief in the CRM.';
+const SAVED_TEXT = 'Sent. I have your answers and will follow up soon.';
 const PATHS = ['rent', 'buy', 'sell', 'sell-buy', 'commercial', 'not-sure'];
 const SECTION_IDS = ['section-open', 'section-path', 'section-contact', 'section-trunk', 'section-budget', 'section-area', 'section-details', 'section-brief'];
 const TRACKING_QUERY = '?utm_source=facebook&utm_medium=paid&utm_campaign=smartmove-test&fbclid=fb.test.123';
