@@ -32,6 +32,7 @@ const TRACKING_QUERY = '?utm_source=facebook&utm_medium=paid&utm_campaign=smartm
 const EXPECTED_TRACKING = { utm_source: 'facebook', utm_medium: 'paid', utm_campaign: 'smartmove-test', fbclid: 'fb.test.123' };
 
 const CONTACT = { name: 'Fable Test Lead', email: 'fable-test@example.com', phone: '713-555-0100' };
+const REFERRAL = { name: 'Referral Test Person', phone: '713-555-0199' };
 
 const failures = [];
 function check(cond, msg) {
@@ -93,10 +94,15 @@ async function selectPath(page, pathKey) {
   await waitForStep(page, 2); // selectPath auto-advances to the contact step
 }
 
-async function fillContact(page) {
+async function fillContact(page, { addReferral = false } = {}) {
   await page.fill('#c-name', CONTACT.name);
   await page.fill('#c-email', CONTACT.email);
   await page.fill('#c-phone', CONTACT.phone);
+  if (addReferral) {
+    await page.locator('#referral-toggle').click();
+    await page.fill('#c-referral-name', REFERRAL.name);
+    await page.fill('#c-referral-phone', REFERRAL.phone);
+  }
   await page.locator('#pref-contact .inline-opt[data-val="call"]').click();
   await page.locator('#best-time .inline-opt[data-val="morning"]').click();
 }
@@ -173,7 +179,7 @@ async function runPath(browser, pathKey, width, query = '') {
   await track('01-path', 'section-path');
 
   await selectPath(page, pathKey);
-  await fillContact(page);
+  await fillContact(page, { addReferral: pathKey === 'rent' });
   await track('02-contact', 'section-contact');
   await page.locator('#contact-btn').click();
   await waitForStep(page, 3);
@@ -407,6 +413,12 @@ async function main() {
     check(partials.length > 0, 'no partial_contact submissions were captured');
     check(partials.length === 11, `expected 11 partials, got ${partials.length}`);
     check(finals.length === 10, `expected 10 finals, got ${finals.length}`);
+
+    const referralSubmissions = all.filter(
+      (s) => s.payload?.contact?.referralName === REFERRAL.name &&
+             s.payload?.contact?.referralPhone === REFERRAL.phone,
+    );
+    check(referralSubmissions.length > 0, 'referral fields did not reach submitted payloads');
 
     // Honeypot: every real submission must carry the field, present and empty
     // (a legitimate human never fills the off-screen input).

@@ -303,6 +303,22 @@
       <input class="contact-input" type="tel" id="c-phone" autocomplete="tel" placeholder="(713) 000-0000">
       <div class="contact-error" id="err-phone"></div>
     </div>
+    <div class="contact-row referral-row">
+      <button class="referral-toggle" id="referral-toggle" type="button" aria-expanded="false" aria-controls="referral-fields" onclick="toggleReferralFields()">+ Add a referral</button>
+      <p class="referral-help">If someone referred you to Joey, add their information here.</p>
+      <div class="referral-fields" id="referral-fields" hidden>
+        <div>
+          <label class="contact-label" for="c-referral-name">Referral Name</label>
+          <input class="contact-input" type="text" id="c-referral-name" autocomplete="off" placeholder="Full name">
+          <div class="contact-error" id="err-referral-name"></div>
+        </div>
+        <div>
+          <label class="contact-label" for="c-referral-phone">Referral Phone</label>
+          <input class="contact-input" type="tel" id="c-referral-phone" autocomplete="off" placeholder="(713) 000-0000">
+          <div class="contact-error" id="err-referral-phone"></div>
+        </div>
+      </div>
+    </div>
     <div class="contact-row">
       <label class="contact-label">Preferred Contact</label>
       <div class="contact-inline-opts" id="pref-contact">

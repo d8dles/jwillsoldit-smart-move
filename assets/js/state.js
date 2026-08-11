@@ -30,7 +30,9 @@ const FormLogic = {
     contact: {
       name: null,
       email: null,
-      phone: null
+      phone: null,
+      referralName: null,
+      referralPhone: null
     },
 
     // Shared trunk (Q2-Q7)
@@ -174,7 +176,9 @@ const FormLogic = {
       contact: {
         name: null,
         email: null,
-        phone: null
+        phone: null,
+        referralName: null,
+        referralPhone: null
       },
       trunk: {
         Q2_timeline: null,
@@ -290,7 +294,9 @@ const FormLogic = {
       contact: {
         name: this.formData.contact.name,
         email: this.formData.contact.email,
-        phone: this.formData.contact.phone
+        phone: this.formData.contact.phone,
+        referralName: this.formData.contact.referralName,
+        referralPhone: this.formData.contact.referralPhone
       },
 
       // Shared trunk
@@ -518,4 +524,3 @@ const FormLogic = {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = FormLogic;
 }
-

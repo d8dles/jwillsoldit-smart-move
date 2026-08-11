@@ -328,6 +328,13 @@
     if (budgetBtn) budgetBtn.disabled = true;
     const agentNotice = document.getElementById('agent-yes-notice');
     if (agentNotice) agentNotice.style.display = 'none';
+    const referralFields = document.getElementById('referral-fields');
+    if (referralFields) referralFields.hidden = true;
+    const referralToggle = document.getElementById('referral-toggle');
+    if (referralToggle) {
+      referralToggle.setAttribute('aria-expanded', 'false');
+      referralToggle.textContent = '+ Add a referral';
+    }
     const routeFields = document.getElementById('route-detail-fields');
     if (routeFields && !keepBrief) routeFields.innerHTML = '';
     if (typeof updateAreaSelectionUI === 'function') updateAreaSelectionUI();
