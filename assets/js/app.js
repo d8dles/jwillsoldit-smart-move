@@ -224,7 +224,7 @@
   function updateRouteCue() {
     const cue = document.getElementById('route-cue');
     if (!cue) return;
-    const hidden = currentStep === 0 || currentStep >= 7;
+    const hidden = currentStep === 0 || currentStep === 2 || currentStep >= 7;
     cue.classList.toggle('is-hidden', hidden);
     cue.style.display = hidden ? 'none' : 'flex';
     cue.classList.toggle('is-dark', currentStep === 1);
@@ -246,7 +246,7 @@
       if (FormLogic.getPath()) goTo(2);
       return;
     }
-    if (currentStep === 2) return submitContact();
+    if (currentStep === 2) return;
     if (currentStep === 3) return submitTrunk();
     if (currentStep === 4) {
       if (isStepReady(4)) goTo(5);
@@ -334,6 +334,8 @@
 
     const pathBtn = document.getElementById('path-btn');
     if (pathBtn) pathBtn.disabled = true;
+    const contactBtn = document.getElementById('contact-btn');
+    if (contactBtn) contactBtn.disabled = true;
     const budgetBtn = document.getElementById('budget-btn');
     if (budgetBtn) budgetBtn.disabled = true;
     const agentNotice = document.getElementById('agent-yes-notice');

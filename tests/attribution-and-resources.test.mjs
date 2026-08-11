@@ -38,3 +38,14 @@ test('guide recommendations unlock only after the brief is saved', () => {
   assert.match(app, /showBriefSuccess/);
   assert.match(app, /Houston search details saved/);
 });
+
+test('contact consent pauses for an explicit continue action', () => {
+  const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  const steps = readFileSync(new URL('../assets/js/steps.js', import.meta.url), 'utf8');
+  assert.match(html, /id="contact-btn" disabled/);
+  assert.match(html, /This step will not move until you select Continue/);
+  assert.doesNotMatch(steps, /scheduleAutoAdvance\('contact'/);
+  assert.match(steps, /button\.disabled = !ready/);
+  const app = readFileSync(new URL('../assets/js/app.js', import.meta.url), 'utf8');
+  assert.match(app, /currentStep === 2 \|\| currentStep >= 7/);
+});

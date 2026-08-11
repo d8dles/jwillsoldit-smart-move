@@ -7,8 +7,7 @@
 //      asserting each step transition, that the details step does NOT auto-advance,
 //      and that the final submit succeeds
 //   3. checks horizontal overflow at 360/390/430/820/1440 on every step
-//   4. runs the C1 regression scenario (scroll up during the contact auto-advance
-//      window and assert the flow recovers to the trunk section)
+//   4. verifies the consent block pauses for an explicit Continue action
 //   5. verifies UTM/fbclid tracking params reach the submitted payload
 //   6. verifies partial-lead capture (submissionType 'partial_contact') after contact
 //
@@ -246,30 +245,26 @@ async function runPath(browser, pathKey, width, query = '') {
   };
 }
 
-// C1 regression: finish the contact step, scroll up during the auto-advance
-// window, and assert the flow still recovers to the trunk section (no stuck
-// "rewinding" state, no dropped advance).
+// Consent is a deliberate pause: completing the required checkbox must not
+// move the client before they can consider the optional marketing choice.
 async function runRegression(browser) {
   const { context, page } = await newFlowPage(browser, 390);
   await advanceHeroToPath(page);
   await selectPath(page, 'rent');
-  await fillContact(page); // completing the last field schedules the auto-advance
-  // Small upward scroll: keeps the contact section active (so the advance is not
-  // cancelled) while setting the scroll-back guard that used to strand users.
-  await page.evaluate(() => window.scrollBy(0, -70));
-  await page.waitForTimeout(120);
-  await page.evaluate(() => window.scrollBy(0, -50));
-
-  let advancedTo = null;
-  try {
-    await waitForStep(page, 3);
-    advancedTo = SECTION_IDS[3];
-  } catch {
-    advancedTo = SECTION_IDS[await page.evaluate(() => currentStep)] || null;
-  }
+  await fillContact(page);
+  await page.waitForTimeout(900);
+  const pausedAt = SECTION_IDS[await page.evaluate(() => currentStep)] || null;
+  await page.locator('#c-marketing-consent').check();
+  await page.waitForTimeout(700);
+  const stillPausedAt = SECTION_IDS[await page.evaluate(() => currentStep)] || null;
+  const buttonEnabled = await page.locator('#contact-btn').isEnabled();
+  const paused = pausedAt === 'section-contact' && stillPausedAt === 'section-contact' && buttonEnabled;
+  check(paused, `consent pause failed (before=${pausedAt}, after=${stillPausedAt}, enabled=${buttonEnabled})`);
+  await page.locator('#contact-btn').click();
+  await waitForStep(page, 3);
+  const advancedTo = SECTION_IDS[await page.evaluate(() => currentStep)] || null;
   const bodyClass = (await page.evaluate(() => document.body.className)).trim();
-  const recovered = advancedTo === 'section-trunk' && !bodyClass.includes('rewinding');
-  check(recovered, `regression did not recover (advancedTo=${advancedTo}, body="${bodyClass}")`);
+  const recovered = paused && advancedTo === 'section-trunk';
 
   await context.close();
   return { advancedTo, bodyClass, recovered };
