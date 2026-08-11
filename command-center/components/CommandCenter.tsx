@@ -19,6 +19,8 @@ import TasksSection from './TasksSection';
 import ClientsSection from './ClientsSection';
 import DeadlinesSection from './DeadlinesSection';
 import MoneySection from './MoneySection';
+import MorningBrief from './MorningBrief';
+import FridayReview from './FridayReview';
 
 interface CenterData {
   ventures: Venture[];
@@ -108,6 +110,7 @@ export default function CommandCenter({ userId }: { userId: string }) {
       </header>
       {error ? <div className="error">{error}</div> : null}
 
+      <MorningBrief />
       <InboxSection items={data.inbox} userId={userId} onChange={load} />
       <DailyThreeSection
         dailyThree={data.dailyThree}
@@ -121,10 +124,7 @@ export default function CommandCenter({ userId }: { userId: string }) {
       <ClientsSection clients={data.clients} userId={userId} onChange={load} />
       <DeadlinesSection deadlines={data.deadlines} userId={userId} onChange={load} />
       <MoneySection items={data.money} userId={userId} onChange={load} />
-
-      <button className="btn-signal" style={{ width: '100%', marginTop: 14 }} disabled>
-        Morning Brief (arrives in Phase 2)
-      </button>
+      <FridayReview />
       <div className="footer-note">DONE IS A WON DAY</div>
     </div>
   );
