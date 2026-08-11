@@ -419,6 +419,14 @@ async function main() {
              s.payload?.contact?.referralPhone === REFERRAL.phone,
     );
     check(referralSubmissions.length > 0, 'referral fields did not reach submitted payloads');
+    check(
+      all.every((s) => s.payload?.contact?.preferredContact === 'call'),
+      'preferred contact did not reach every submitted payload',
+    );
+    check(
+      all.every((s) => s.payload?.contact?.bestContactTime === 'morning'),
+      'best contact time did not reach every submitted payload',
+    );
 
     // Honeypot: every real submission must carry the field, present and empty
     // (a legitimate human never fills the off-screen input).

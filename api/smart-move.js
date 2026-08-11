@@ -28,6 +28,8 @@ const CUSTOM_PROPERTIES = [
   { name: 'smart_move_submitted_at',  label: 'Smart Move Submitted At',  fieldType: 'text',      type: 'string' },
   { name: 'smart_move_referral_name', label: 'Smart Move Referral Name', fieldType: 'text',      type: 'string' },
   { name: 'smart_move_referral_phone', label: 'Smart Move Referral Phone', fieldType: 'phonenumber', type: 'string' },
+  { name: 'smart_move_preferred_contact', label: 'Smart Move Preferred Contact', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_best_contact_time', label: 'Smart Move Best Contact Time', fieldType: 'text', type: 'string' },
 ];
 
 function buildBriefText(payload) {
@@ -42,6 +44,8 @@ function buildBriefText(payload) {
     `Phone: ${p.contact?.phone || '—'}`,
     `Referral Name: ${p.contact?.referralName || '—'}`,
     `Referral Phone: ${p.contact?.referralPhone || '—'}`,
+    `Preferred Contact: ${p.contact?.preferredContact || '—'}`,
+    `Best Contact Time: ${p.contact?.bestContactTime || '—'}`,
     '',
     `Route: ${p.routeLabel || '—'}`,
     `Timeline: ${p.timelineLabel || '—'}`,
@@ -137,6 +141,8 @@ async function upsertContact(token, payload) {
     smart_move_submitted_at:  payload.metadata?.submittedAt || new Date().toISOString(),
     smart_move_referral_name: payload.contact?.referralName || '',
     smart_move_referral_phone: payload.contact?.referralPhone || '',
+    smart_move_preferred_contact: payload.contact?.preferredContact || '',
+    smart_move_best_contact_time: payload.contact?.bestContactTime || '',
   };
 
   if (name) {

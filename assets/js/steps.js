@@ -272,6 +272,8 @@
     FormLogic.updateContactField('name',  name);
     FormLogic.updateContactField('email', email);
     FormLogic.updateContactField('phone', phone);
+    FormLogic.updateContactField('preferredContact', method);
+    FormLogic.updateContactField('bestContactTime', time);
     FormLogic.updateContactField('referralName', referralOpen ? referralName : null);
     FormLogic.updateContactField('referralPhone', referralOpen ? referralPhone : null);
 
@@ -436,4 +438,3 @@
     toggleArea(faux);
     input.value = '';
   }
-
