@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Public Inventory | JWillSoldIt Admin</title>
+<title>Published Properties | JWillSoldIt Admin</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,15 +15,15 @@
 </head>
 <body class="admin-body" data-page="inventory">
 <header class="admin-topbar">
-  <a class="admin-brand" href="https://www.jwillsoldit.com/"><span class="jw-logo">JWILLSOLDIT<span class="jw-logo__dot" aria-hidden="true">.</span></span><span class="tag">Inventory</span></a>
+  <a class="admin-brand" href="https://www.jwillsoldit.com/"><span class="jw-logo">JWILLSOLDIT<span class="jw-logo__dot" aria-hidden="true">.</span></span><span class="tag">Properties</span></a>
   <nav class="admin-nav">
-    <a href="/admin/verifications" data-nav="list">Verifications</a>
+    <a href="/admin/verifications" data-nav="list">Rental Files</a>
     <a href="/admin/invoices" data-nav="invoices">Invoices</a>
     <a href="/admin/listings" data-nav="listings">Listing Files</a>
     <a href="/admin/cdas" data-nav="cdas">CDAs</a>
     <a href="/admin/cdas/new" data-nav="cdas-new">New CDA</a>
-    <a href="/admin/inventory" data-nav="inventory">Public Inventory</a>
-    <a href="/admin/inventory/new" data-nav="inventory-new">New Inventory</a>
+    <a href="/admin/inventory" data-nav="inventory">Published Properties</a>
+    <a href="/admin/inventory/new" data-nav="inventory-new">Add Property</a>
     <button class="link-btn" id="admin-logout" type="button">Log Out</button>
   </nav>
 </header>
@@ -32,10 +32,10 @@
   <div class="admin-header-row">
     <div>
       <div class="admin-kicker">JWILLSOLDIT Public Surface</div>
-      <h1 class="admin-h1">Public Inventory</h1>
-      <p class="admin-sub">Control what appears on the listings pages. This is separate from private listing intake files.</p>
+      <h1 class="admin-h1">Published Properties</h1>
+      <p class="admin-sub">Manage the properties shown publicly on the website. Client listing files stay separate.</p>
     </div>
-    <a href="/admin/inventory/new" class="admin-btn primary">+ New Public Inventory</a>
+    <a href="/admin/inventory/new" class="admin-btn primary">+ Add Property</a>
   </div>
 
   <div class="admin-card inventory-toolbar">
@@ -44,14 +44,14 @@
   </div>
 
   <div class="admin-card" style="padding:0;overflow-x:auto;">
-    <div id="inventory-loading" class="empty-state">Loading public inventory…</div>
+    <div id="inventory-loading" class="empty-state">Loading published properties…</div>
     <table class="admin-table" id="inventory-table" style="display:none;">
       <thead>
         <tr><th>Property</th><th>Offering</th><th>Status</th><th>Published</th><th>Updated</th><th>Archive</th></tr>
       </thead>
       <tbody id="inventory-body"></tbody>
     </table>
-    <div id="inventory-empty" class="empty-state" style="display:none;">No public inventory records yet. <a href="/admin/inventory/new">Create the first one</a>.</div>
+    <div id="inventory-empty" class="empty-state" style="display:none;">No published properties yet. <a href="/admin/inventory/new">Add the first one</a>.</div>
   </div>
 </main>
 

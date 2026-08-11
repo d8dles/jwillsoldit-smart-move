@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Public Inventory Detail | JWillSoldIt Admin</title>
+<title>Property Page | JWillSoldIt Admin</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,13 +17,13 @@
 <header class="admin-topbar">
   <a class="admin-brand" href="https://www.jwillsoldit.com/"><span class="jw-logo">JWILLSOLDIT<span class="jw-logo__dot" aria-hidden="true">.</span></span><span class="tag">Inventory</span></a>
   <nav class="admin-nav">
-    <a href="/admin/verifications" data-nav="list">Verifications</a>
+    <a href="/admin/verifications" data-nav="list">Rental Files</a>
     <a href="/admin/invoices" data-nav="invoices">Invoices</a>
     <a href="/admin/listings" data-nav="listings">Listing Files</a>
     <a href="/admin/cdas" data-nav="cdas">CDAs</a>
     <a href="/admin/cdas/new" data-nav="cdas-new">New CDA</a>
-    <a href="/admin/inventory" data-nav="inventory">Public Inventory</a>
-    <a href="/admin/inventory/new" data-nav="inventory-new">New Inventory</a>
+    <a href="/admin/inventory" data-nav="inventory">Published Properties</a>
+    <a href="/admin/inventory/new" data-nav="inventory-new">Add Property</a>
     <button class="link-btn" id="admin-logout" type="button">Log Out</button>
   </nav>
 </header>
@@ -32,7 +32,7 @@
   <div id="inventory-loading" class="empty-state">Loading inventory record…</div>
   <div id="inventory-state" style="display:none;">
     <div class="admin-header-row">
-      <div><div class="admin-kicker">Public Inventory</div><h1 class="admin-h1" id="inventory-title">—</h1><p class="admin-sub" id="inventory-sub"></p></div>
+      <div><div class="admin-kicker">Published Property</div><h1 class="admin-h1" id="inventory-title">—</h1><p class="admin-sub" id="inventory-sub"></p></div>
       <span class="badge" id="inventory-badge">—</span>
     </div>
     <div id="inventory-error" class="form-error"></div>

@@ -90,14 +90,14 @@
 
   async function load() {
     try { const data = await api(); record = data.inventory; render(); }
-    catch (err) { document.getElementById('inventory-loading').textContent = `Could not load inventory: ${err.message}`; }
+    catch (err) { document.getElementById('inventory-loading').textContent = `Could not load property: ${err.message}`; }
   }
 
   typeEl.addEventListener('change', refreshTypeFields);
   modeEl.addEventListener('change', refreshTypeFields);
   document.getElementById('save-inventory').addEventListener('click', async () => {
     const error = document.getElementById('inventory-error'); error.classList.remove('show');
-    try { const data = await api('', { method: 'PATCH', body: JSON.stringify(payload()) }); record = data.inventory; render(); AdminShell.toast('Inventory saved'); }
+    try { const data = await api('', { method: 'PATCH', body: JSON.stringify(payload()) }); record = data.inventory; render(); AdminShell.toast('Property saved'); }
     catch (err) { error.textContent = err.message; error.classList.add('show'); }
   });
   document.getElementById('archive-inventory').addEventListener('click', async () => {

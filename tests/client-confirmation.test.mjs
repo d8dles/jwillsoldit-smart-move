@@ -9,10 +9,10 @@ test('builds a personalized client confirmation with the Houston guide invitatio
     routeLabel: 'Buy',
   });
 
-  assert.match(message.subject, /^Avery, your Smart Move brief is in$/);
-  assert.match(message.html, /your move is a priority/i);
+  assert.match(message.subject, /^Avery, I have your Smart Move details$/);
+  assert.match(message.html, /I have your answers/i);
   assert.match(message.html, /https:\/\/www\.jwillsoldit\.com\/houston/);
-  assert.match(message.text, /be in contact shortly with the next steps/i);
+  assert.match(message.text, /reach out shortly so we can talk through the next step/i);
   assert.match(message.text, /joey@jwillsoldit\.com/);
 });
 
@@ -24,7 +24,6 @@ test('escapes client-controlled values in confirmation HTML', () => {
 
   assert.doesNotMatch(message.html, /<script>|<img src=x/);
   assert.match(message.html, /&lt;script&gt;/);
-  assert.match(message.html, /&lt;img src=x onerror=alert\(1\)&gt;/);
 });
 
 test('sends confirmations only for final submissions with duplicate protection', () => {

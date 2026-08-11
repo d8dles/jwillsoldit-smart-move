@@ -105,7 +105,7 @@
 
   // ── TRAIL + PARALLAX ENGINE ─────────────────────────────
   (function () {
-    const WORDS = ['RENT','BUY','SELL','COMMERCIAL','HOUSTON','SMART ROUTE',
+    const WORDS = ['RENT','BUY','SELL','COMMERCIAL','HOUSTON','YOUR MOVE',
                    'MOVE DATE','AREA','BUDGET','TOUR','CMA','KEYS'];
     const MAX_CARDS = 7;
     const MIN_DIST  = 68;
@@ -174,7 +174,7 @@
     cue.type = 'button';
     cue.id = 'route-cue';
     cue.className = 'route-cue is-hidden';
-    cue.textContent = 'Next route point';
+    cue.textContent = 'Continue';
     cue.addEventListener('click', manualNextRoute);
     document.body.appendChild(cue);
 
@@ -231,14 +231,14 @@
 
     const ready = isStepReady(currentStep);
     const labels = {
-      1: ready ? 'Next route point' : 'Choose a route',
-      2: ready ? 'Next route point' : 'Complete contact',
-      3: ready ? 'Next route point' : 'Confirm disclosures',
-      4: ready ? 'Next route point' : 'Choose a range',
-      5: 'Next route point',
-      6: ready ? 'Generate route brief' : 'Complete route details'
+      1: ready ? 'Continue' : 'Choose your move',
+      2: ready ? 'Continue' : 'Complete your contact details',
+      3: ready ? 'Continue' : 'Confirm the notices',
+      4: ready ? 'Continue' : 'Choose a range',
+      5: 'Continue',
+      6: ready ? 'Review your answers' : 'Complete the required details'
     };
-    cue.textContent = labels[currentStep] || 'Next route point';
+    cue.textContent = labels[currentStep] || 'Continue';
   }
 
   function manualNextRoute() {
@@ -374,7 +374,7 @@
     const dialogBtn = document.getElementById('brief-dialog-send');
     if (dialogBtn) {
       dialogBtn.disabled = false;
-      dialogBtn.textContent = 'Send my brief';
+      dialogBtn.textContent = 'Send my answers';
     }
   }
 
@@ -432,16 +432,15 @@
 
     if (status) {
       status.classList.remove('error');
-      status.textContent = SMART_MOVE_ENDPOINT ? 'Sending route brief…' : 'Connection not active yet. Payload logged in console.';
+      status.textContent = SMART_MOVE_ENDPOINT ? 'Sending your answers…' : 'I couldn’t send your answers yet. They are still here—please try again.';
     }
 
     if (!SMART_MOVE_ENDPOINT) {
-      if (status) status.textContent = 'Brief captured locally. Connection is not active yet, and the form has been reset.';
+      if (status) status.textContent = 'I couldn’t send your answers yet. They are still here—please try again.';
       if (btn) {
         btn.disabled = true;
-        btn.textContent = 'Brief captured';
+        btn.textContent = 'Try sending again';
       }
-      resetSmartMoveState({ keepBrief: true });
       return;
     }
 
@@ -463,9 +462,9 @@
       });
       if (!res.ok) throw new Error(`Endpoint responded ${res.status}`);
       const result = await res.json();
-      if (status) status.textContent = 'Saved. Joey has your Smart Move Brief in the CRM.';
-      if (btn) btn.textContent = 'Brief sent';
-      if (dialogBtn) dialogBtn.textContent = 'Brief sent';
+      if (status) status.textContent = 'Sent. I have your answers and will follow up soon.';
+      if (btn) btn.textContent = 'Answers sent';
+      if (dialogBtn) dialogBtn.textContent = 'Answers sent';
       briefSent = true;
       showBriefSuccess({ confirmationSent: result.confirmationSent === true });
       const resources = document.getElementById('brief-resources');
@@ -473,21 +472,21 @@
       document.getElementById('brief-contact-actions')?.removeAttribute('hidden');
       document.getElementById('brief-sticky-send')?.setAttribute('hidden', '');
       const statusText = document.getElementById('brief-status-text');
-      if (statusText) statusText.textContent = 'Brief received';
+      if (statusText) statusText.textContent = 'Got it';
       const beaconLabel = document.getElementById('brief-beacon-label');
-      if (beaconLabel) beaconLabel.textContent = 'Houston search details saved';
+      if (beaconLabel) beaconLabel.textContent = 'Your answers are saved';
       const beaconAddress = document.getElementById('brief-beacon-address');
-      if (beaconAddress) beaconAddress.textContent = 'Joey has your answers';
+      if (beaconAddress) beaconAddress.textContent = 'I’ll follow up soon';
       resetSmartMoveState({ keepBrief: true });
     } catch (err) {
       console.error('[SmartMove] Send failed:', err);
       if (status) {
         status.classList.add('error');
-        status.textContent = 'Send failed. Check the endpoint connection.';
+        status.textContent = 'I couldn’t send this right now. Your answers are still here—please try again, or call or text me.';
       }
       if (btn) {
         btn.disabled = false;
-        btn.textContent = originalText || 'Send My Smart Move Brief';
+        btn.textContent = originalText || 'Send My Answers to Joey';
       }
       if (dialogBtn) {
         dialogBtn.disabled = false;
@@ -567,7 +566,7 @@
     } else {
       add('pathData.Q8_questionCategory');
     }
-    if (criteriaEl) criteriaEl.textContent = criteria.length ? criteria.slice(0, 8).join(' · ') : 'Criteria captured';
+    if (criteriaEl) criteriaEl.textContent = criteria.length ? criteria.slice(0, 8).join(' · ') : 'We’ll narrow this together';
 
     const summaryEl = document.getElementById('brief-all-selections');
     if (summaryEl) {
@@ -581,18 +580,18 @@
       sendLink.removeAttribute('href');
       sendLink.removeAttribute('disabled');
       sendLink.disabled = false;
-      sendLink.textContent = 'Send My Smart Move Brief';
-      sendLink.setAttribute('aria-label', 'Send Smart Move Brief to Joey');
+      sendLink.textContent = 'Send My Answers to Joey';
+      sendLink.setAttribute('aria-label', 'Send my answers to Joey');
     }
     document.getElementById('brief-resources')?.setAttribute('hidden', '');
     document.getElementById('brief-contact-actions')?.setAttribute('hidden', '');
     document.getElementById('brief-sticky-send')?.removeAttribute('hidden');
     const statusText = document.getElementById('brief-status-text');
-    if (statusText) statusText.textContent = 'Brief ready to send';
+    if (statusText) statusText.textContent = 'Your answers are ready';
     const beaconLabel = document.getElementById('brief-beacon-label');
-    if (beaconLabel) beaconLabel.textContent = 'Houston search ready';
+    if (beaconLabel) beaconLabel.textContent = 'One last review';
     const beaconAddress = document.getElementById('brief-beacon-address');
-    if (beaconAddress) beaconAddress.textContent = 'Review your details, then save the brief';
+    if (beaconAddress) beaconAddress.textContent = 'Check the details, then send them to me';
     briefSent = false;
     briefPromptShown = false;
     setTimeout(armBriefSendPrompt, 300);

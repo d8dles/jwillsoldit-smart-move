@@ -9,7 +9,8 @@
     "test:confirmation": "node --test tests/client-confirmation.test.mjs",
     "test:attribution": "node --test tests/attribution-and-resources.test.mjs",
     "test:inventory": "node tests/inventory.test.mjs",
-    "test:wordmark": "node tests/wordmark-contract.test.mjs"
+    "test:wordmark": "node tests/wordmark-contract.test.mjs",
+    "test:copy": "node --test tests/plain-language-copy.test.mjs"
   },
   "dependencies": {
     "@vercel/functions": "^3.7.5",

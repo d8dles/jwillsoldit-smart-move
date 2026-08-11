@@ -133,7 +133,7 @@
   </div>
   <div class="plotline-step" data-step="1">
     <div class="step-num">2</div>
-    <div class="step-label">Path</div>
+    <div class="step-label">Your move</div>
   </div>
   <div class="plotline-step" data-step="2">
     <div class="step-num">3</div>
@@ -141,7 +141,7 @@
   </div>
   <div class="plotline-step" data-step="3">
     <div class="step-num">4</div>
-    <div class="step-label">Prep</div>
+    <div class="step-label">Timing</div>
   </div>
   <div class="plotline-step" data-step="4">
     <div class="step-num">5</div>
@@ -153,11 +153,11 @@
   </div>
   <div class="plotline-step" data-step="6">
     <div class="step-num">7</div>
-    <div class="step-label">Route</div>
+    <div class="step-label">Details</div>
   </div>
   <div class="plotline-step" data-step="7">
     <div class="step-num">8</div>
-    <div class="step-label">Brief</div>
+    <div class="step-label">Summary</div>
   </div>
 </nav>
 
@@ -219,11 +219,11 @@
     </div>
     <h1 class="open-headline">Your Smart Move<br><em>Starts Here</em></h1>
     <p class="open-intro">Tell me what you are trying to do, where you need to be, and when you need to move. I will use those answers to point you toward the Houston rental, purchase, or sale that fits your real life.</p>
-    <div class="scroll-cue">Scroll to plot your move</div>
+    <div class="scroll-cue">Tell me about your move</div>
   </div>
   <div class="open-footer-strip">
     <div class="pulse-dot"></div>
-    <span>Plot Line Active</span>
+    <span>Let’s get started</span>
     <span style="margin-left:auto;">Houston, TX</span>
     <span class="open-crg-text">Christin Rachelle Group</span>
   </div>
@@ -233,7 +233,7 @@
 <section class="section" id="section-path">
   <div class="trail-layer" aria-hidden="true"></div>
   <div class="section-header">
-    <div class="section-label">Plot Line — Step 2</div>
+    <div class="section-label">Your move</div>
     <h2 class="section-title">What kind of move<br>are you making?</h2>
   </div>
   <div class="path-bands">
@@ -246,13 +246,13 @@
     <div class="path-band" data-path="buy" onclick="selectPath(this)">
       <span class="path-band-index">02</span>
       <span class="path-band-label">Buy</span>
-      <span class="path-band-desc">Own your next place</span>
+      <span class="path-band-desc">Find a home to buy</span>
       <div class="path-select-indicator"></div>
     </div>
     <div class="path-band" data-path="sell" onclick="selectPath(this)">
       <span class="path-band-index">03</span>
       <span class="path-band-label">Sell</span>
-      <span class="path-band-desc">Exit on your terms</span>
+      <span class="path-band-desc">Sell with a clear plan</span>
       <div class="path-select-indicator"></div>
     </div>
     <div class="path-band" data-path="sell-buy" onclick="selectPath(this)">
@@ -282,8 +282,8 @@
 <!-- ── SECTION 3: CONTACT ────────────────────────────────── -->
 <section class="section" id="section-contact">
   <div class="section-header">
-    <div class="section-label">Plot Line — Step 3</div>
-    <h2 class="section-title">How do we<br>reach you?</h2>
+    <div class="section-label">Contact</div>
+    <h2 class="section-title">How should I<br>reach you?</h2>
   </div>
   <div class="contact-fields">
     <!-- Honeypot: hidden from humans, off-screen (not display:none), ignored by assistive tech and tab order. Bots that fill it are silently dropped server-side. -->
@@ -305,7 +305,7 @@
     </div>
     <div class="contact-row referral-row">
       <button class="referral-toggle" id="referral-toggle" type="button" aria-expanded="false" aria-controls="referral-fields" onclick="toggleReferralFields()">+ Add a referral</button>
-      <p class="referral-help">If someone referred you to Joey, add their information here.</p>
+      <p class="referral-help">If someone sent you my way, you can add their name and number here.</p>
       <div class="referral-fields" id="referral-fields" hidden>
         <div>
           <label class="contact-label" for="c-referral-name">Referral Name</label>
@@ -341,7 +341,7 @@
     <div class="contact-row consent-row">
       <label class="consent-option" for="c-contact-consent">
         <input type="checkbox" id="c-contact-consent">
-        <span>By continuing, I agree Joey Williams may contact me about this Smart Move request using the method I selected. I have read the <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+        <span>By continuing, I agree that Joey Williams may contact me about this Smart Move request using the method I selected. I have read the <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
       </label>
       <div class="contact-error" id="err-contact-consent"></div>
       <label class="consent-option consent-option-marketing" for="c-marketing-consent">
@@ -349,19 +349,19 @@
         <span>Yes, Joey Williams / JWILLSOLDIT may send me occasional real estate marketing emails and texts, including automated messages. Consent is not a condition of purchase. Message and data rates may apply. Reply STOP or unsubscribe anytime.</span>
       </label>
       <p class="consent-privacy-note">Your information is used for your request and your selected communications. It is not sold or rented.</p>
-      <p class="consent-pause-note">Take a moment to review both choices. This step will not move until you select Continue.</p>
+      <p class="consent-pause-note">Review your choices, then select Continue when you’re ready.</p>
     </div>
   </div>
   <div class="path-continue">
-    <button class="btn-continue" id="contact-btn" disabled onclick="submitContact()">Continue after reviewing</button>
+    <button class="btn-continue" id="contact-btn" disabled onclick="submitContact()">Continue</button>
   </div>
 </section>
 
 <!-- ── SECTION 4: SHARED TRUNK ───────────────────────────── -->
 <section class="section" id="section-trunk">
   <div class="section-header">
-    <div class="section-label">Plot Line — Step 4</div>
-    <h2 class="section-title">A few things before<br>we route your move.</h2>
+    <div class="section-label">Timing</div>
+    <h2 class="section-title">A few things before<br>we get specific.</h2>
   </div>
 
   <div class="trunk-block">
@@ -435,7 +435,7 @@
 <!-- ── SECTION 5: BUDGET ─────────────────────────────────── -->
 <section class="section" id="section-budget">
   <div class="section-header">
-    <div class="section-label">Plot Line — Step 5</div>
+    <div class="section-label">Budget</div>
     <h2 class="section-title" id="budget-title">What is your<br>budget?</h2>
   </div>
   <div class="budget-bands" id="budget-bands">
@@ -484,7 +484,7 @@
 
 <section class="section" id="section-area">
   <div class="section-header">
-    <div class="section-label">Plot Line — Step 6</div>
+    <div class="section-label">Areas</div>
     <h2 class="section-title">Where should<br>we focus?</h2>
   </div>
 
@@ -555,7 +555,7 @@
 
   <div class="area-continue">
     <a class="area-skip" onclick="goTo(6)">Skip areas for now</a>
-    <button class="btn-continue" id="area-btn" onclick="goTo(6)">Continue to Route Details</button>
+    <button class="btn-continue" id="area-btn" onclick="goTo(6)">Continue to the Details</button>
   </div>
 </section>
 
@@ -563,18 +563,18 @@
 <!-- ── SECTION 7: ROUTE DETAILS ──────────────────────────── -->
 <section class="section" id="section-details">
   <div class="section-header">
-    <div class="section-label">Plot Line — Step 7</div>
-    <h2 class="section-title">Now let’s collect<br>the real details.</h2>
+    <div class="section-label">Details</div>
+    <h2 class="section-title">Now let’s get<br>specific.</h2>
   </div>
   <div class="route-detail-body">
     <div class="route-detail-intro">
-      Answer what applies so Joey can route your move correctly.
+      Answer what applies so I can understand what you need.
     </div>
     <div id="route-detail-fields"></div>
   </div>
   <div class="detail-continue">
     <div class="detail-error" id="detail-error"></div>
-    <button class="btn-continue" onclick="submitRouteDetails()">Build My Smart Move Brief</button>
+    <button class="btn-continue" onclick="submitRouteDetails()">Review My Answers</button>
   </div>
 </section>
 
@@ -582,14 +582,14 @@
 
 <section class="section" id="section-brief">
   <div class="brief-inner brief-climax">
-    <div class="brief-kicker">Smart Move Plotline</div>
-    <h2 class="brief-headline climax-title">Your Smart Move<br>is plotted.</h2>
-    <p class="brief-subline">Here is what I heard from your answers. I will use this summary when I follow up, so you will not have to start over.</p>
+    <div class="brief-kicker">Your Smart Move</div>
+    <h2 class="brief-headline climax-title">Here’s what<br>you shared.</h2>
+    <p class="brief-subline">Here’s what I heard from your answers. I’ll use this summary when I follow up, so you won’t have to start over.</p>
 
     <div class="brief-stage">
       <div class="smart-route-card">
         <div class="route-card-left">
-          <div class="route-card-label">Route type</div>
+          <div class="route-card-label">What you’re planning</div>
           <div class="route-card-value" id="brief-path">—</div>
           <div class="route-energy-line" aria-hidden="true"></div>
 
@@ -621,7 +621,7 @@
           </div>
 
           <div class="brief-selection-summary">
-            <div class="route-card-label">Selected details</div>
+            <div class="route-card-label">What matters to you</div>
             <div class="brief-summary-list" id="brief-all-selections"></div>
           </div>
         </div>
@@ -629,18 +629,18 @@
         <div class="route-card-right">
           <div class="brief-status">
             <div class="brief-status-dot"></div>
-            <span class="brief-status-text" id="brief-status-text">Brief ready to send</span>
+            <span class="brief-status-text" id="brief-status-text">Your answers are ready</span>
           </div>
 
           <div class="brief-next-step">
-            <p class="brief-next-label">Recommended Next Step</p>
-            <p class="brief-next-text" id="brief-next-text">Your brief is ready. I will reach out to confirm the details and talk through the next step.</p>
+            <p class="brief-next-label">What happens next</p>
+            <p class="brief-next-text" id="brief-next-text">I’ll review your answers, confirm the details, and talk through the next step with you.</p>
           </div>
 
           <div class="brief-resources" id="brief-resources" aria-labelledby="brief-resource-title" hidden>
-            <p class="brief-next-label">Chosen for your route</p>
-            <h3 id="brief-resource-title">Keep planning</h3>
-            <p id="brief-resource-text">Use these Houston guides while I review your brief.</p>
+            <p class="brief-next-label">A few useful guides for you</p>
+            <h3 id="brief-resource-title">Keep exploring</h3>
+            <p id="brief-resource-text">These Houston guides may help while I review your answers.</p>
             <div class="brief-resource-links">
               <a id="brief-resource-primary" class="brief-resource-link primary" href="https://www.jwillsoldit.com/houston/guides">Explore Houston guides</a>
               <a id="brief-resource-secondary" class="brief-resource-link" href="https://www.jwillsoldit.com/houston">Houston, Handled.</a>
@@ -652,12 +652,12 @@
             <div class="map-route-line map-route-b"></div>
             <div class="map-route-line map-route-c"></div>
             <div class="map-pulse-pin"></div>
-            <div class="map-beacon-label" id="brief-beacon-label">Houston search ready</div>
-            <div class="map-beacon-address" id="brief-beacon-address">Review your details, then save the brief</div>
+            <div class="map-beacon-label" id="brief-beacon-label">Your details are ready</div>
+            <div class="map-beacon-address" id="brief-beacon-address">Review everything, then send it to me</div>
           </div>
 
           <div class="brief-actions">
-            <button id="brief-send-link" class="brief-action primary" type="button" onclick="sendSmartMoveBrief(event)">Send My Smart Move Brief</button>
+            <button id="brief-send-link" class="brief-action primary" type="button" onclick="sendSmartMoveBrief(event)">Send My Answers to Joey</button>
             <div class="brief-contact-actions" id="brief-contact-actions" hidden>
               <a class="brief-action" href="tel:+15616856566">Call Joey</a>
               <a class="brief-action" href="sms:+15616856566">Text Joey</a>
@@ -693,11 +693,11 @@
 
 <dialog class="brief-send-dialog" id="brief-send-dialog" aria-labelledby="brief-send-dialog-title">
   <div class="brief-send-dialog-inner" id="brief-send-prompt">
-    <p class="brief-next-label">One last step</p>
-    <h2 id="brief-send-dialog-title">Save your Smart Move Brief.</h2>
-    <p>You have done the work. Send the brief so Joey receives your answers and can follow up without making you start over. Your recommended guides will unlock right after it is saved.</p>
+    <p class="brief-next-label">Ready to send?</p>
+    <h2 id="brief-send-dialog-title">Send your answers to Joey.</h2>
+    <p>Once you send them, I’ll have what I need to review your move and follow up. Your recommended guides will appear right afterward.</p>
     <div class="brief-send-dialog-actions">
-      <button class="brief-action primary" id="brief-dialog-send" type="button" onclick="sendSmartMoveBrief(event)">Send my brief</button>
+      <button class="brief-action primary" id="brief-dialog-send" type="button" onclick="sendSmartMoveBrief(event)">Send my answers</button>
       <button class="brief-action" type="button" onclick="closeBriefSendPrompt()">Keep reviewing</button>
     </div>
   </div>
@@ -706,9 +706,9 @@
       <span class="brief-success-line"></span>
       <span class="brief-success-dot"></span>
     </div>
-    <p class="brief-next-label">Brief received</p>
-    <h2><span id="brief-success-name">Your</span> brief is sent.</h2>
-    <p id="brief-success-copy">Joey has your answers and will follow up with the next steps. You will not need to explain everything again.</p>
+    <p class="brief-next-label">Got it</p>
+    <h2><span id="brief-success-name">Your</span> answers are on the way.</h2>
+    <p id="brief-success-copy">I have what you shared and will follow up with the next steps. You won’t have to explain it all again.</p>
     <p class="brief-success-email" id="brief-success-email" hidden></p>
     <div class="brief-send-dialog-actions">
       <button class="brief-action primary" type="button" onclick="finishBriefCelebration()">See my recommendations</button>
@@ -716,7 +716,7 @@
   </div>
 </dialog>
 
-<button class="brief-sticky-send" id="brief-sticky-send" type="button" onclick="sendSmartMoveBrief(event)" hidden>Send my brief</button>
+<button class="brief-sticky-send" id="brief-sticky-send" type="button" onclick="sendSmartMoveBrief(event)" hidden>Send my answers</button>
 
 <div id="global-footer">
   <div class="gf-left">

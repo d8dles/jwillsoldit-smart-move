@@ -76,7 +76,7 @@
     } catch (err) {
       PublicForm.setFormError(err.message);
       btn.disabled = false;
-      btn.textContent = 'Submit Verification';
+      btn.textContent = 'Confirm My Rental Details';
     }
   });
 })();

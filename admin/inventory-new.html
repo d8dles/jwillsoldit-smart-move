@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>New Public Inventory | JWillSoldIt Admin</title>
+<title>Add Property | JWillSoldIt Admin</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,21 +17,21 @@
 <header class="admin-topbar">
   <a class="admin-brand" href="https://www.jwillsoldit.com/"><span class="jw-logo">JWILLSOLDIT<span class="jw-logo__dot" aria-hidden="true">.</span></span><span class="tag">Inventory</span></a>
   <nav class="admin-nav">
-    <a href="/admin/verifications" data-nav="list">Verifications</a>
+    <a href="/admin/verifications" data-nav="list">Rental Files</a>
     <a href="/admin/invoices" data-nav="invoices">Invoices</a>
     <a href="/admin/listings" data-nav="listings">Listing Files</a>
     <a href="/admin/cdas" data-nav="cdas">CDAs</a>
     <a href="/admin/cdas/new" data-nav="cdas-new">New CDA</a>
-    <a href="/admin/inventory" data-nav="inventory">Public Inventory</a>
-    <a href="/admin/inventory/new" data-nav="inventory-new">New Inventory</a>
+    <a href="/admin/inventory" data-nav="inventory">Published Properties</a>
+    <a href="/admin/inventory/new" data-nav="inventory-new">Add Property</a>
     <button class="link-btn" id="admin-logout" type="button">Log Out</button>
   </nav>
 </header>
 
 <main class="admin-shell" style="max-width:760px;">
-  <div class="admin-kicker">Public Inventory</div>
-  <h1 class="admin-h1">New Public Inventory</h1>
-  <p class="admin-sub" style="margin-bottom:28px;">Create the public property record first. You can publish it after the content and status are ready.</p>
+  <div class="admin-kicker">Published Properties</div>
+  <h1 class="admin-h1">Add a Property</h1>
+  <p class="admin-sub" style="margin-bottom:28px;">Add the property details now. Keep it as a draft until the page is ready to publish.</p>
 
   <form id="inventory-form">
     <div id="inventory-error" class="form-error"></div>
@@ -90,7 +90,7 @@
     <div class="admin-card">
       <div class="admin-field"><label for="internalNotes">Internal Notes</label><textarea id="internalNotes"></textarea></div>
       <label class="admin-checkbox-inline"><input type="checkbox" id="published"> Publish immediately after creation</label>
-      <div style="margin-top:20px;"><button type="submit" class="admin-btn primary" id="inventory-submit">Create Inventory Record</button></div>
+      <div style="margin-top:20px;"><button type="submit" class="admin-btn primary" id="inventory-submit">Add Property</button></div>
     </div>
   </form>
 </main>

@@ -95,7 +95,7 @@
       error.textContent = err.message;
       error.classList.add('show');
       button.disabled = false;
-      button.textContent = 'Create Inventory Record';
+      button.textContent = 'Add Property';
     }
   });
 })();

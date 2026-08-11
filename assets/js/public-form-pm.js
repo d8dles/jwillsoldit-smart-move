@@ -14,7 +14,7 @@
   if (result.clientName) {
     document.getElementById('clientName').value = result.clientName;
     document.getElementById('form-context').textContent =
-      `Joey Williams (JWillSoldIt / Christin Rachelle Group) is requesting confirmation of ${result.clientName}'s rental placement for locator commission invoicing.`;
+      `Joey Williams is requesting the details below so ${result.clientName}’s rental placement can be verified and invoiced correctly.`;
   }
   if (result.alreadySubmitted) {
     document.getElementById('already-note').style.display = 'block';
