@@ -71,6 +71,60 @@
     const nextEl = document.getElementById('brief-next-text');
     if (nextEl) nextEl.textContent = NEXT_STEP[path] || 'I will reach out to confirm the details and talk through the next step.';
 
+    const RESOURCE_ROUTES = {
+      renter: {
+        title: 'Your Houston renter checklist',
+        text: 'Prepare the documents, utilities, lease questions, insurance, maintenance plan, and move-in records you will need.',
+        primary: ['Open the renter checklist', 'https://www.jwillsoldit.com/houston/guides/houston-renter-checklist'],
+        secondary: ['Next steps after the lease', 'https://www.jwillsoldit.com/houston/guides/first-time-homebuyer']
+      },
+      buyer: {
+        title: 'Prepare for the purchase',
+        text: 'Review financing questions and the address-level Houston costs that deserve verification before you decide.',
+        primary: ['Open the first-time buyer guide', 'https://www.jwillsoldit.com/houston/guides/first-time-homebuyer'],
+        secondary: ['Understand property taxes', 'https://www.jwillsoldit.com/houston/guides/property-taxes']
+      },
+      sellbuy: {
+        title: 'Plan the next address',
+        text: 'Use the Houston guides to evaluate recurring costs and property-specific risks while Joey coordinates both sides.',
+        primary: ['Understand property taxes', 'https://www.jwillsoldit.com/houston/guides/property-taxes'],
+        secondary: ['Check flood risk and insurance', 'https://www.jwillsoldit.com/houston/guides/flood-risk-and-insurance']
+      },
+      seller: {
+        title: 'Know what buyers will verify',
+        text: 'Review the Houston property questions that can surface during a sale and prepare your records before the consultation.',
+        primary: ['Review Houston property guides', 'https://www.jwillsoldit.com/houston/guides'],
+        secondary: ['Understand property taxes', 'https://www.jwillsoldit.com/houston/guides/property-taxes']
+      },
+      commercial: {
+        title: 'Map the Houston context',
+        text: 'Explore how the region is organized while Joey reviews the property and business requirements in your brief.',
+        primary: ['How Houston is organized', 'https://www.jwillsoldit.com/houston/guides/how-houston-is-organized'],
+        secondary: ['Explore Houston areas', 'https://www.jwillsoldit.com/houston']
+      },
+      notsure: {
+        title: 'Explore before the call',
+        text: 'Start with the guide library. Joey will use your brief to narrow the next useful step.',
+        primary: ['Explore Houston guides', 'https://www.jwillsoldit.com/houston/guides'],
+        secondary: ['See the Houston map', 'https://www.jwillsoldit.com/houston']
+      }
+    };
+    const resource = RESOURCE_ROUTES[path] || RESOURCE_ROUTES.notsure;
+    const resourceTitle = document.getElementById('brief-resource-title');
+    const resourceText = document.getElementById('brief-resource-text');
+    const resourcePrimary = document.getElementById('brief-resource-primary');
+    const resourceSecondary = document.getElementById('brief-resource-secondary');
+    if (resourceTitle) resourceTitle.textContent = resource.title;
+    if (resourceText) resourceText.textContent = resource.text;
+    if (resourcePrimary) {
+      resourcePrimary.textContent = resource.primary[0];
+      resourcePrimary.href = resource.primary[1];
+    }
+    if (resourceSecondary) {
+      resourceSecondary.textContent = resource.secondary[0];
+      resourceSecondary.href = resource.secondary[1];
+    }
+
     // Build and log submission object
     const submission = buildEnhancedSubmission(FormLogic.buildSubmissionObject());
     console.log('[SmartMove] Submission JSON:', JSON.stringify(submission, null, 2));

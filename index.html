@@ -349,10 +349,11 @@
         <span>Yes, Joey Williams / JWILLSOLDIT may send me occasional real estate marketing emails and texts, including automated messages. Consent is not a condition of purchase. Message and data rates may apply. Reply STOP or unsubscribe anytime.</span>
       </label>
       <p class="consent-privacy-note">Your information is used for your request and your selected communications. It is not sold or rented.</p>
+      <p class="consent-pause-note">Take a moment to review both choices. This step will not move until you select Continue.</p>
     </div>
   </div>
   <div class="path-continue">
-    <button class="btn-continue" id="contact-btn" onclick="submitContact()">Continue</button>
+    <button class="btn-continue" id="contact-btn" disabled onclick="submitContact()">Continue after reviewing</button>
   </div>
 </section>
 
@@ -628,7 +629,7 @@
         <div class="route-card-right">
           <div class="brief-status">
             <div class="brief-status-dot"></div>
-            <span class="brief-status-text">Route generated</span>
+            <span class="brief-status-text" id="brief-status-text">Brief ready to send</span>
           </div>
 
           <div class="brief-next-step">
@@ -636,20 +637,32 @@
             <p class="brief-next-text" id="brief-next-text">Your brief is ready. I will reach out to confirm the details and talk through the next step.</p>
           </div>
 
+          <div class="brief-resources" id="brief-resources" aria-labelledby="brief-resource-title" hidden>
+            <p class="brief-next-label">Chosen for your route</p>
+            <h3 id="brief-resource-title">Keep planning</h3>
+            <p id="brief-resource-text">Use these Houston guides while I review your brief.</p>
+            <div class="brief-resource-links">
+              <a id="brief-resource-primary" class="brief-resource-link primary" href="https://www.jwillsoldit.com/houston/guides">Explore Houston guides</a>
+              <a id="brief-resource-secondary" class="brief-resource-link" href="https://www.jwillsoldit.com/houston">Houston, Handled.</a>
+            </div>
+          </div>
+
           <div class="brief-map-beacon" aria-label="Animated Houston map route beacon">
             <div class="map-route-line map-route-a"></div>
             <div class="map-route-line map-route-b"></div>
             <div class="map-route-line map-route-c"></div>
             <div class="map-pulse-pin"></div>
-            <div class="map-beacon-label">Move signal locked</div>
-            <div class="map-beacon-address">Greater Houston · route mapped</div>
+            <div class="map-beacon-label" id="brief-beacon-label">Houston search ready</div>
+            <div class="map-beacon-address" id="brief-beacon-address">Review your details, then save the brief</div>
           </div>
 
           <div class="brief-actions">
             <button id="brief-send-link" class="brief-action primary" type="button" onclick="sendSmartMoveBrief(event)">Send My Smart Move Brief</button>
-            <a class="brief-action" href="tel:+15616856566">Call Joey</a>
-            <a class="brief-action" href="sms:+15616856566">Text Joey</a>
-            <a class="brief-action" href="mailto:joey@jwillsoldit.com">Email Joey</a>
+            <div class="brief-contact-actions" id="brief-contact-actions" hidden>
+              <a class="brief-action" href="tel:+15616856566">Call Joey</a>
+              <a class="brief-action" href="sms:+15616856566">Text Joey</a>
+              <a class="brief-action" href="mailto:joey@jwillsoldit.com">Email Joey</a>
+            </div>
           </div>
           <div class="brief-submit-status" id="brief-submit-status" aria-live="polite"></div>
         </div>
@@ -677,6 +690,33 @@
     </div>
   </div>
 </section>
+
+<dialog class="brief-send-dialog" id="brief-send-dialog" aria-labelledby="brief-send-dialog-title">
+  <div class="brief-send-dialog-inner" id="brief-send-prompt">
+    <p class="brief-next-label">One last step</p>
+    <h2 id="brief-send-dialog-title">Save your Smart Move Brief.</h2>
+    <p>You have done the work. Send the brief so Joey receives your answers and can follow up without making you start over. Your recommended guides will unlock right after it is saved.</p>
+    <div class="brief-send-dialog-actions">
+      <button class="brief-action primary" id="brief-dialog-send" type="button" onclick="sendSmartMoveBrief(event)">Send my brief</button>
+      <button class="brief-action" type="button" onclick="closeBriefSendPrompt()">Keep reviewing</button>
+    </div>
+  </div>
+  <div class="brief-send-dialog-inner brief-success-panel" id="brief-send-success" hidden>
+    <div class="brief-success-signal" aria-hidden="true">
+      <span class="brief-success-line"></span>
+      <span class="brief-success-dot"></span>
+    </div>
+    <p class="brief-next-label">Brief received</p>
+    <h2><span id="brief-success-name">Your</span> brief is sent.</h2>
+    <p id="brief-success-copy">Joey has your answers and will follow up with the next steps. You will not need to explain everything again.</p>
+    <p class="brief-success-email" id="brief-success-email" hidden></p>
+    <div class="brief-send-dialog-actions">
+      <button class="brief-action primary" type="button" onclick="finishBriefCelebration()">See my recommendations</button>
+    </div>
+  </div>
+</dialog>
+
+<button class="brief-sticky-send" id="brief-sticky-send" type="button" onclick="sendSmartMoveBrief(event)" hidden>Send my brief</button>
 
 <div id="global-footer">
   <div class="gf-left">

@@ -172,6 +172,10 @@
 
   // ── CONTACT VALIDATION + SAVE ───────────────────────────
   function maybeAutoContact() {
+    if (autoAdvanceTimers.has('contact')) {
+      clearTimeout(autoAdvanceTimers.get('contact'));
+      autoAdvanceTimers.delete('contact');
+    }
     const name  = document.getElementById('c-name')?.value.trim() || '';
     const email = document.getElementById('c-email')?.value.trim() || '';
     const phone = document.getElementById('c-phone')?.value.trim() || '';
@@ -189,7 +193,8 @@
                   FormLogic.validateField('email', email).valid &&
                   FormLogic.validateField('phone', phone).valid &&
                   method && time && referralReady && contactConsent;
-    if (ready) scheduleAutoAdvance('contact', submitContact, 550);
+    const button = document.getElementById('contact-btn');
+    if (button) button.disabled = !ready;
   }
 
   ['c-name','c-email','c-phone','c-referral-name','c-referral-phone'].forEach(id => {

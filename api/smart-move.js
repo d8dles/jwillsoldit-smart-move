@@ -13,7 +13,7 @@ function escapeHtml(value) {
 }
 
 // Cached across warm invocations: once the HubSpot custom properties have been
-// ensured successfully, skip the 9-schema fetch/create round-trips entirely.
+// ensured successfully, skip repeated schema fetch/create round-trips entirely.
 let customPropertiesEnsured = false;
 
 const CUSTOM_PROPERTIES = [
@@ -34,7 +34,25 @@ const CUSTOM_PROPERTIES = [
   { name: 'smart_move_marketing_consent', label: 'Smart Move Marketing Consent', fieldType: 'text', type: 'string' },
   { name: 'smart_move_consent_version', label: 'Smart Move Consent Version', fieldType: 'text', type: 'string' },
   { name: 'smart_move_consent_at', label: 'Smart Move Consent At', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_utm_source', label: 'Smart Move UTM Source', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_utm_medium', label: 'Smart Move UTM Medium', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_utm_campaign', label: 'Smart Move UTM Campaign', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_utm_content', label: 'Smart Move UTM Content', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_utm_term', label: 'Smart Move UTM Term', fieldType: 'text', type: 'string' },
+  { name: 'smart_move_fbclid', label: 'Smart Move Facebook Click ID', fieldType: 'text', type: 'string' },
 ];
+
+export function buildTrackingProperties(payload) {
+  const tracking = payload?.metadata?.tracking || {};
+  return {
+    smart_move_utm_source: tracking.utm_source || '',
+    smart_move_utm_medium: tracking.utm_medium || '',
+    smart_move_utm_campaign: tracking.utm_campaign || '',
+    smart_move_utm_content: tracking.utm_content || '',
+    smart_move_utm_term: tracking.utm_term || '',
+    smart_move_fbclid: tracking.fbclid || '',
+  };
+}
 
 function buildBriefText(payload) {
   const p = payload;
@@ -88,7 +106,19 @@ function buildBriefText(payload) {
     });
   }
 
-  lines.push('', `Device: ${p.metadata?.deviceType || '—'}`);
+  const tracking = p.metadata?.tracking || {};
+  lines.push(
+    '',
+    'Attribution:',
+    `  UTM Source: ${tracking.utm_source || '—'}`,
+    `  UTM Medium: ${tracking.utm_medium || '—'}`,
+    `  UTM Campaign: ${tracking.utm_campaign || '—'}`,
+    `  UTM Content: ${tracking.utm_content || '—'}`,
+    `  UTM Term: ${tracking.utm_term || '—'}`,
+    `  Facebook Click ID: ${tracking.fbclid || '—'}`,
+    '',
+    `Device: ${p.metadata?.deviceType || '—'}`,
+  );
   return lines.join('\n');
 }
 
@@ -155,6 +185,7 @@ async function upsertContact(token, payload) {
     smart_move_marketing_consent: payload.contact?.marketingConsent ? 'Yes' : 'No',
     smart_move_consent_version: payload.contact?.consentVersion || '',
     smart_move_consent_at: payload.contact?.consentAt || '',
+    ...buildTrackingProperties(payload),
   };
 
   if (name) {
@@ -233,16 +264,23 @@ async function sendLeadAlert(payload, contactId) {
   const hubspotLink  = `https://app-na2.hubspot.com/contacts/246507261/contact/${contactId}`;
 
   const isPartial = payload.metadata?.submissionType === 'partial_contact';
-  const submissionTypeLabel = isPartial ? 'Partial Contact' : 'Completed Brief';
-  const subject = isPartial
-    ? `Partial Smart Move Lead: ${name || '—'} — ${route}`
-    : `Completed Smart Move Lead: ${name || '—'} — ${route} — ${budget}`;
+  const isHubQuestion = payload.metadata?.submissionType === 'hub_question';
+  const submissionTypeLabel = isHubQuestion
+    ? 'Website Question'
+    : isPartial
+      ? 'Partial Contact'
+      : 'Completed Brief';
+  const subject = isHubQuestion
+    ? `Website Question: ${name || '—'} — ${route}`
+    : isPartial
+      ? `Partial Smart Move Lead: ${name || '—'} — ${route}`
+      : `Completed Smart Move Lead: ${name || '—'} — ${route} — ${budget}`;
 
   // Escape every user-controlled value before it lands in the HTML body so
   // injected markup renders as inert text. hubspotLink and submissionTypeLabel
   // are server-derived, not user input, but escaping them too is harmless.
   const html = `
-<h2 style="font-family:sans-serif;margin-bottom:16px;">${isPartial ? 'Partial' : 'Completed'} Smart Move Lead</h2>
+<h2 style="font-family:sans-serif;margin-bottom:16px;">${escapeHtml(submissionTypeLabel)}</h2>
 <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">
   <tr><td style="font-weight:bold;padding-right:16px;">Submission Type</td><td>${escapeHtml(submissionTypeLabel)}</td></tr>
   <tr><td style="font-weight:bold;padding-right:16px;">Name</td><td>${escapeHtml(name) || '—'}</td></tr>
@@ -345,14 +383,14 @@ export function buildClientConfirmation(payload) {
 }
 
 async function sendClientConfirmation(payload) {
-  if (payload.metadata?.submissionType !== 'final') return;
+  if (payload.metadata?.submissionType !== 'final') return false;
 
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.CLIENT_CONFIRMATION_FROM || process.env.LEAD_ALERT_FROM;
   const to = payload.contact?.email?.trim();
   if (!apiKey || !from || !to) {
     console.warn('[smart-move] Client confirmation skipped: RESEND_API_KEY, sender, or client email not set');
-    return;
+    return false;
   }
 
   const message = buildClientConfirmation(payload);
@@ -376,6 +414,7 @@ async function sendClientConfirmation(payload) {
     const errBody = await confirmationRes.text();
     throw new Error(`Resend confirmation API ${confirmationRes.status}: ${errBody}`);
   }
+  return true;
 }
 
 async function tryAttachNote(token, contactId, noteText) {
@@ -402,9 +441,23 @@ async function tryAttachNote(token, contactId, noteText) {
 }
 
 export default async function handler(req, res) {
-  const allowedOrigin = process.env.ALLOWED_ORIGIN || 'https://move.jwillsoldit.com';
+  const requestOrigin = req.headers.origin || '';
+  const configuredOrigins = (process.env.ALLOWED_ORIGIN || '')
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(Boolean);
+  const fixedOrigins = [
+    'https://move.jwillsoldit.com',
+    'https://jwillsoldit.com',
+    'https://www.jwillsoldit.com',
+  ];
+  const isHubPreview = /^https:\/\/jwillsoldit-hub-[a-z0-9-]+\.vercel\.app$/.test(requestOrigin);
+  const allowedOrigin = [...fixedOrigins, ...configuredOrigins].includes(requestOrigin) || isHubPreview
+    ? requestOrigin
+    : 'https://move.jwillsoldit.com';
 
   res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -460,8 +513,9 @@ export default async function handler(req, res) {
       console.warn('[smart-move] Lead alert email failed:', err.message);
     }
 
+    let confirmationSent = false;
     try {
-      await sendClientConfirmation(payload);
+      confirmationSent = await sendClientConfirmation(payload);
     } catch (err) {
       console.warn('[smart-move] Client confirmation email failed:', err.message);
     }
@@ -470,6 +524,7 @@ export default async function handler(req, res) {
       success: true,
       contactId,
       submissionId: payload?.metadata?.submissionId || null,
+      confirmationSent,
     });
   } catch (err) {
     console.error('[smart-move] HubSpot error:', err.message);

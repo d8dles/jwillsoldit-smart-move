@@ -224,7 +224,7 @@
   function updateRouteCue() {
     const cue = document.getElementById('route-cue');
     if (!cue) return;
-    const hidden = currentStep === 0 || currentStep >= 7;
+    const hidden = currentStep === 0 || currentStep === 2 || currentStep >= 7;
     cue.classList.toggle('is-hidden', hidden);
     cue.style.display = hidden ? 'none' : 'flex';
     cue.classList.toggle('is-dark', currentStep === 1);
@@ -246,7 +246,7 @@
       if (FormLogic.getPath()) goTo(2);
       return;
     }
-    if (currentStep === 2) return submitContact();
+    if (currentStep === 2) return;
     if (currentStep === 3) return submitTrunk();
     if (currentStep === 4) {
       if (isStepReady(4)) goTo(5);
@@ -312,6 +312,16 @@
     autoAdvanceTimers.forEach(timer => clearTimeout(timer));
     autoAdvanceTimers.clear();
     partialLeadSent = false;
+    if (!keepBrief) {
+      briefSent = false;
+      briefPromptShown = false;
+      briefPromptObserver?.disconnect();
+      briefPromptObserver = null;
+      document.getElementById('brief-resources')?.setAttribute('hidden', '');
+      document.getElementById('brief-contact-actions')?.setAttribute('hidden', '');
+      document.getElementById('brief-sticky-send')?.setAttribute('hidden', '');
+      closeBriefSendPrompt();
+    }
     FormLogic.init();
 
     document.querySelectorAll('.selected, .checked, .invalid').forEach(el => el.classList.remove('selected', 'checked', 'invalid'));
@@ -324,6 +334,8 @@
 
     const pathBtn = document.getElementById('path-btn');
     if (pathBtn) pathBtn.disabled = true;
+    const contactBtn = document.getElementById('contact-btn');
+    if (contactBtn) contactBtn.disabled = true;
     const budgetBtn = document.getElementById('budget-btn');
     if (budgetBtn) budgetBtn.disabled = true;
     const agentNotice = document.getElementById('agent-yes-notice');
@@ -347,9 +359,73 @@
     updateRouteCue();
   }
 
+  let briefSent = false;
+  let briefPromptShown = false;
+  let briefPromptObserver = null;
+
+  function closeBriefSendPrompt() {
+    const dialog = document.getElementById('brief-send-dialog');
+    if (dialog?.open) dialog.close();
+  }
+
+  function resetBriefDialog() {
+    document.getElementById('brief-send-prompt')?.removeAttribute('hidden');
+    document.getElementById('brief-send-success')?.setAttribute('hidden', '');
+    const dialogBtn = document.getElementById('brief-dialog-send');
+    if (dialogBtn) {
+      dialogBtn.disabled = false;
+      dialogBtn.textContent = 'Send my brief';
+    }
+  }
+
+  function showBriefSuccess({ confirmationSent = false } = {}) {
+    const dialog = document.getElementById('brief-send-dialog');
+    if (dialog?.showModal && !dialog.open) dialog.showModal();
+    const firstName = (FormLogic.formData.contact?.name || '').trim().split(/\s+/)[0];
+    const email = FormLogic.formData.contact?.email || '';
+    const nameEl = document.getElementById('brief-success-name');
+    if (nameEl) nameEl.textContent = firstName ? `${firstName}, your` : 'Your';
+    const emailEl = document.getElementById('brief-success-email');
+    if (emailEl) {
+      emailEl.hidden = !confirmationSent;
+      emailEl.textContent = confirmationSent ? `A confirmation and helpful links are headed to ${email}.` : '';
+    }
+    document.getElementById('brief-send-prompt')?.setAttribute('hidden', '');
+    document.getElementById('brief-send-success')?.removeAttribute('hidden');
+  }
+
+  function finishBriefCelebration() {
+    closeBriefSendPrompt();
+    const resources = document.getElementById('brief-resources');
+    if (resources) setTimeout(() => resources.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+  }
+
+  function showBriefSendPrompt() {
+    if (briefSent || briefPromptShown) return;
+    const dialog = document.getElementById('brief-send-dialog');
+    if (!dialog?.showModal) return;
+    briefPromptShown = true;
+    resetBriefDialog();
+    dialog.showModal();
+  }
+
+  function armBriefSendPrompt() {
+    briefPromptObserver?.disconnect();
+    const sendButton = document.getElementById('brief-send-link');
+    if (!sendButton || briefSent || briefPromptShown) return;
+    briefPromptObserver = new IntersectionObserver((entries) => {
+      if (entries.some(entry => entry.isIntersecting)) {
+        briefPromptObserver?.disconnect();
+        setTimeout(showBriefSendPrompt, 450);
+      }
+    }, { threshold: 0.7 });
+    briefPromptObserver.observe(sendButton);
+  }
+
   async function sendSmartMoveBrief(event) {
     if (event) event.preventDefault();
     const btn = document.getElementById('brief-send-link');
+    const dialogBtn = document.getElementById('brief-dialog-send');
     const status = document.getElementById('brief-submit-status');
     const payload = buildSmartMovePayload();
     console.log('[SmartMove] Submission payload:', payload);
@@ -374,6 +450,10 @@
       btn.disabled = true;
       btn.textContent = 'Sending…';
     }
+    if (dialogBtn) {
+      dialogBtn.disabled = true;
+      dialogBtn.textContent = 'Sending…';
+    }
 
     try {
       const res = await fetch(SMART_MOVE_ENDPOINT, {
@@ -382,8 +462,22 @@
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error(`Endpoint responded ${res.status}`);
+      const result = await res.json();
       if (status) status.textContent = 'Saved. Joey has your Smart Move Brief in the CRM.';
       if (btn) btn.textContent = 'Brief sent';
+      if (dialogBtn) dialogBtn.textContent = 'Brief sent';
+      briefSent = true;
+      showBriefSuccess({ confirmationSent: result.confirmationSent === true });
+      const resources = document.getElementById('brief-resources');
+      if (resources) resources.removeAttribute('hidden');
+      document.getElementById('brief-contact-actions')?.removeAttribute('hidden');
+      document.getElementById('brief-sticky-send')?.setAttribute('hidden', '');
+      const statusText = document.getElementById('brief-status-text');
+      if (statusText) statusText.textContent = 'Brief received';
+      const beaconLabel = document.getElementById('brief-beacon-label');
+      if (beaconLabel) beaconLabel.textContent = 'Houston search details saved';
+      const beaconAddress = document.getElementById('brief-beacon-address');
+      if (beaconAddress) beaconAddress.textContent = 'Joey has your answers';
       resetSmartMoveState({ keepBrief: true });
     } catch (err) {
       console.error('[SmartMove] Send failed:', err);
@@ -394,6 +488,10 @@
       if (btn) {
         btn.disabled = false;
         btn.textContent = originalText || 'Send My Smart Move Brief';
+      }
+      if (dialogBtn) {
+        dialogBtn.disabled = false;
+        dialogBtn.textContent = 'Try sending again';
       }
     }
   }
@@ -486,9 +584,56 @@
       sendLink.textContent = 'Send My Smart Move Brief';
       sendLink.setAttribute('aria-label', 'Send Smart Move Brief to Joey');
     }
+    document.getElementById('brief-resources')?.setAttribute('hidden', '');
+    document.getElementById('brief-contact-actions')?.setAttribute('hidden', '');
+    document.getElementById('brief-sticky-send')?.removeAttribute('hidden');
+    const statusText = document.getElementById('brief-status-text');
+    if (statusText) statusText.textContent = 'Brief ready to send';
+    const beaconLabel = document.getElementById('brief-beacon-label');
+    if (beaconLabel) beaconLabel.textContent = 'Houston search ready';
+    const beaconAddress = document.getElementById('brief-beacon-address');
+    if (beaconAddress) beaconAddress.textContent = 'Review your details, then save the brief';
+    briefSent = false;
+    briefPromptShown = false;
+    setTimeout(armBriefSendPrompt, 300);
   }
 
   // Keep the selected-area tray in sync on first render.
   setTimeout(() => {
     if (typeof updateAreaSelectionUI === 'function') updateAreaSelectionUI();
   }, 300);
+
+  // Hub and Houston-guide links can enter Smart Move with the visitor's choice
+  // already made. This follows the same selectPath() code path as a real click,
+  // including the selected state and transition into contact details.
+  function applyEntryIntent() {
+    const rawIntent = new URLSearchParams(window.location.search).get('intent');
+    if (!rawIntent) return;
+    const intent = rawIntent.toLowerCase();
+    const pathByIntent = {
+      rent: 'rent',
+      buy: 'buy',
+      sell: 'sell',
+      'sell-buy': 'sell-buy',
+      commercial: 'commercial',
+      'not-sure': 'not-sure',
+      relocate: 'not-sure',
+      'houston-relocation': 'not-sure'
+    };
+    const displayPath = pathByIntent[intent];
+    if (!displayPath) return;
+
+    if (intent === 'relocate' || intent === 'houston-relocation') {
+      PATH_LABELS.notsure = 'Relocate';
+      const relocateBand = document.querySelector('.path-band[data-path="not-sure"]');
+      const label = relocateBand?.querySelector('.path-band-label');
+      const description = relocateBand?.querySelector('.path-band-desc');
+      if (label) label.textContent = 'Relocate';
+      if (description) description.textContent = 'Plan your move to Texas';
+    }
+
+    const band = document.querySelector(`.path-band[data-path="${displayPath}"]`);
+    if (band) selectPath(band);
+  }
+
+  setTimeout(applyEntryIntent, 350);
