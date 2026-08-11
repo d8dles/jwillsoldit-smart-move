@@ -264,16 +264,23 @@ async function sendLeadAlert(payload, contactId) {
   const hubspotLink  = `https://app-na2.hubspot.com/contacts/246507261/contact/${contactId}`;
 
   const isPartial = payload.metadata?.submissionType === 'partial_contact';
-  const submissionTypeLabel = isPartial ? 'Partial Contact' : 'Completed Brief';
-  const subject = isPartial
-    ? `Partial Smart Move Lead: ${name || '—'} — ${route}`
-    : `Completed Smart Move Lead: ${name || '—'} — ${route} — ${budget}`;
+  const isHubQuestion = payload.metadata?.submissionType === 'hub_question';
+  const submissionTypeLabel = isHubQuestion
+    ? 'Website Question'
+    : isPartial
+      ? 'Partial Contact'
+      : 'Completed Brief';
+  const subject = isHubQuestion
+    ? `Website Question: ${name || '—'} — ${route}`
+    : isPartial
+      ? `Partial Smart Move Lead: ${name || '—'} — ${route}`
+      : `Completed Smart Move Lead: ${name || '—'} — ${route} — ${budget}`;
 
   // Escape every user-controlled value before it lands in the HTML body so
   // injected markup renders as inert text. hubspotLink and submissionTypeLabel
   // are server-derived, not user input, but escaping them too is harmless.
   const html = `
-<h2 style="font-family:sans-serif;margin-bottom:16px;">${isPartial ? 'Partial' : 'Completed'} Smart Move Lead</h2>
+<h2 style="font-family:sans-serif;margin-bottom:16px;">${escapeHtml(submissionTypeLabel)}</h2>
 <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">
   <tr><td style="font-weight:bold;padding-right:16px;">Submission Type</td><td>${escapeHtml(submissionTypeLabel)}</td></tr>
   <tr><td style="font-weight:bold;padding-right:16px;">Name</td><td>${escapeHtml(name) || '—'}</td></tr>
@@ -434,9 +441,23 @@ async function tryAttachNote(token, contactId, noteText) {
 }
 
 export default async function handler(req, res) {
-  const allowedOrigin = process.env.ALLOWED_ORIGIN || 'https://move.jwillsoldit.com';
+  const requestOrigin = req.headers.origin || '';
+  const configuredOrigins = (process.env.ALLOWED_ORIGIN || '')
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(Boolean);
+  const fixedOrigins = [
+    'https://move.jwillsoldit.com',
+    'https://jwillsoldit.com',
+    'https://www.jwillsoldit.com',
+  ];
+  const isHubPreview = /^https:\/\/jwillsoldit-hub-[a-z0-9-]+\.vercel\.app$/.test(requestOrigin);
+  const allowedOrigin = [...fixedOrigins, ...configuredOrigins].includes(requestOrigin) || isHubPreview
+    ? requestOrigin
+    : 'https://move.jwillsoldit.com';
 
   res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
