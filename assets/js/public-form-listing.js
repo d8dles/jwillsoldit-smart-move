@@ -215,12 +215,12 @@
           outstanding.map(function (i) { return '<li style="margin-bottom:4px;">' + PublicForm.escapeHtml(i.label) + '</li>'; }).join('') +
           '</ul><p style="margin-top:10px;">You can reply to your confirmation email or call/text Joey to get these over.</p>';
       } else {
-        box.innerHTML = '<p style="font-weight:600;">Your checklist is complete — nothing outstanding.</p>';
+        box.innerHTML = '<p style="font-weight:600;">You’re all set—I have everything on the checklist.</p>';
       }
     } catch (err) {
       PublicForm.setFormError(err.message);
       btn.disabled = false;
-      btn.textContent = 'Submit Listing Checklist';
+      btn.textContent = 'Send My Listing Details';
     }
   });
 })();

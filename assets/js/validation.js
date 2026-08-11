@@ -164,7 +164,7 @@
       { group:'Rental needs', type:'multi', store:'pathData.renter_property_type', label:'What rental types should I search?', required:true,
         options:[['apartment','Apartment'],['condo_townhome','Condo / townhome'],['single_family','Single-family home'],['duplex','Duplex'],['fourplex','Fourplex'],['townhouse','Townhouse'],['garage_apartment','Garage apartment / guest house'],['flexible','Flexible']] },
       { group:'Rental needs', type:'bedbath', store:'pathData.Q9_bedroomsBathrooms', label:'Minimum bedroom / bathroom count', required:true,
-        note:'Use the plus and minus controls so this feels quick instead of making someone hunt through a long dropdown.' },
+        note:'Choose the minimum number of bedrooms and bathrooms you need.' },
       { group:'Rental needs', type:'multi', store:'pathData.Q10_rentalAmenities', label:'What features or amenities matter most?', required:false,
         options:[['washer_dryer','Washer / dryer'],['garage','Garage'],['covered_parking','Covered parking'],['yard','Yard'],['fenced_yard','Fenced yard'],['patio_balcony','Patio / balcony'],['pet_friendly','Pet friendly'],['study','Study / office'],['home_office','Home office space'],['one_story_preferred','One-story preferred'],['two_story_ok','Two-story okay'],['three_plus_stories_ok','Three+ stories okay'],['split_level_ok','Split-level okay'],['primary_down','Primary bedroom down'],['one_bed_down','At least one bedroom down'],['no_carpet','No carpet'],['island_kitchen','Island kitchen'],['walk_in_closet','Walk-in closet'],['pool','Pool'],['gym','Gym'],['gated','Gated access'],['elevator','Elevator'],['first_floor','First-floor unit'],['top_floor','Top-floor unit'],['storage','Extra storage'],['ev_charging','EV charging']] },
       { group:'Rental needs', type:'select', store:'pathData.Q12_leaseTerm', label:'What lease term are you looking for?', required:true,
@@ -200,7 +200,7 @@
       { group:'Buying criteria', type:'single', store:'pathData.Q12_newResale', label:'Are you more interested in new construction or resale?', required:true,
         options:[['new','New construction'],['resale','Resale'],['both','Open to both']] },
       { group:'Buying criteria', type:'bedbath', store:'pathData.Q13_bedsBaths', label:'Minimum bedroom / bathroom count', required:true,
-        note:'Set the minimum search target. Joey can widen it if the right property needs flexibility.' },
+        note:'Choose the minimum you need. We can stay flexible if the right home comes close.' },
       { group:'Buying criteria', type:'multi', store:'pathData.Q14_mustHaves', label:'Which must-haves matter most?', required:true,
         options:[['garage','Garage'],['yard','Yard / outdoor space'],['home_office','Home office'],['multi_story_ok','Multi-story okay'],['split_level_ok','Split-level okay'],['primary_down','Primary bedroom downstairs'],['updated_kitchen','Updated kitchen'],['no_carpet','No carpet'],['low_hoa','Low HOA'],['new_construction','New construction'],['move_in_ready','Move-in ready'],['commute','Commute / access'],['walkability','Walkability']] },
       { group:'Target Date Details', type:'single', store:'pathData.target_date_precision', label:'Preferred closing or move-in window', required:false,
@@ -211,7 +211,7 @@
     ],
     seller: [
       { group:'Selling details', type:'address', store:'pathData.seller_property_address', label:'What is the property address?', required:true,
-        note:'Start typing the full property address. Browser address suggestions are enabled now; true map/parcel verification can be connected when the site goes live.' },
+        note:'Enter the full property address, including the city and ZIP code.' },
       { group:'Selling details', type:'single', store:'pathData.seller_property_type', label:'What type of property are you selling?', required:true,
         options:[['single_family','Single-family home'],['condo_townhome','Condo / townhome'],['duplex_fourplex','Duplex / fourplex'],['multi_family','Multi-family / income property'],['land','Land'],['commercial','Commercial property'],['other','Other / not sure']] },
       { group:'Selling details', type:'single', store:'pathData.Q8_propertyCondition', label:'What is the condition of your property?', required:true,
@@ -333,14 +333,14 @@
       body = `<input class="detail-input" type="number" data-store="${field.store}" oninput="updateDetailInput(this)" placeholder="Example: 450000" value="${current || ''}">`;
     } else if (field.type === 'address') {
       body = `<input class="detail-input" type="text" data-store="${field.store}" autocomplete="street-address" inputmode="text" oninput="updateDetailInput(this)" placeholder="Start typing the property address..." value="${current || ''}">
-      <div class="address-assist">Address autofill is enabled. Full map verification can be connected with a Places API key later.</div>`;
+      <div class="address-assist">Select the suggested address if it appears.</div>`;
     } else if (field.type === 'text') {
       body = `<input class="detail-input" type="text" data-store="${field.store}" oninput="updateDetailInput(this)" placeholder="Type your answer..." value="${current || ''}">`;
     } else if (field.type === 'ack') {
       body = `<div class="detail-options"><div class="detail-option ${current ? 'selected' : ''}" data-store="${field.store}" data-type="ack" data-value="true" onclick="selectDetailOption(this)">
         <div class="detail-dot"></div><span class="detail-option-label">I acknowledge</span></div></div>`;
     } else if (field.type === 'link') {
-      body = `<a href="#" class="detail-link" onclick="markLenderClicked(event)">Mark lender intro needed / clicked</a>`;
+      body = `<a href="#" class="detail-link" onclick="markLenderClicked(event)">I’d like a lender introduction</a>`;
     } else if (field.type === 'disclaimer') {
       return `<div class="detail-field" data-field="_disclaimer" data-visible="true">
         <div class="detail-disclaimer">${field.text || ''}</div>
@@ -406,7 +406,7 @@
   function markLenderClicked(event) {
     event.preventDefault();
     FormLogic.formData.pathData.Q9_lenderLinkClicked = true;
-    event.target.textContent = 'Lender intro marked';
+    event.target.textContent = 'Got it—I’ll include that in my follow-up';
   }
 
   function getCurrentDetailFields() {

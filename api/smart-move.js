@@ -91,7 +91,7 @@ function buildBriefText(payload) {
   }
 
   if (p.fullPathData && Object.keys(p.fullPathData).length) {
-    lines.push('', 'Path Data:');
+    lines.push('', 'Detailed Answers:');
     Object.entries(p.fullPathData).forEach(([k, v]) => {
       const val = Array.isArray(v) ? v.join(', ') : String(v ?? '');
       if (val) lines.push(`  ${k}: ${val}`);
@@ -99,7 +99,7 @@ function buildBriefText(payload) {
   }
 
   if (p.fullTrunk && Object.keys(p.fullTrunk).length) {
-    lines.push('', 'Trunk Data:');
+    lines.push('', 'General Answers:');
     Object.entries(p.fullTrunk).forEach(([k, v]) => {
       const val = Array.isArray(v) ? v.join(', ') : String(v ?? '');
       if (val) lines.push(`  ${k}: ${val}`);
@@ -343,21 +343,19 @@ async function sendLeadAlert(payload, contactId) {
 export function buildClientConfirmation(payload) {
   const fullName = payload.contact?.name?.trim() || '';
   const firstName = fullName.split(/\s+/)[0] || 'there';
-  const route = payload.routeLabel || payload.path || 'your move';
-  const subject = `${firstName}, your Smart Move brief is in`;
+  const subject = `${firstName}, I have your Smart Move details`;
   const guidesUrl = 'https://www.jwillsoldit.com/houston';
   const phoneUrl = 'tel:+15616856566';
   const safeFirstName = escapeHtml(firstName);
-  const safeRoute = escapeHtml(route);
 
   const html = `
 <div style="margin:0;background:#f6f2e9;padding:32px 16px;color:#1c3b2e;font-family:Arial,sans-serif;">
   <div style="max-width:620px;margin:0 auto;background:#ffffff;border:1px solid #ded8cc;padding:36px;">
     <p style="margin:0 0 22px;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#b05c2e;">JWILLSOLDIT · Smart Move</p>
-    <h1 style="margin:0 0 20px;font-size:30px;font-weight:500;line-height:1.15;color:#1c3b2e;">Your Smart Move brief is in.</h1>
+    <h1 style="margin:0 0 20px;font-size:30px;font-weight:500;line-height:1.15;color:#1c3b2e;">I have your answers.</h1>
     <p style="margin:0 0 16px;font-size:16px;line-height:1.7;">Hi ${safeFirstName},</p>
-    <p style="margin:0 0 16px;font-size:16px;line-height:1.7;">Thank you for trusting me with ${safeRoute}. I received your completed brief, and your move is a priority. I’ll review what you shared and be in contact shortly with the next steps.</p>
-    <p style="margin:0 0 24px;font-size:16px;line-height:1.7;">While I’m reviewing it, explore <strong>Houston, Handled.</strong> It covers the property taxes, flood questions, utility districts, commutes, and area details that can change a Houston move.</p>
+    <p style="margin:0 0 16px;font-size:16px;line-height:1.7;">Thanks for sharing the details, ${safeFirstName}. I’m reviewing everything now and will reach out shortly so we can talk through the next step.</p>
+    <p style="margin:0 0 24px;font-size:16px;line-height:1.7;">While I’m reviewing your answers, you can explore <strong>Houston, Handled.</strong> I built these guides around the questions that come up most—property taxes, flooding, utility districts, commutes, and how one part of Houston differs from the next.</p>
     <p style="margin:0 0 28px;"><a href="${guidesUrl}" style="display:inline-block;background:#1c3b2e;color:#ffffff;text-decoration:none;padding:13px 18px;font-size:13px;font-weight:700;letter-spacing:0.05em;">Explore the Houston guides</a></p>
     <p style="margin:0 0 18px;font-size:15px;line-height:1.7;">If anything changes before I reach out, reply directly to this email or <a href="${phoneUrl}" style="color:#b05c2e;">call or text me</a>.</p>
     <p style="margin:0;font-size:15px;line-height:1.6;"><strong>Joey Williams</strong><br>REALTOR® · Christin Rachelle Group<br><a href="${phoneUrl}" style="color:#b05c2e;">(561) 685-6566</a> · <a href="mailto:joey@jwillsoldit.com" style="color:#b05c2e;">joey@jwillsoldit.com</a></p>
@@ -367,9 +365,9 @@ export function buildClientConfirmation(payload) {
   const text = [
     `Hi ${firstName},`,
     '',
-    `Thank you for trusting me with ${route}. I received your completed brief, and your move is a priority. I’ll review what you shared and be in contact shortly with the next steps.`,
+    `Thanks for sharing the details, ${firstName}. I’m reviewing everything now and will reach out shortly so we can talk through the next step.`,
     '',
-    'While I’m reviewing it, explore Houston, Handled. It covers the property taxes, flood questions, utility districts, commutes, and area details that can change a Houston move.',
+    'While I’m reviewing your answers, you can explore Houston, Handled. I built these guides around the questions that come up most—property taxes, flooding, utility districts, commutes, and how one part of Houston differs from the next.',
     guidesUrl,
     '',
     'If anything changes before I reach out, reply directly to this email or call or text me.',
@@ -528,6 +526,6 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error('[smart-move] HubSpot error:', err.message);
-    return res.status(502).json({ success: false, error: 'CRM sync failed. Please try again.' });
+    return res.status(502).json({ success: false, error: 'We could not save your answers. Please try again.' });
   }
 }

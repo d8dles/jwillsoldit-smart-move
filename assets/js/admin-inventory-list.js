@@ -39,7 +39,7 @@
       });
       table.style.display = 'table';
     } catch (err) {
-      loading.textContent = `Could not load public inventory: ${err.message}`;
+      loading.textContent = `Could not load published properties: ${err.message}`;
     }
   }
 

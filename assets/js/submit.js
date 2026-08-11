@@ -8,7 +8,7 @@
         const node = document.querySelector(`.detail-field[data-field="${CSS.escape(f.store)}"] .detail-field-error`);
         if (node) node.textContent = 'Required';
       });
-      document.getElementById('detail-error').textContent = 'Complete the required route details.';
+      document.getElementById('detail-error').textContent = 'A few required answers are still missing.';
       return;
     }
 
@@ -61,50 +61,50 @@
 
     // Recommended next step — path-specific copy
     const NEXT_STEP = {
-      renter:     'Joey will review your criteria and follow up with realistic rental matches and next steps. Have your ID and pay stubs ready for applications.',
-      buyer:      'Joey will schedule a no-pressure buyer consultation to walk through the market, your budget, and a competitive offer strategy.',
-      seller:     'Joey will prepare a Comparative Market Analysis for your property and reach out to schedule a listing consultation.',
-      sellbuy:    'Joey will map a coordinated sell-and-buy timeline so the order of operations makes sense before you make your next move.',
-      commercial: 'Joey will review your commercial criteria and follow up directly to map the next step for your lease, purchase, sale, or investment need.',
-      notsure:    'No pressure — Joey will reach out for a quick 15-minute call to help you figure out the right move and the right timing.'
+      renter:     'I’ll review what you need and follow up with rental options that make sense for your budget, timing, and location. In the meantime, start gathering your ID, income documents, and rental history so an application doesn’t catch you off guard.',
+      buyer:      'I’ll reach out to talk through your budget, timing, and what the current market looks like for the kind of home you want. Then we can decide what the first useful step should be.',
+      seller:     'I’ll review the property and recent comparable sales, then reach out to discuss pricing, preparation, and the timing that makes sense for you.',
+      sellbuy:    'I’ll help you sort out which move needs to happen first, where the timing can overlap, and what we should have ready before either side goes live.',
+      commercial: 'I’ll review the property and business details, then contact you to narrow the search or plan the sale.',
+      notsure:    'No pressure. I’ll reach out for a short call so we can sort through the options and decide what makes sense.'
     };
     const nextEl = document.getElementById('brief-next-text');
-    if (nextEl) nextEl.textContent = NEXT_STEP[path] || 'I will reach out to confirm the details and talk through the next step.';
+    if (nextEl) nextEl.textContent = NEXT_STEP[path] || 'I’ll reach out to confirm the details and talk through the next step.';
 
     const RESOURCE_ROUTES = {
       renter: {
         title: 'Your Houston renter checklist',
-        text: 'Prepare the documents, utilities, lease questions, insurance, maintenance plan, and move-in records you will need.',
+        text: 'Know what to gather, what to ask before signing, which utilities to arrange, and what to document on move-in day.',
         primary: ['Open the renter checklist', 'https://www.jwillsoldit.com/houston/guides/houston-renter-checklist'],
         secondary: ['Next steps after the lease', 'https://www.jwillsoldit.com/houston/guides/first-time-homebuyer']
       },
       buyer: {
-        title: 'Prepare for the purchase',
-        text: 'Review financing questions and the address-level Houston costs that deserve verification before you decide.',
+        title: 'A clearer start to buying',
+        text: 'Start with financing, then learn which taxes, flood questions, and recurring costs can change from one Houston address to the next.',
         primary: ['Open the first-time buyer guide', 'https://www.jwillsoldit.com/houston/guides/first-time-homebuyer'],
         secondary: ['Understand property taxes', 'https://www.jwillsoldit.com/houston/guides/property-taxes']
       },
       sellbuy: {
-        title: 'Plan the next address',
-        text: 'Use the Houston guides to evaluate recurring costs and property-specific risks while Joey coordinates both sides.',
+        title: 'Plan both sides of the move',
+        text: 'Use the Houston guides to understand recurring costs and property-specific questions while we work out the timing between selling and buying.',
         primary: ['Understand property taxes', 'https://www.jwillsoldit.com/houston/guides/property-taxes'],
         secondary: ['Check flood risk and insurance', 'https://www.jwillsoldit.com/houston/guides/flood-risk-and-insurance']
       },
       seller: {
-        title: 'Know what buyers will verify',
-        text: 'Review the Houston property questions that can surface during a sale and prepare your records before the consultation.',
+        title: 'Get ahead of the buyer’s questions',
+        text: 'These guides cover the property details buyers often ask about, so we can gather the right records early.',
         primary: ['Review Houston property guides', 'https://www.jwillsoldit.com/houston/guides'],
         secondary: ['Understand property taxes', 'https://www.jwillsoldit.com/houston/guides/property-taxes']
       },
       commercial: {
-        title: 'Map the Houston context',
-        text: 'Explore how the region is organized while Joey reviews the property and business requirements in your brief.',
+        title: 'Understand the Houston market',
+        text: 'Explore how the region is organized while I review what the property needs to do for your business.',
         primary: ['How Houston is organized', 'https://www.jwillsoldit.com/houston/guides/how-houston-is-organized'],
         secondary: ['Explore Houston areas', 'https://www.jwillsoldit.com/houston']
       },
       notsure: {
         title: 'Explore before the call',
-        text: 'Start with the guide library. Joey will use your brief to narrow the next useful step.',
+        text: 'Start wherever you’re curious. I’ll use your answers to help narrow what comes next.',
         primary: ['Explore Houston guides', 'https://www.jwillsoldit.com/houston/guides'],
         secondary: ['See the Houston map', 'https://www.jwillsoldit.com/houston']
       }

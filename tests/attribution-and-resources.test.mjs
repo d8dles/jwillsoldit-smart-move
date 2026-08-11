@@ -31,19 +31,19 @@ test('guide recommendations unlock only after the brief is saved', () => {
   assert.match(html, /id="brief-send-dialog"/);
   assert.match(app, /IntersectionObserver/);
   assert.match(app, /resources\.removeAttribute\('hidden'\)/);
-  assert.match(app, /Saved\. Joey has your Smart Move Brief/);
-  assert.match(html, /Brief ready to send/);
+  assert.match(app, /Sent\. I have your answers and will follow up soon/);
+  assert.match(html, /Your answers are ready/);
   assert.match(html, /brief-contact-actions[^>]*hidden/);
   assert.match(html, /brief-sticky-send[^>]*hidden/);
   assert.match(app, /showBriefSuccess/);
-  assert.match(app, /Houston search details saved/);
+  assert.match(app, /Your answers are saved/);
 });
 
 test('contact consent pauses for an explicit continue action', () => {
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   const steps = readFileSync(new URL('../assets/js/steps.js', import.meta.url), 'utf8');
   assert.match(html, /id="contact-btn" disabled/);
-  assert.match(html, /This step will not move until you select Continue/);
+  assert.match(html, /Review your choices, then select Continue when you’re ready/);
   assert.doesNotMatch(steps, /scheduleAutoAdvance\('contact'/);
   assert.match(steps, /button\.disabled = !ready/);
   const app = readFileSync(new URL('../assets/js/app.js', import.meta.url), 'utf8');
