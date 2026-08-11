@@ -302,6 +302,82 @@ async function sendLeadAlert(payload, contactId) {
   }
 }
 
+export function buildClientConfirmation(payload) {
+  const fullName = payload.contact?.name?.trim() || '';
+  const firstName = fullName.split(/\s+/)[0] || 'there';
+  const route = payload.routeLabel || payload.path || 'your move';
+  const subject = `${firstName}, your Smart Move brief is in`;
+  const guidesUrl = 'https://www.jwillsoldit.com/houston';
+  const phoneUrl = 'tel:+15616856566';
+  const safeFirstName = escapeHtml(firstName);
+  const safeRoute = escapeHtml(route);
+
+  const html = `
+<div style="margin:0;background:#f6f2e9;padding:32px 16px;color:#1c3b2e;font-family:Arial,sans-serif;">
+  <div style="max-width:620px;margin:0 auto;background:#ffffff;border:1px solid #ded8cc;padding:36px;">
+    <p style="margin:0 0 22px;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#b05c2e;">JWILLSOLDIT · Smart Move</p>
+    <h1 style="margin:0 0 20px;font-size:30px;font-weight:500;line-height:1.15;color:#1c3b2e;">Your Smart Move brief is in.</h1>
+    <p style="margin:0 0 16px;font-size:16px;line-height:1.7;">Hi ${safeFirstName},</p>
+    <p style="margin:0 0 16px;font-size:16px;line-height:1.7;">Thank you for trusting me with ${safeRoute}. I received your completed brief, and your move is a priority. I’ll review what you shared and be in contact shortly with the next steps.</p>
+    <p style="margin:0 0 24px;font-size:16px;line-height:1.7;">While I’m reviewing it, explore <strong>Houston, Handled.</strong> It covers the property taxes, flood questions, utility districts, commutes, and area details that can change a Houston move.</p>
+    <p style="margin:0 0 28px;"><a href="${guidesUrl}" style="display:inline-block;background:#1c3b2e;color:#ffffff;text-decoration:none;padding:13px 18px;font-size:13px;font-weight:700;letter-spacing:0.05em;">Explore the Houston guides</a></p>
+    <p style="margin:0 0 18px;font-size:15px;line-height:1.7;">If anything changes before I reach out, reply directly to this email or <a href="${phoneUrl}" style="color:#b05c2e;">call or text me</a>.</p>
+    <p style="margin:0;font-size:15px;line-height:1.6;"><strong>Joey Williams</strong><br>REALTOR® · Christin Rachelle Group<br><a href="${phoneUrl}" style="color:#b05c2e;">(561) 685-6566</a> · <a href="mailto:joey@jwillsoldit.com" style="color:#b05c2e;">joey@jwillsoldit.com</a></p>
+  </div>
+</div>`.trim();
+
+  const text = [
+    `Hi ${firstName},`,
+    '',
+    `Thank you for trusting me with ${route}. I received your completed brief, and your move is a priority. I’ll review what you shared and be in contact shortly with the next steps.`,
+    '',
+    'While I’m reviewing it, explore Houston, Handled. It covers the property taxes, flood questions, utility districts, commutes, and area details that can change a Houston move.',
+    guidesUrl,
+    '',
+    'If anything changes before I reach out, reply directly to this email or call or text me.',
+    '',
+    'Joey Williams',
+    'REALTOR® · Christin Rachelle Group',
+    '(561) 685-6566 · joey@jwillsoldit.com',
+  ].join('\n');
+
+  return { subject, html, text };
+}
+
+async function sendClientConfirmation(payload) {
+  if (payload.metadata?.submissionType !== 'final') return;
+
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.CLIENT_CONFIRMATION_FROM || process.env.LEAD_ALERT_FROM;
+  const to = payload.contact?.email?.trim();
+  if (!apiKey || !from || !to) {
+    console.warn('[smart-move] Client confirmation skipped: RESEND_API_KEY, sender, or client email not set');
+    return;
+  }
+
+  const message = buildClientConfirmation(payload);
+  const submissionId = payload.metadata?.submissionId || `contact-${to}`;
+  const confirmationRes = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      'Idempotency-Key': `smart-move-confirmation/${submissionId}`,
+    },
+    body: JSON.stringify({
+      from,
+      to: [to],
+      reply_to: 'joey@jwillsoldit.com',
+      ...message,
+    }),
+  });
+
+  if (!confirmationRes.ok) {
+    const errBody = await confirmationRes.text();
+    throw new Error(`Resend confirmation API ${confirmationRes.status}: ${errBody}`);
+  }
+}
+
 async function tryAttachNote(token, contactId, noteText) {
   try {
     const createNoteRes = await fetch(`${HUBSPOT_API}/crm/v3/objects/notes`, {
@@ -382,6 +458,12 @@ export default async function handler(req, res) {
       await sendLeadAlert(payload, contactId);
     } catch (err) {
       console.warn('[smart-move] Lead alert email failed:', err.message);
+    }
+
+    try {
+      await sendClientConfirmation(payload);
+    } catch (err) {
+      console.warn('[smart-move] Client confirmation email failed:', err.message);
     }
 
     return res.status(200).json({
