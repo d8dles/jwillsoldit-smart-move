@@ -32,4 +32,9 @@ test('guide recommendations unlock only after the brief is saved', () => {
   assert.match(app, /IntersectionObserver/);
   assert.match(app, /resources\.removeAttribute\('hidden'\)/);
   assert.match(app, /Saved\. Joey has your Smart Move Brief/);
+  assert.match(html, /Brief ready to send/);
+  assert.match(html, /brief-contact-actions[^>]*hidden/);
+  assert.match(html, /brief-sticky-send[^>]*hidden/);
+  assert.match(app, /showBriefSuccess/);
+  assert.match(app, /Houston search details saved/);
 });

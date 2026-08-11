@@ -376,14 +376,14 @@ export function buildClientConfirmation(payload) {
 }
 
 async function sendClientConfirmation(payload) {
-  if (payload.metadata?.submissionType !== 'final') return;
+  if (payload.metadata?.submissionType !== 'final') return false;
 
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.CLIENT_CONFIRMATION_FROM || process.env.LEAD_ALERT_FROM;
   const to = payload.contact?.email?.trim();
   if (!apiKey || !from || !to) {
     console.warn('[smart-move] Client confirmation skipped: RESEND_API_KEY, sender, or client email not set');
-    return;
+    return false;
   }
 
   const message = buildClientConfirmation(payload);
@@ -407,6 +407,7 @@ async function sendClientConfirmation(payload) {
     const errBody = await confirmationRes.text();
     throw new Error(`Resend confirmation API ${confirmationRes.status}: ${errBody}`);
   }
+  return true;
 }
 
 async function tryAttachNote(token, contactId, noteText) {
@@ -491,8 +492,9 @@ export default async function handler(req, res) {
       console.warn('[smart-move] Lead alert email failed:', err.message);
     }
 
+    let confirmationSent = false;
     try {
-      await sendClientConfirmation(payload);
+      confirmationSent = await sendClientConfirmation(payload);
     } catch (err) {
       console.warn('[smart-move] Client confirmation email failed:', err.message);
     }
@@ -501,6 +503,7 @@ export default async function handler(req, res) {
       success: true,
       contactId,
       submissionId: payload?.metadata?.submissionId || null,
+      confirmationSent,
     });
   } catch (err) {
     console.error('[smart-move] HubSpot error:', err.message);

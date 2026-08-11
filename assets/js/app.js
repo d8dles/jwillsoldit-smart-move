@@ -318,6 +318,8 @@
       briefPromptObserver?.disconnect();
       briefPromptObserver = null;
       document.getElementById('brief-resources')?.setAttribute('hidden', '');
+      document.getElementById('brief-contact-actions')?.setAttribute('hidden', '');
+      document.getElementById('brief-sticky-send')?.setAttribute('hidden', '');
       closeBriefSendPrompt();
     }
     FormLogic.init();
@@ -364,11 +366,44 @@
     if (dialog?.open) dialog.close();
   }
 
+  function resetBriefDialog() {
+    document.getElementById('brief-send-prompt')?.removeAttribute('hidden');
+    document.getElementById('brief-send-success')?.setAttribute('hidden', '');
+    const dialogBtn = document.getElementById('brief-dialog-send');
+    if (dialogBtn) {
+      dialogBtn.disabled = false;
+      dialogBtn.textContent = 'Send my brief';
+    }
+  }
+
+  function showBriefSuccess({ confirmationSent = false } = {}) {
+    const dialog = document.getElementById('brief-send-dialog');
+    if (dialog?.showModal && !dialog.open) dialog.showModal();
+    const firstName = (FormLogic.formData.contact?.name || '').trim().split(/\s+/)[0];
+    const email = FormLogic.formData.contact?.email || '';
+    const nameEl = document.getElementById('brief-success-name');
+    if (nameEl) nameEl.textContent = firstName ? `${firstName}, your` : 'Your';
+    const emailEl = document.getElementById('brief-success-email');
+    if (emailEl) {
+      emailEl.hidden = !confirmationSent;
+      emailEl.textContent = confirmationSent ? `A confirmation and helpful links are headed to ${email}.` : '';
+    }
+    document.getElementById('brief-send-prompt')?.setAttribute('hidden', '');
+    document.getElementById('brief-send-success')?.removeAttribute('hidden');
+  }
+
+  function finishBriefCelebration() {
+    closeBriefSendPrompt();
+    const resources = document.getElementById('brief-resources');
+    if (resources) setTimeout(() => resources.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+  }
+
   function showBriefSendPrompt() {
     if (briefSent || briefPromptShown) return;
     const dialog = document.getElementById('brief-send-dialog');
     if (!dialog?.showModal) return;
     briefPromptShown = true;
+    resetBriefDialog();
     dialog.showModal();
   }
 
@@ -425,16 +460,22 @@
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error(`Endpoint responded ${res.status}`);
+      const result = await res.json();
       if (status) status.textContent = 'Saved. Joey has your Smart Move Brief in the CRM.';
       if (btn) btn.textContent = 'Brief sent';
       if (dialogBtn) dialogBtn.textContent = 'Brief sent';
       briefSent = true;
-      closeBriefSendPrompt();
+      showBriefSuccess({ confirmationSent: result.confirmationSent === true });
       const resources = document.getElementById('brief-resources');
-      if (resources) {
-        resources.removeAttribute('hidden');
-        setTimeout(() => resources.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
-      }
+      if (resources) resources.removeAttribute('hidden');
+      document.getElementById('brief-contact-actions')?.removeAttribute('hidden');
+      document.getElementById('brief-sticky-send')?.setAttribute('hidden', '');
+      const statusText = document.getElementById('brief-status-text');
+      if (statusText) statusText.textContent = 'Brief received';
+      const beaconLabel = document.getElementById('brief-beacon-label');
+      if (beaconLabel) beaconLabel.textContent = 'Houston search details saved';
+      const beaconAddress = document.getElementById('brief-beacon-address');
+      if (beaconAddress) beaconAddress.textContent = 'Joey has your answers';
       resetSmartMoveState({ keepBrief: true });
     } catch (err) {
       console.error('[SmartMove] Send failed:', err);
@@ -448,7 +489,7 @@
       }
       if (dialogBtn) {
         dialogBtn.disabled = false;
-        dialogBtn.textContent = 'Send my brief';
+        dialogBtn.textContent = 'Try sending again';
       }
     }
   }
@@ -542,6 +583,14 @@
       sendLink.setAttribute('aria-label', 'Send Smart Move Brief to Joey');
     }
     document.getElementById('brief-resources')?.setAttribute('hidden', '');
+    document.getElementById('brief-contact-actions')?.setAttribute('hidden', '');
+    document.getElementById('brief-sticky-send')?.removeAttribute('hidden');
+    const statusText = document.getElementById('brief-status-text');
+    if (statusText) statusText.textContent = 'Brief ready to send';
+    const beaconLabel = document.getElementById('brief-beacon-label');
+    if (beaconLabel) beaconLabel.textContent = 'Houston search ready';
+    const beaconAddress = document.getElementById('brief-beacon-address');
+    if (beaconAddress) beaconAddress.textContent = 'Review your details, then save the brief';
     briefSent = false;
     briefPromptShown = false;
     setTimeout(armBriefSendPrompt, 300);

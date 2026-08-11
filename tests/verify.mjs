@@ -216,7 +216,9 @@ async function runPath(browser, pathKey, width, query = '') {
   await waitForStep(page, 7);
   await track('07-brief', 'section-brief');
 
-  await page.locator('#brief-send-link').click();
+  const dialogSend = page.locator('#brief-dialog-send');
+  if (await dialogSend.isVisible().catch(() => false)) await dialogSend.click();
+  else await page.locator('#brief-send-link').click();
   await page.waitForFunction(
     (t) => document.getElementById('brief-submit-status')?.textContent === t,
     SAVED_TEXT,
@@ -224,6 +226,9 @@ async function runPath(browser, pathKey, width, query = '') {
   );
   const submitStatus = await page.evaluate(() => document.getElementById('brief-submit-status')?.textContent || '');
   const buttonState = await page.evaluate(() => document.getElementById('brief-send-link')?.textContent || '');
+  check(await page.locator('#brief-send-success').isVisible(), `[${pathKey}@${width}] success celebration did not appear`);
+  check(await page.locator('#brief-resources').isVisible(), `[${pathKey}@${width}] recommendations did not unlock`);
+  check(await page.locator('#brief-contact-actions').isVisible(), `[${pathKey}@${width}] contact actions did not unlock`);
 
   await context.close();
 
