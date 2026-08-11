@@ -602,3 +602,38 @@
   setTimeout(() => {
     if (typeof updateAreaSelectionUI === 'function') updateAreaSelectionUI();
   }, 300);
+
+  // Hub and Houston-guide links can enter Smart Move with the visitor's choice
+  // already made. This follows the same selectPath() code path as a real click,
+  // including the selected state and transition into contact details.
+  function applyEntryIntent() {
+    const rawIntent = new URLSearchParams(window.location.search).get('intent');
+    if (!rawIntent) return;
+    const intent = rawIntent.toLowerCase();
+    const pathByIntent = {
+      rent: 'rent',
+      buy: 'buy',
+      sell: 'sell',
+      'sell-buy': 'sell-buy',
+      commercial: 'commercial',
+      'not-sure': 'not-sure',
+      relocate: 'not-sure',
+      'houston-relocation': 'not-sure'
+    };
+    const displayPath = pathByIntent[intent];
+    if (!displayPath) return;
+
+    if (intent === 'relocate' || intent === 'houston-relocation') {
+      PATH_LABELS.notsure = 'Relocate';
+      const relocateBand = document.querySelector('.path-band[data-path="not-sure"]');
+      const label = relocateBand?.querySelector('.path-band-label');
+      const description = relocateBand?.querySelector('.path-band-desc');
+      if (label) label.textContent = 'Relocate';
+      if (description) description.textContent = 'Plan your move to Texas';
+    }
+
+    const band = document.querySelector(`.path-band[data-path="${displayPath}"]`);
+    if (band) selectPath(band);
+  }
+
+  setTimeout(applyEntryIntent, 350);

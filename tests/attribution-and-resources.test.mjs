@@ -49,3 +49,12 @@ test('contact consent pauses for an explicit continue action', () => {
   const app = readFileSync(new URL('../assets/js/app.js', import.meta.url), 'utf8');
   assert.match(app, /currentStep === 2 \|\| currentStep >= 7/);
 });
+
+test('hub intent links use the same path-selection behavior as a click', () => {
+  const app = readFileSync(new URL('../assets/js/app.js', import.meta.url), 'utf8');
+  for (const intent of ['rent', 'buy', 'sell', 'sell-buy', 'commercial', 'not-sure', 'relocate', 'houston-relocation']) {
+    assert.match(app, new RegExp(`['\"]?${intent.replace('-', '\\-')}['\"]?\\s*:`));
+  }
+  assert.match(app, /selectPath\(band\)/);
+  assert.match(app, /PATH_LABELS\.notsure = 'Relocate'/);
+});
