@@ -126,7 +126,7 @@ HubSpot contact.
 |-----|---------|
 | `ADMIN_PASSWORD` | Shared password for `/admin` sign-in |
 | `ADMIN_2FA_EMAIL` | Strongly recommended; enables two-factor sign-in. When set, a correct password also emails a 6-digit code (via Resend) to this address, and the code must be entered to finish signing in. Requires `RESEND_API_KEY` + `LEAD_ALERT_FROM`; if the code email can't be sent, sign-in fails closed. Leave unset for password-only (local dev). |
-| `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | Preferred production store for verification files, links, invoices, admin sessions, and login throttling. Uses the private `smart_move_store` table in Supabase Postgres. The service-role key must stay server-side in Vercel env vars. |
+| `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | Preferred production store for verification files, links, invoices, admin sessions, and login throttling. Uses the private `smart_move_store` table in Supabase Postgres. The service-role key must stay server-side in Vercel env vars. Smart Move lead delivery does not depend on this store; its anti-spam check falls back locally if the store is unavailable. |
 | `PUBLIC_ALLOWED_ORIGINS` | Comma-separated public site origins allowed to read published JWILLSOLDIT inventory, for example `https://www.jwillsoldit.com,http://127.0.0.1:4173`. |
 | `KV_REST_API_URL` / `KV_REST_API_TOKEN` | Legacy/alternate production store. Used only if Supabase env vars are not set. |
 | `TOKEN_ENCRYPTION_KEY` | Optional but recommended; encrypts link tokens at rest. Falls back to deriving a key from `ADMIN_PASSWORD` if unset. |
