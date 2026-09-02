@@ -6,6 +6,20 @@ const HUBSPOT_API = 'https://api.hubapi.com';
 export const SMART_MOVE_RATE_LIMIT = { max: 8, windowMs: 10 * 60 * 1000, lockoutMs: 15 * 60 * 1000 };
 export const MAX_SMART_MOVE_BODY_BYTES = 100_000;
 
+// The public intake must not depend on the private admin database being
+// reachable. Keep a per-instance fallback so an outage in Supabase/KV cannot
+// reject a real lead before HubSpot gets a chance to save it.
+const localRateLimitDB = {};
+
+export async function checkSmartMoveRateLimit(key, rateLimitStore = withDB) {
+  try {
+    return await rateLimitStore((db) => checkRateLimit(db, key, SMART_MOVE_RATE_LIMIT));
+  } catch (err) {
+    console.warn('[smart-move] Durable rate-limit store unavailable; using local fallback:', err.message);
+    return checkRateLimit(localRateLimitDB, key, SMART_MOVE_RATE_LIMIT);
+  }
+}
+
 // Escape user-controlled values before interpolating into the alert email's HTML
 // body. Covers the five HTML-significant characters so injected markup renders as
 // inert text. The plain-text part of the email needs no escaping.
@@ -511,15 +525,7 @@ export default async function handler(req, res) {
     return res.status(413).json({ success: false, error: 'Request is too large' });
   }
 
-  let rateLimit;
-  try {
-    rateLimit = await withDB((db) =>
-      checkRateLimit(db, `smart-move:${getClientIp(req)}`, SMART_MOVE_RATE_LIMIT)
-    );
-  } catch (err) {
-    console.error('[smart-move] Rate-limit check failed:', err.message);
-    return res.status(503).json({ success: false, error: 'We could not save your answers. Please try again.' });
-  }
+  const rateLimit = await checkSmartMoveRateLimit(`smart-move:${getClientIp(req)}`);
   if (!rateLimit.allowed) {
     res.setHeader('Retry-After', String(rateLimit.retryAfterSeconds));
     return res.status(429).json({ success: false, error: 'Please wait a few minutes before trying again.' });
